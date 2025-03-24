@@ -9,8 +9,8 @@ export interface SankeyNode extends d3.SimulationNodeDatum {
   x?: number;
   y?: number;
   value?: number;
-  sourceLinks?: any[];
-  targetLinks?: any[];
+  sourceLinks?: SankeyLink[];
+  targetLinks?: SankeyLink[];
 }
 
 export interface SankeyLink {
@@ -86,7 +86,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
       .attr('fill', 'none')
       .attr('stroke', '#aaa')
       .attr('stroke-opacity', 0.4)
-      .attr('stroke-width', (d: any) => Math.max(1, d.width))
+      .attr('stroke-width', (d: SankeyLink & { width?: number }) => Math.max(1, d.width || 0))
       .style('mix-blend-mode', 'multiply');
 
     // Add nodes
@@ -96,24 +96,24 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
       .data(sankeyData.nodes)
       .enter()
       .append('g')
-      .attr('transform', (d: any) => `translate(${d.x0},${d.y0})`);
+      .attr('transform', (d: SankeyNode & { x0?: number; y0?: number }) => `translate(${d.x0 || 0},${d.y0 || 0})`);
 
     // Add rectangles for nodes
     node.append('rect')
-      .attr('height', (d: any) => d.y1 - d.y0)
-      .attr('width', (d: any) => d.x1 - d.x0)
-      .attr('fill', (d: any) => d.color || '#69b3a2')
+      .attr('height', (d: SankeyNode & { y0?: number; y1?: number }) => (d.y1 || 0) - (d.y0 || 0))
+      .attr('width', (d: SankeyNode & { x0?: number; x1?: number }) => (d.x1 || 0) - (d.x0 || 0))
+      .attr('fill', (d: SankeyNode) => d.color || '#69b3a2')
       .attr('opacity', 0.8)
       .attr('stroke', '#333')
       .attr('stroke-width', 1);
 
     // Add text labels
     node.append('text')
-      .attr('x', (d: any) => d.x1 < width / 2 ? (d.x1 - d.x0) + 6 : -6)
-      .attr('y', (d: any) => (d.y1 - d.y0) / 2)
+      .attr('x', (d: SankeyNode & { x0?: number; x1?: number }) => (d.x1 || 0) < width / 2 ? ((d.x1 || 0) - (d.x0 || 0)) + 6 : -6)
+      .attr('y', (d: SankeyNode & { y0?: number; y1?: number }) => ((d.y1 || 0) - (d.y0 || 0)) / 2)
       .attr('dy', '0.35em')
-      .attr('text-anchor', (d: any) => d.x1 < width / 2 ? 'start' : 'end')
-      .text((d: any) => d.name)
+      .attr('text-anchor', (d: SankeyNode & { x1?: number }) => (d.x1 || 0) < width / 2 ? 'start' : 'end')
+      .text((d: SankeyNode) => d.name)
       .attr('font-size', '10px')
       .attr('font-family', 'sans-serif');
 
