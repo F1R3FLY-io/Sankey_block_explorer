@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import EnergyFlowExample from '../components/energy_flow';
+import BlockchainFlowExample from '../components/energy_flow';
 import { siteConfig, mainNavigation } from './siteMetdata';
 
 function App() {
@@ -39,10 +39,10 @@ function App() {
             </ul>
           </nav>
         </div>
-        <h1>Sankey Block Explorer</h1>
+        <h1>Blockchain Value Flow Explorer</h1>
       </header>
       <main>
-        <EnergyFlowExample />
+        <BlockchainFlowExample />
       </main>
     </div>
   );
