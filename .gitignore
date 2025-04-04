@@ -2,3 +2,4 @@ node_modules/
 .aider*
 .env
 .aider.*
+.idea/
