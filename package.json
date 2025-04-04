@@ -2,7 +2,7 @@
   "name": "sankey_block_explorer",
   "private": true,
   "version": "1.0.0",
-  "description": "A Sankey diagram block explorer for energy flows",
+  "description": "A Sankey diagram block explorer for value flows",
   "license": "ISC",
   "author": "",
   "type": "module",
