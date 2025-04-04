@@ -6,6 +6,7 @@ export interface NavItem {
 }
 
 export const mainNavigation: NavItem[] = [
+  //TODO ask Diana about 'header' or main navigation, will we have something?
   {
     name: 'Home',
     path: '/',
