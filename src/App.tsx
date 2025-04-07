@@ -75,7 +75,7 @@ function App() {
     if (!blocksData.blocks.length) {
       fetchData();
     }
-  }, []);
+  }, [blocksData.blocks.length]);
 
   return (
     <Router>
