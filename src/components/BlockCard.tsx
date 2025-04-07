@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Block, Deploy } from '../services/blockService.ts';
 import SankeyDiagram from './SankeyDiagram.tsx';
 import HelpButton from './HelpButton.tsx';
@@ -11,8 +11,32 @@ interface BlockCardProps {
   onNavigate: (direction: string) => void;
 }
 
+
+const generateRandomColor = () => {
+  const hue = Math.floor(Math.random() * 360);
+  return `hsl(${hue}, 70%, 50%)`;
+};
+
 const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, totalBlocks, onNavigate }) => {
-  // Group deploys by deployer
+  const addressColors = useMemo(() => {
+    const colors = new Map();
+    deploys.forEach(deploy => {
+      if (!colors.has(deploy.deployer)) {
+        colors.set(deploy.deployer, generateRandomColor());
+      }
+
+      if (currentBlock !== 1) {
+        const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
+        if (termMatch) {
+          const [, from, to] = termMatch;
+          if (!colors.has(from)) colors.set(from, generateRandomColor());
+          if (!colors.has(to)) colors.set(to, generateRandomColor());
+        }
+      }
+    });
+    return colors;
+  }, [deploys, currentBlock]);
+
   const deployerGroups = deploys.reduce((acc, deploy) => {
     if (!acc[deploy.deployer]) {
       acc[deploy.deployer] = {
@@ -27,28 +51,60 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
     return acc;
   }, {} as Record<string, { deploys: Deploy[], totalCost: number, totalPhlo: number }>);
 
-  // Prepare nodes and links for Sankey diagram
-  const nodes = [
-    // Create nodes for deployers
-    ...Object.entries(deployerGroups).map(([deployer, data]) => ({
+  let nodes = [];
+  let links = [];
+
+  if (currentBlock === 1) {
+    nodes = Object.entries(deployerGroups).map(([deployer, data]) => ({
       id: deployer,
       name: `0x${deployer.substring(0, 6)}`,
-      value: data.totalCost
-    })),
-    // Add block node
-    {
-      id: block.blockHash,
-      name: `Block #${block.blockNumber}`,
-      value: deploys.reduce((sum, d) => sum + d.cost, 0)
-    }
-  ];
+      value: data.totalCost,
+      color: addressColors.get(deployer)
+    }));
 
-  const links = Object.entries(deployerGroups).map(([deployer, data]) => ({
-    source: deployer,
-    target: block.blockHash,
-    value: data.totalCost,
-    details: `Deploys: ${data.deploys.length}\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
-  }));
+    links = Object.entries(deployerGroups).map(([deployer, data]) => ({
+      source: deployer,
+      target: deployer,
+      value: data.totalCost,
+      color: addressColors.get(deployer),
+      details: `Deployer: 0x${deployer.substring(0, 6)}\nDeploys: ${data.deploys.length}\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+    }));
+  } else {
+    const processedDeploys = deploys
+      .map(deploy => {
+        const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
+        if (!termMatch) return null;
+        return {
+          from: termMatch[1],
+          to: termMatch[2],
+          amount: parseInt(termMatch[3]),
+          phlo: deploy.phloLimit
+        };
+      })
+      .filter(deploy => deploy !== null);
+
+    const uniqueAddresses = new Set([
+      ...processedDeploys.map(d => d.from),
+      ...processedDeploys.map(d => d.to)
+    ]);
+
+    nodes = Array.from(uniqueAddresses).map(address => ({
+      id: address,
+      name: `0x${address.substring(0, 6)}`,
+      value: processedDeploys
+        .filter(d => d.from === address || d.to === address)
+        .reduce((sum, d) => sum + d.amount, 0),
+      color: addressColors.get(address)
+    }));
+
+    links = processedDeploys.map(deploy => ({
+      source: deploy.from,
+      target: deploy.to,
+      value: deploy.amount,
+      color: addressColors.get(deploy.from),
+      details: `From: 0x${deploy.from.substring(0, 6)}\nTo: 0x${deploy.to.substring(0, 6)}\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
+    }));
+  }
 
   return (
     <div className="block-container">
@@ -63,14 +119,10 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
             links={links}
             options={{
               node: {
-                fill: '#1890ff',
-                stroke: '#1890ff',
-                opacity: 0.8
+                opacity: 1
               },
               link: {
-                fill: '#1890ff',
-                stroke: '#1890ff',
-                opacity: 0.3
+                opacity: 0.2
               }
             }}
           />
@@ -138,4 +190,4 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
   );
 };
 
-export default BlockCard; 
+export default BlockCard;
