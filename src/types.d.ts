@@ -18,7 +18,12 @@ declare module '*.svg' {
   export default value;
 }
 
-export type Block = {
+// These simplified type definitions are kept for reference.
+// Service implementations should use the more detailed types from blockService.ts
+// to ensure compatibility with API responses.
+
+// Legacy/reference types - Don't use these directly
+type LegacyBlock = {
   id: string;
   height: number;
   size: number;
@@ -26,7 +31,7 @@ export type Block = {
   transactions: number;
 };
 
-export type Transaction = {
+type LegacyTransaction = {
   id: string;
   from: string;
   to: string;
@@ -35,7 +40,7 @@ export type Transaction = {
   blockId: string;
 };
 
-export type Deploy = {
+type LegacyDeploy = {
   deployHash: string;
   account: string;
   timestamp: string;
@@ -43,24 +48,6 @@ export type Deploy = {
   status: string;
   blockHeight: number;
   blockHash: string;
-};
-
-export type SankeyNode = {
-  id: string;
-  name: string;
-  type: 'block' | 'address';
-  value: number;
-};
-
-export type SankeyLink = {
-  source: string;
-  target: string;
-  value: number;
-};
-
-export type SankeyData = {
-  nodes: SankeyNode[];
-  links: SankeyLink[];
 };
 
 // React Router type augmentation

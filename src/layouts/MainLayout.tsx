@@ -6,9 +6,11 @@ import logo from '../assets/Copernicus.png';
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  onRefresh?: () => void;
+  loading?: boolean;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, onRefresh, loading = false }) => {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -44,6 +46,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             />
             <button type="submit" className="search-button">Search</button>
           </form>
+          {onRefresh && (
+            <button 
+              className="refresh-button" 
+              onClick={onRefresh}
+              disabled={loading}
+            >
+              {loading ? 'Loading...' : 'Refresh data'}
+            </button>
+          )}
         </div>
       </header>
 

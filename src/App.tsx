@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createBrowserRouter, RouterProvider, RouteObject } from 'react-router-dom';
 import './App.css';
 import './styles/gradients.css';
@@ -16,6 +16,7 @@ interface BlockCategories {
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [blocksData, setBlocksData] = useState<{ blocks: BlockWithDeploys[], categories: BlockCategories }>({ 
     blocks: [], 
     categories: { 
@@ -25,9 +26,11 @@ function App() {
     } 
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
+      console.log('Fetching blockchain data...');
       const analysis = await analyzeBlockChain();
       const allBlocks: BlockWithDeploys[] = [];
       const categories: BlockCategories = {
@@ -57,28 +60,35 @@ function App() {
 
       // Sort blocks by block number
       allBlocks.sort((a, b) => a.blockInfo.blockNumber - b.blockInfo.blockNumber);
+      console.log(`Loaded ${allBlocks.length} blocks successfully`);
 
       setBlocksData({ blocks: allBlocks, categories });
     } catch (err) {
       console.error('Error fetching blockchain data:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred while fetching blockchain data');
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const handleRefresh = () => {
+    fetchData();
   };
 
   useEffect(() => {
     if (!blocksData.blocks.length) {
       fetchData();
     }
-  }, [blocksData.blocks.length]);
+  }, [fetchData]);
 
   // Define routes
   const routes: RouteObject[] = [
     {
       path: "/",
       element: (
-        <MainLayout>
+        <MainLayout onRefresh={handleRefresh} loading={loading}>
           <div className="main-content-wrapper">
+            {error && <div style={{ color: 'white', padding: '32px 90px' }}>Error: {error}</div>}
             <Explorer
               blocks={blocksData.blocks}
               categories={blocksData.categories}
@@ -91,8 +101,9 @@ function App() {
     {
       path: "/blocks",
       element: (
-        <MainLayout>
+        <MainLayout onRefresh={handleRefresh} loading={loading}>
           <div className="main-content-wrapper">
+            {error && <div style={{ color: 'white', padding: '32px 90px' }}>Error: {error}</div>}
             <BlocksList 
               blocks={blocksData.blocks} 
               categories={blocksData.categories}
