@@ -6,7 +6,7 @@ import { mockBlock, mockDeploys, mockDeploysWithPattern } from '../../test/mocks
 
 // Mock the SankeyDiagram component
 vi.mock('../SankeyDiagram', () => ({
-  default: ({ nodes, links, options }: { nodes: SankeyNode[]; links: SankeyLink[]; options: any }) => (
+  default: ({ nodes, links, options }: { nodes: SankeyNode[]; links: SankeyLink[]; options?: Record<string, unknown> }) => (
     <div data-testid="sankey-diagram">
       <div data-testid="sankey-nodes">{JSON.stringify(nodes)}</div>
       <div data-testid="sankey-links">{JSON.stringify(links)}</div>

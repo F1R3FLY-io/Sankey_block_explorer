@@ -56,34 +56,6 @@ const TypographySection = () => (
   </div>
 );
 
-// Card Demo Section
-const CardsSection = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-      <Card title="Basic Card">
-        <Typography style={{ color: 'rgb(157, 167, 177)' }}>This is a basic card with a title.</Typography>
-      </Card>
-      
-      <Card isHoverable>
-        <Typography variant="h4" style={{ color: 'white', marginBottom: '8px' }}>Hoverable Card</Typography>
-        <Typography style={{ color: 'rgb(157, 167, 177)' }}>This card has a hover effect. Try hovering over it!</Typography>
-      </Card>
-    </div>
-    
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-      <Card isGradientBorder>
-        <Typography variant="h4" style={{ color: 'white', marginBottom: '8px' }}>Gradient Border Card</Typography>
-        <Typography style={{ color: 'rgb(157, 167, 177)' }}>This card has a gradient border effect.</Typography>
-      </Card>
-      
-      <Card className="gradient-primary" style={{ background: 'linear-gradient(135deg, rgba(0,122,255,0.1), rgba(0,102,215,0.1))' }}>
-        <Typography variant="h4" style={{ color: 'white', marginBottom: '8px' }}>Custom Background Card</Typography>
-        <Typography style={{ color: 'rgb(157, 167, 177)' }}>This card has a custom gradient background applied via style.</Typography>
-      </Card>
-    </div>
-  </div>
-);
-
 // BlockCard Demo Section
 const BlockCardSection = () => {
   const handleNavigate = (direction: string) => {
@@ -188,7 +160,6 @@ const Demo = () => {
   const sections = [
     { id: 'buttons', title: 'Buttons', component: <ButtonsSection /> },
     { id: 'typography', title: 'Typography', component: <TypographySection /> },
-    { id: 'cards', title: 'Cards', component: <CardsSection /> },
     { id: 'blockcard', title: 'Block Card', component: <BlockCardSection /> },
     { id: 'sankeydiagram', title: 'Sankey Diagram', component: <SankeyDiagramSection /> },
   ];

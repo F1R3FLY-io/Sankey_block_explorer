@@ -6,8 +6,21 @@ import { mockBlock, mockDeploys, mockDeploysWithPattern } from '../../test/mocks
 import { BlockWithDeploys } from '../../services/blockService';
 
 // Mock the BlockCard component
+import { Block, Deploy } from '../../services/blockService';
+
 vi.mock('../../components/BlockCard.tsx', () => ({
-  default: ({ block, deploys, currentBlock, totalBlocks }: any) => (
+  default: ({ 
+    block, 
+    deploys, 
+    currentBlock, 
+    totalBlocks
+  }: { 
+    block: Block; 
+    deploys: Deploy[]; 
+    currentBlock: number; 
+    totalBlocks: number;
+    onNavigate?: (direction: string) => void;  
+  }) => (
     <div data-testid="block-card">
       <div data-testid="block-info">
         {JSON.stringify({ 
@@ -18,7 +31,7 @@ vi.mock('../../components/BlockCard.tsx', () => ({
         })}
       </div>
       <div data-testid="deploys-info">
-        {JSON.stringify(deploys.map((d: any) => ({ 
+        {JSON.stringify(deploys.map((d: Deploy) => ({ 
           deployer: d.deployer, 
           cost: d.cost 
         })))}

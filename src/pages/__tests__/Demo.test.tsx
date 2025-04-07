@@ -37,8 +37,21 @@ vi.mock('../../components/ui/Typography', () => ({
 }));
 
 // Mock BlockCard component
+import { Block, Deploy } from '../../services/blockService';
+
 vi.mock('../../components/BlockCard', () => ({
-  default: ({ block, deploys, currentBlock, totalBlocks }: any) => (
+  default: ({ 
+    block, 
+    deploys, 
+    currentBlock, 
+    totalBlocks 
+  }: { 
+    block: Block; 
+    deploys: Deploy[]; 
+    currentBlock: number; 
+    totalBlocks: number;
+    onNavigate: (direction: string) => void;  
+  }) => (
     <div data-testid="block-card">
       <div>Block Hash: {block.blockHash}</div>
       <div>Current Block: {currentBlock}</div>
@@ -49,8 +62,17 @@ vi.mock('../../components/BlockCard', () => ({
 }));
 
 // Mock SankeyDiagram component
+type SankeyNode = { id: string; name: string; value?: number; color?: string };
+type SankeyLink = { 
+  source: string | number | SankeyNode; 
+  target: string | number | SankeyNode;
+  value: number;
+  color?: string;
+  details?: string;
+};
+
 vi.mock('../../components/SankeyDiagram', () => ({
-  default: ({ nodes, links }: any) => (
+  default: ({ nodes, links }: { nodes: SankeyNode[]; links: SankeyLink[] }) => (
     <div data-testid="sankey-diagram">
       <div>Nodes: {nodes.length}</div>
       <div>Links: {links.length}</div>
@@ -68,14 +90,12 @@ describe('Demo', () => {
     // Check if all required sections are rendered
     expect(screen.getByTestId('section-buttons')).toBeInTheDocument();
     expect(screen.getByTestId('section-typography')).toBeInTheDocument();
-    expect(screen.getByTestId('section-cards')).toBeInTheDocument();
     expect(screen.getByTestId('section-blockcard')).toBeInTheDocument();
     expect(screen.getByTestId('section-sankeydiagram')).toBeInTheDocument();
     
     // Check section titles
     expect(screen.getByText('Buttons')).toBeInTheDocument();
     expect(screen.getByText('Typography')).toBeInTheDocument();
-    expect(screen.getByText('Cards')).toBeInTheDocument();
     expect(screen.getByText('Block Card')).toBeInTheDocument();
     expect(screen.getByText('Sankey Diagram')).toBeInTheDocument();
   });
@@ -119,26 +139,6 @@ describe('Demo', () => {
     expect(screen.getByText(/Small body text/)).toBeInTheDocument();
     expect(screen.getByText(/Caption text/)).toBeInTheDocument();
     expect(screen.getByText('Gradient Heading')).toBeInTheDocument();
-  });
-
-  it('renders Card examples in the Cards section', () => {
-    render(<Demo />);
-    
-    // Find all card elements in the Cards section
-    const cardsSection = screen.getByTestId('section-cards');
-    const cardElements = cardsSection.querySelectorAll('[data-testid="ui-card"]');
-    
-    // Check if there are multiple card examples
-    expect(cardElements.length).toBeGreaterThan(3);
-    
-    // Check for specific card contents
-    expect(screen.getByText('Basic Card')).toBeInTheDocument();
-    expect(screen.getByText('Hoverable Card')).toBeInTheDocument();
-    expect(screen.getByText('Gradient Border Card')).toBeInTheDocument();
-    expect(screen.getByText('Custom Background Card')).toBeInTheDocument();
-    expect(screen.getByText(/This is a basic card with a title/)).toBeInTheDocument();
-    expect(screen.getByText(/This card has a hover effect/)).toBeInTheDocument();
-    expect(screen.getByText(/This card has a gradient border effect/)).toBeInTheDocument();
   });
   
   it('renders BlockCard examples in the Block Card section', () => {

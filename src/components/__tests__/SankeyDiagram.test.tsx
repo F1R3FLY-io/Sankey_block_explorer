@@ -4,7 +4,32 @@ import SankeyDiagram from '../SankeyDiagram';
 import { mockSankeyNodes, mockSankeyLinks, mockSankeyOptions } from '../../test/mocks';
 
 // Create a spy version of SankeyDiagram that keeps track of props
-type Props = { nodes: any[]; links: any[]; options?: any };
+type SankeyNode = { id: string; name: string; value?: number; color?: string };
+type SankeyLink = { 
+  source: string | number | SankeyNode; 
+  target: string | number | SankeyNode;
+  value: number;
+  color?: string;
+  details?: string;
+};
+type SankeyOptions = {
+  node?: {
+    opacity?: number;
+    fill?: string;
+    stroke?: string;
+  };
+  link?: {
+    opacity?: number;
+    fill?: string;
+    stroke?: string;
+  };
+};
+
+type Props = { 
+  nodes: SankeyNode[]; 
+  links: SankeyLink[]; 
+  options?: SankeyOptions;
+};
 const SankeyDiagramComponent = vi.fn((props: Props) => {
   return (
     <div data-testid="sankey-container">
@@ -21,7 +46,7 @@ const SankeyDiagramComponent = vi.fn((props: Props) => {
 // Mock the actual SankeyDiagram component
 vi.mock('../SankeyDiagram', () => ({
   __esModule: true,
-  default: (props: any) => SankeyDiagramComponent(props)
+  default: (props: Props) => SankeyDiagramComponent(props)
 }));
 
 describe('SankeyDiagram', () => {
@@ -106,11 +131,11 @@ describe('SankeyDiagram', () => {
     );
     
     expect(SankeyDiagramComponent).toHaveBeenCalled();
-    const passedOptions = SankeyDiagramComponent.mock.calls[0][0].options;
+    const passedOptions = SankeyDiagramComponent.mock.calls[0][0].options as SankeyOptions;
     
-    expect(passedOptions.node?.opacity).toBe(0.9);
-    expect(passedOptions.node?.fill).toBe('#custom');
-    expect(passedOptions.link?.opacity).toBe(0.5);
-    expect(passedOptions.link?.stroke).toBe('#customLink');
+    expect(passedOptions?.node?.opacity).toBe(0.9);
+    expect(passedOptions?.node?.fill).toBe('#custom');
+    expect(passedOptions?.link?.opacity).toBe(0.5);
+    expect(passedOptions?.link?.stroke).toBe('#customLink');
   });
 });
