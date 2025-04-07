@@ -2,14 +2,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BlockCard from '../BlockCard';
 import { SankeyNode, SankeyLink } from '../SankeyDiagram';
-import { mockBlock, mockDeploys } from '../../test/mocks';
+import { mockBlock, mockDeploys, mockDeploysWithPattern } from '../../test/mocks';
 
 // Mock the SankeyDiagram component
 vi.mock('../SankeyDiagram', () => ({
-  default: ({ nodes, links }: { nodes: SankeyNode[]; links: SankeyLink[] }) => (
+  default: ({ nodes, links, options }: { nodes: SankeyNode[]; links: SankeyLink[]; options: any }) => (
     <div data-testid="sankey-diagram">
       <div data-testid="sankey-nodes">{JSON.stringify(nodes)}</div>
       <div data-testid="sankey-links">{JSON.stringify(links)}</div>
+      <div data-testid="sankey-options">{JSON.stringify(options)}</div>
     </div>
   )
 }));
@@ -76,7 +77,7 @@ describe('BlockCard', () => {
     expect(defaultProps.onNavigate).toHaveBeenCalledWith('last');
   });
 
-  it('should prepare correct data for Sankey diagram', () => {
+  it('should prepare correct data for Sankey diagram with regular deploys', () => {
     render(<BlockCard {...defaultProps} />);
     
     const sankeyNodes = screen.getByTestId('sankey-nodes');
@@ -124,5 +125,104 @@ describe('BlockCard', () => {
       .filter(d => d.deployer === 'deployer2')
       .reduce((sum, d) => sum + d.cost, 0);
     expect(deployer2Link?.value).toBe(deployer2Costs);
+    
+    // Verify that color properties are present
+    nodes.forEach((node: SankeyNode) => {
+      expect(node.color).toBeDefined();
+    });
+    
+    links.forEach((link: SankeyLink) => {
+      expect(link.color).toBeDefined();
+    });
+  });
+  
+  it('should handle block #1 correctly', () => {
+    render(<BlockCard {...defaultProps} currentBlock={1} />);
+    
+    const sankeyNodes = screen.getByTestId('sankey-nodes');
+    const sankeyLinks = screen.getByTestId('sankey-links');
+    
+    // Parse nodes and links data
+    const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+    const links = JSON.parse(sankeyLinks.textContent || '[]');
+    
+    // Even for block #1, with the fixed implementation, we expect the same structure
+    expect(nodes.length).toBeGreaterThan(0);
+    expect(links.length).toBeGreaterThan(0);
+    
+    // Verify that nodes have color properties
+    nodes.forEach((node: SankeyNode) => {
+      expect(node.color).toBeDefined();
+    });
+  });
+  
+  it('should correctly handle deploys with transfer patterns', () => {
+    render(<BlockCard {...{
+      ...defaultProps,
+      deploys: mockDeploysWithPattern
+    }} />);
+    
+    const sankeyNodes = screen.getByTestId('sankey-nodes');
+    const sankeyLinks = screen.getByTestId('sankey-links');
+    
+    // Parse nodes and links data
+    const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+    const links = JSON.parse(sankeyLinks.textContent || '[]');
+    
+    // With pattern matching deploys, we expect to see the addresses extracted
+    // Test for address nodes
+    const addr1Node = nodes.find((n: SankeyNode) => n.id === 'addr1');
+    const addr2Node = nodes.find((n: SankeyNode) => n.id === 'addr2');
+    const addr3Node = nodes.find((n: SankeyNode) => n.id === 'addr3');
+    const addr4Node = nodes.find((n: SankeyNode) => n.id === 'addr4');
+    
+    expect(addr1Node).toBeDefined();
+    expect(addr2Node).toBeDefined();
+    expect(addr3Node).toBeDefined();
+    expect(addr4Node).toBeDefined();
+    
+    // Check for expected pattern of links
+    const addr1ToAddr2Link = links.find((l: SankeyLink) => 
+      (typeof l.source === 'string' && l.source === 'addr1' && 
+       typeof l.target === 'string' && l.target === 'addr2')
+    );
+    expect(addr1ToAddr2Link).toBeDefined();
+    expect(addr1ToAddr2Link?.value).toBe(1000);
+    
+    const addr1ToAddr3Link = links.find((l: SankeyLink) => 
+      (typeof l.source === 'string' && l.source === 'addr1' && 
+       typeof l.target === 'string' && l.target === 'addr3')
+    );
+    expect(addr1ToAddr3Link).toBeDefined();
+    expect(addr1ToAddr3Link?.value).toBe(1500);
+    
+    const addr4ToAddr2Link = links.find((l: SankeyLink) => 
+      (typeof l.source === 'string' && l.source === 'addr4' && 
+       typeof l.target === 'string' && l.target === 'addr2')
+    );
+    expect(addr4ToAddr2Link).toBeDefined();
+    expect(addr4ToAddr2Link?.value).toBe(800);
+    
+    // Verify that color properties are present
+    nodes.forEach((node: SankeyNode) => {
+      expect(node.color).toBeDefined();
+    });
+    
+    links.forEach((link: SankeyLink) => {
+      expect(link.color).toBeDefined();
+    });
+  });
+  
+  it('should pass appropriate options to SankeyDiagram', () => {
+    render(<BlockCard {...defaultProps} />);
+    
+    const sankeyOptions = screen.getByTestId('sankey-options');
+    const options = JSON.parse(sankeyOptions.textContent || '{}');
+    
+    // Check that node opacity is set to 1
+    expect(options.node?.opacity).toBe(1);
+    
+    // Check that link opacity is set to 0.2
+    expect(options.link?.opacity).toBe(0.2);
   });
 });

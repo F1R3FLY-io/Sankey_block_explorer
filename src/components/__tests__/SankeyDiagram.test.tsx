@@ -2,11 +2,10 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import SankeyDiagram from '../SankeyDiagram';
 import { mockSankeyNodes, mockSankeyLinks, mockSankeyOptions } from '../../test/mocks';
-import { SankeyNode, SankeyLink } from '../SankeyDiagram';
 
 // Create a spy version of SankeyDiagram that keeps track of props
-const SankeyDiagramComponent = vi.fn((props) => {
-  SankeyDiagramComponent.mockProps = props;
+type Props = { nodes: any[]; links: any[]; options?: any };
+const SankeyDiagramComponent = vi.fn((props: Props) => {
   return (
     <div data-testid="sankey-container">
       <div data-testid="sankey-svg">
