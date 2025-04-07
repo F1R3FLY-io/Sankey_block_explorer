@@ -36,6 +36,28 @@ vi.mock('../../components/ui/Typography', () => ({
   )
 }));
 
+// Mock BlockCard component
+vi.mock('../../components/BlockCard', () => ({
+  default: ({ block, deploys, currentBlock, totalBlocks }: any) => (
+    <div data-testid="block-card">
+      <div>Block Hash: {block.blockHash}</div>
+      <div>Current Block: {currentBlock}</div>
+      <div>Total Blocks: {totalBlocks}</div>
+      <div>Deploys: {deploys.length}</div>
+    </div>
+  )
+}));
+
+// Mock SankeyDiagram component
+vi.mock('../../components/SankeyDiagram', () => ({
+  default: ({ nodes, links }: any) => (
+    <div data-testid="sankey-diagram">
+      <div>Nodes: {nodes.length}</div>
+      <div>Links: {links.length}</div>
+    </div>
+  )
+}));
+
 describe('Demo', () => {
   it('renders DemoLayout with all required sections', () => {
     render(<Demo />);
@@ -47,11 +69,15 @@ describe('Demo', () => {
     expect(screen.getByTestId('section-buttons')).toBeInTheDocument();
     expect(screen.getByTestId('section-typography')).toBeInTheDocument();
     expect(screen.getByTestId('section-cards')).toBeInTheDocument();
+    expect(screen.getByTestId('section-blockcard')).toBeInTheDocument();
+    expect(screen.getByTestId('section-sankeydiagram')).toBeInTheDocument();
     
     // Check section titles
     expect(screen.getByText('Buttons')).toBeInTheDocument();
     expect(screen.getByText('Typography')).toBeInTheDocument();
     expect(screen.getByText('Cards')).toBeInTheDocument();
+    expect(screen.getByText('Block Card')).toBeInTheDocument();
+    expect(screen.getByText('Sankey Diagram')).toBeInTheDocument();
   });
 
   it('renders Button examples in the Buttons section', () => {
@@ -113,5 +139,40 @@ describe('Demo', () => {
     expect(screen.getByText(/This is a basic card with a title/)).toBeInTheDocument();
     expect(screen.getByText(/This card has a hover effect/)).toBeInTheDocument();
     expect(screen.getByText(/This card has a gradient border effect/)).toBeInTheDocument();
+  });
+  
+  it('renders BlockCard examples in the Block Card section', () => {
+    render(<Demo />);
+    
+    // Find all BlockCard elements in the Block Card section
+    const blockCardSection = screen.getByTestId('section-blockcard');
+    const blockCardElements = blockCardSection.querySelectorAll('[data-testid="block-card"]');
+    
+    // Check if there are multiple BlockCard examples
+    expect(blockCardElements.length).toBe(3);
+    
+    // Check for section header typography
+    expect(screen.getByText('BlockCard - Standard View')).toBeInTheDocument();
+    expect(screen.getByText('BlockCard - With Transfer Patterns')).toBeInTheDocument();
+    expect(screen.getByText('BlockCard - First Block')).toBeInTheDocument();
+  });
+
+  it('renders SankeyDiagram examples in the Sankey Diagram section', () => {
+    render(<Demo />);
+    
+    // Find all SankeyDiagram elements in the Sankey Diagram section
+    const sankeySection = screen.getByTestId('section-sankeydiagram');
+    const sankeyElements = sankeySection.querySelectorAll('[data-testid="sankey-diagram"]');
+    
+    // Check if there are multiple SankeyDiagram examples
+    expect(sankeyElements.length).toBe(2);
+    
+    // Check for section header typography
+    expect(screen.getByText('SankeyDiagram - Basic Example')).toBeInTheDocument();
+    expect(screen.getByText('SankeyDiagram - Parallel Links')).toBeInTheDocument();
+    
+    // Check for nodes and links counts
+    expect(screen.getAllByText('Nodes: 4').length).toBe(2);
+    expect(screen.getAllByText('Links: 3').length).toBe(2);
   });
 });
