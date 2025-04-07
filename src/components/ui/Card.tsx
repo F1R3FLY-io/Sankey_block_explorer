@@ -8,6 +8,7 @@ interface CardProps {
   isHoverable?: boolean;
   isGradientBorder?: boolean;
   style?: React.CSSProperties;
+  'data-testid'?: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -17,6 +18,7 @@ const Card: React.FC<CardProps> = ({
   isHoverable = false,
   isGradientBorder = false,
   style = {},
+  'data-testid': testId,
 }) => {
   const hoverableStyles = isHoverable
     ? 'transition-all duration-300 hover:shadow-lg hover:-translate-y-1'
@@ -36,6 +38,7 @@ const Card: React.FC<CardProps> = ({
         boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
         ...style
       }}
+      data-testid={testId}
     >
       {title && (
         <div style={{ 
