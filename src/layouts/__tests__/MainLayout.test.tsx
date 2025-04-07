@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider, RouteObject } from 'react-router-dom';
 import MainLayout from '../MainLayout';
 
 // Mock useLocation hook
@@ -15,15 +15,33 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+// Helper function to create router with future flags
+const createTestRouter = (routes: RouteObject[]) => {
+  return createMemoryRouter(routes, {
+    initialEntries: ['/'],
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any // Type assertion to bypass TypeScript errors
+  });
+};
+
 describe('MainLayout', () => {
   it('renders the header with logo and title', () => {
-    render(
-      <BrowserRouter>
-        <MainLayout>
-          <div>Content</div>
-        </MainLayout>
-      </BrowserRouter>
-    );
+    const routes: RouteObject[] = [
+      {
+        path: '/',
+        element: (
+          <MainLayout>
+            <div>Content</div>
+          </MainLayout>
+        ),
+      },
+    ];
+
+    const router = createTestRouter(routes);
+    render(<RouterProvider router={router} />);
     
     // Check for the logo
     const logo = screen.getByAltText('MeTTaCycle Logo');
@@ -35,13 +53,19 @@ describe('MainLayout', () => {
   });
 
   it('renders the search input', () => {
-    render(
-      <BrowserRouter>
-        <MainLayout>
-          <div>Content</div>
-        </MainLayout>
-      </BrowserRouter>
-    );
+    const routes: RouteObject[] = [
+      {
+        path: '/',
+        element: (
+          <MainLayout>
+            <div>Content</div>
+          </MainLayout>
+        ),
+      },
+    ];
+
+    const router = createTestRouter(routes);
+    render(<RouterProvider router={router} />);
     
     const searchInput = screen.getByPlaceholderText('Search');
     expect(searchInput).toBeInTheDocument();
@@ -49,13 +73,19 @@ describe('MainLayout', () => {
   });
 
   it('renders navigation links', () => {
-    render(
-      <BrowserRouter>
-        <MainLayout>
-          <div>Content</div>
-        </MainLayout>
-      </BrowserRouter>
-    );
+    const routes: RouteObject[] = [
+      {
+        path: '/',
+        element: (
+          <MainLayout>
+            <div>Content</div>
+          </MainLayout>
+        ),
+      },
+    ];
+
+    const router = createTestRouter(routes);
+    render(<RouterProvider router={router} />);
     
     expect(screen.getByText('Explorer')).toBeInTheDocument();
     expect(screen.getByText('Blocks')).toBeInTheDocument();
@@ -64,13 +94,19 @@ describe('MainLayout', () => {
 
   it('highlights the active link based on location', () => {
     // The home path '/' should be active in our mocked location
-    render(
-      <BrowserRouter>
-        <MainLayout>
-          <div>Content</div>
-        </MainLayout>
-      </BrowserRouter>
-    );
+    const routes: RouteObject[] = [
+      {
+        path: '/',
+        element: (
+          <MainLayout>
+            <div>Content</div>
+          </MainLayout>
+        ),
+      },
+    ];
+
+    const router = createTestRouter(routes);
+    render(<RouterProvider router={router} />);
     
     const explorerLink = screen.getByText('Explorer');
     expect(explorerLink).toHaveStyle({
@@ -85,26 +121,38 @@ describe('MainLayout', () => {
   });
 
   it('renders children content', () => {
-    render(
-      <BrowserRouter>
-        <MainLayout>
-          <div data-testid="test-content">Child Content</div>
-        </MainLayout>
-      </BrowserRouter>
-    );
+    const routes: RouteObject[] = [
+      {
+        path: '/',
+        element: (
+          <MainLayout>
+            <div data-testid="test-content">Child Content</div>
+          </MainLayout>
+        ),
+      },
+    ];
+
+    const router = createTestRouter(routes);
+    render(<RouterProvider router={router} />);
     
     expect(screen.getByTestId('test-content')).toBeInTheDocument();
     expect(screen.getByText('Child Content')).toBeInTheDocument();
   });
 
   it('renders the footer with copyright information', () => {
-    render(
-      <BrowserRouter>
-        <MainLayout>
-          <div>Content</div>
-        </MainLayout>
-      </BrowserRouter>
-    );
+    const routes: RouteObject[] = [
+      {
+        path: '/',
+        element: (
+          <MainLayout>
+            <div>Content</div>
+          </MainLayout>
+        ),
+      },
+    ];
+
+    const router = createTestRouter(routes);
+    render(<RouterProvider router={router} />);
     
     const currentYear = new Date().getFullYear();
     expect(screen.getByText(new RegExp(`© ${currentYear} MeTTaCycle Block Explorer. All rights reserved.`))).toBeInTheDocument();

@@ -35,6 +35,7 @@
 - Keep component hierarchy consistent with the existing architecture
 - Use framer-motion for animations following existing patterns
 - Test UI on mobile and desktop viewports
+- If connected to a `mcp-shell-server` also known as just a "shell", run all shell commands through that mcp server. This approach will automatically restrict which commands can be run and properly configure the shell environment. 
 
 ## Best Practices
 - Maintain responsive design across all components
