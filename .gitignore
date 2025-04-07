@@ -1,2 +1,8 @@
 node_modules/
+.aider*
+.env
+.aider.*
 .idea/
+dist/
+.mcp.json
+.claude/
