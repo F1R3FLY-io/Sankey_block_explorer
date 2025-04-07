@@ -79,7 +79,7 @@ function App() {
     if (!blocksData.blocks.length) {
       fetchData();
     }
-  }, [fetchData]);
+  }, [fetchData, blocksData.blocks.length]);
 
   // Define routes
   const routes: RouteObject[] = [

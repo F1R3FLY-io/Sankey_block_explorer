@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 // Import the logo image
-// @ts-ignore - Suppress TypeScript error for image import
 import logo from '../assets/Copernicus.png';
 
 interface MainLayoutProps {
