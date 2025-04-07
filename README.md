@@ -55,13 +55,7 @@ pnpm preview
 
 ## Project Structure
 
-- `components/` - React components
-  - `energy_flow.tsx` - Energy flow example component
-  - `SankeyDiagram.tsx` - Reusable Sankey diagram component
-- `src/` - Source files
-  - `App.tsx` - Main application component
-  - `main.tsx` - Application entry point
 
 ## License
 
-ISC
+(Sovereign Source License)[https://gitlab.com/smart-assets.io/SovereignLicense/-/raw/main/SovereignLicense.md]
