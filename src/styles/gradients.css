@@ -1,0 +1,42 @@
+/* Custom gradient definitions */
+.gradient-primary {
+  @apply bg-gradient-to-r from-primary-600 to-primary-400;
+}
+
+.gradient-secondary {
+  @apply bg-gradient-to-r from-secondary-600 to-secondary-400;
+}
+
+.gradient-blue-purple {
+  @apply bg-gradient-to-r from-blue-600 to-purple-600;
+}
+
+.gradient-green-cyan {
+  @apply bg-gradient-to-r from-green-500 to-cyan-400;
+}
+
+.gradient-orange-red {
+  @apply bg-gradient-to-r from-orange-500 to-red-500;
+}
+
+.gradient-text {
+  @apply text-transparent bg-clip-text;
+}
+
+/* Gradient animations */
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

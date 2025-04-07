@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+import './styles/gradients.css';
 import Explorer from './pages/Explorer.tsx';
 import BlocksList from './pages/BlocksList';
-import logo from './assets/Copernicus.png';
+import Demo from './pages/Demo';
+import MainLayout from './layouts/MainLayout';
 import { BlockWithDeploys, analyzeBlockChain, getBlockByHash } from './services/blockService';
 
 interface BlockCategories {
@@ -13,9 +15,7 @@ interface BlockCategories {
 }
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [blocksData, setBlocksData] = useState<{ blocks: BlockWithDeploys[], categories: BlockCategories }>({ 
     blocks: [], 
     categories: { 
@@ -27,7 +27,6 @@ function App() {
 
   const fetchData = async () => {
     setLoading(true);
-    setError(null);
     try {
       const analysis = await analyzeBlockChain();
       const allBlocks: BlockWithDeploys[] = [];
@@ -61,14 +60,10 @@ function App() {
 
       setBlocksData({ blocks: allBlocks, categories });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error fetching blockchain data:', err);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRefresh = () => {
-    fetchData();
   };
 
   useEffect(() => {
@@ -79,57 +74,40 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <header className="App-header">
-          <div className="header-content">
-            <div className="logo-section">
-              <img src={logo} alt="MeTTaCycle Logo" className="logo" />
-              <h1>MeTTaCycle Block Explorer</h1>
-            </div>
-            <div className="search-container">
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              <button 
-                className="refresh-button" 
-                onClick={handleRefresh}
-                disabled={loading}
-              >
-                {loading ? 'Loading...' : 'Refresh data'}
-              </button>
-            </div>
-          </div>
-        </header>
-        <main>
-          {error && <div style={{ color: 'white', padding: '32px 90px' }}>Error: {error}</div>}
-          <Routes>
-            <Route 
-              path="/" 
-              element={
+      <Routes>
+        <Route 
+          path="/" 
+          element={
+            <MainLayout>
+              <div className="main-content-wrapper">
                 <Explorer
                   blocks={blocksData.blocks}
                   categories={blocksData.categories}
                   loading={loading}
                 />
-              } 
-            />
-            <Route 
-              path="/blocks" 
-              element={
+              </div>
+            </MainLayout>
+          } 
+        />
+        <Route 
+          path="/blocks" 
+          element={
+            <MainLayout>
+              <div className="main-content-wrapper">
                 <BlocksList 
                   blocks={blocksData.blocks} 
                   categories={blocksData.categories}
                   loading={loading}
                 />
-              } 
-            />
-          </Routes>
-        </main>
-      </div>
+              </div>
+            </MainLayout>
+          } 
+        />
+        <Route 
+          path="/demo" 
+          element={<Demo />} 
+        />
+      </Routes>
     </Router>
   );
 }

@@ -1,11 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BlockCard from '../BlockCard';
+import { SankeyNode, SankeyLink } from '../SankeyDiagram';
 import { mockBlock, mockDeploys } from '../../test/mocks';
 
 // Mock the SankeyDiagram component
 vi.mock('../SankeyDiagram', () => ({
-  default: ({ nodes, links }: { nodes: any[]; links: any[] }) => (
+  default: ({ nodes, links }: { nodes: SankeyNode[]; links: SankeyLink[] }) => (
     <div data-testid="sankey-diagram">
       <div data-testid="sankey-nodes">{JSON.stringify(nodes)}</div>
       <div data-testid="sankey-links">{JSON.stringify(links)}</div>
@@ -87,33 +88,41 @@ describe('BlockCard', () => {
     
     // Verify nodes structure
     expect(nodes).toHaveLength(3); // 2 deployers + 1 block
-    expect(nodes.find((n: any) => n.id === mockBlock.blockHash)).toBeDefined();
-    expect(nodes.find((n: any) => n.id === 'deployer1')).toBeDefined();
-    expect(nodes.find((n: any) => n.id === 'deployer2')).toBeDefined();
+    expect(nodes.find((n: SankeyNode) => n.id === mockBlock.blockHash)).toBeDefined();
+    expect(nodes.find((n: SankeyNode) => n.id === 'deployer1')).toBeDefined();
+    expect(nodes.find((n: SankeyNode) => n.id === 'deployer2')).toBeDefined();
     
     // Verify links structure
     expect(links).toHaveLength(2); // One link for each unique deployer
     
     // Check links from deployer1
-    const deployer1Link = links.find((l: any) => l.source === 'deployer1');
+    const deployer1Link = links.find((l: SankeyLink) => 
+      typeof l.source === 'string' ? l.source === 'deployer1' : 
+      typeof l.source === 'number' ? false : 
+      l.source.id === 'deployer1'
+    );
     expect(deployer1Link).toBeDefined();
-    expect(deployer1Link.target).toBe(mockBlock.blockHash);
+    expect(deployer1Link?.target).toBe(mockBlock.blockHash);
     
     // Calculate expected value for deployer1 (sum of costs)
     const deployer1Costs = mockDeploys
       .filter(d => d.deployer === 'deployer1')
       .reduce((sum, d) => sum + d.cost, 0);
-    expect(deployer1Link.value).toBe(deployer1Costs);
+    expect(deployer1Link?.value).toBe(deployer1Costs);
     
     // Check links from deployer2
-    const deployer2Link = links.find((l: any) => l.source === 'deployer2');
+    const deployer2Link = links.find((l: SankeyLink) => 
+      typeof l.source === 'string' ? l.source === 'deployer2' : 
+      typeof l.source === 'number' ? false : 
+      l.source.id === 'deployer2'
+    );
     expect(deployer2Link).toBeDefined();
-    expect(deployer2Link.target).toBe(mockBlock.blockHash);
+    expect(deployer2Link?.target).toBe(mockBlock.blockHash);
     
     // Calculate expected value for deployer2 (sum of costs)
     const deployer2Costs = mockDeploys
       .filter(d => d.deployer === 'deployer2')
       .reduce((sum, d) => sum + d.cost, 0);
-    expect(deployer2Link.value).toBe(deployer2Costs);
+    expect(deployer2Link?.value).toBe(deployer2Costs);
   });
 });
