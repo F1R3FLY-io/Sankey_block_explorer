@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { siteConfig } from '../siteMetdata';
 
-const API_URL = 'http://146.235.215.215:30003/api'; //asi-dev, just for example
+const API_URL = siteConfig.apiUrl;
 
 export interface Deploy {
   deployer: string;
@@ -176,15 +177,15 @@ export const getBlockchainSankeyData = async (): Promise<SankeyData> => {
   
   // Create nodes for Sankey diagram
   const nodes = Array.from(allBlocks.values()).map(block => {
-    let color = '#6c757d'; // Default color (gray)
+    let color = siteConfig.branding.secondaryColor; // Default color
     
     // Determine node color based on its type
     if (analysis.sources.includes(block.blockHash)) {
-      color = '#28a745'; // Source - green
+      color = siteConfig.branding.accentColor; // Source
     } else if (analysis.sinks.includes(block.blockHash)) {
-      color = '#dc3545'; // Sink - red
+      color = siteConfig.branding.errorColor; // Sink
     } else if (analysis.sourceSinks.includes(block.blockHash)) {
-      color = '#007bff'; // Source-Sink - blue
+      color = siteConfig.branding.primaryColor; // Source-Sink
     }
     
     return {

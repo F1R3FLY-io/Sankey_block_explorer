@@ -38,6 +38,13 @@ export const siteConfig = {
   name: 'DUNA Block Explorer',
   description: 'A Sankey diagram block explorer for energy flows',
   logo: '/src/assets/f1r3fly-io-logo-bg.png',
+  apiUrl: '/api',
+  branding: {
+    primaryColor: '#007bff',
+    secondaryColor: '#6c757d',
+    accentColor: '#28a745',
+    errorColor: '#dc3545',
+  },
   socialLinks: {
     twitter: 'https://twitter.com/example',
     github: 'https://github.com/example',
