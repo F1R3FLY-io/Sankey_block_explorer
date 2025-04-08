@@ -7,7 +7,8 @@
 - Style with Tailwind CSS.
  
 ## Commands
-- Development: `pnpm dev` or `pnpm dev-https` for HTTPS
+- Development: `pnpm dev` for standard HTTP development server
+- HTTPS Development: `pnpm dev-https` for HTTPS development server (useful for testing with secure contexts)
 - Build: `pnpm build`
 - Lint: `pnpm lint` (ESLint with Next.js and TypeScript rules)
 - Start production: `pnpm start`

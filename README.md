@@ -19,6 +19,7 @@ A visualization tool for exploring blockchain data using Sankey diagrams. This a
 - D3.js for data visualization
 - Vitest for testing
 - Vite for build tooling
+- API proxy for CORS-free backend communication
 
 ## Getting Started
 
@@ -41,10 +42,16 @@ pnpm install
 Start the development server:
 
 ```bash
+# Standard HTTP development server
 pnpm dev
+
+# HTTPS development server (for secure contexts)
+pnpm dev-https
 ```
 
-The application will be available at http://localhost:5173
+The application will be available at:
+- HTTP mode: http://localhost:5173
+- HTTPS mode: https://localhost:5173 (you may need to accept the self-signed certificate)
 
 ### Building for Production
 
@@ -108,6 +115,16 @@ The project follows a structured approach with:
 - **Testing**: Component tests with Vitest and React Testing Library
 - **TypeScript**: Type-safe development throughout the codebase
 
+## API Proxy Configuration
+
+The application includes a built-in API proxy to communicate with the backend blockchain data service. The proxy:
+
+- Forwards all `/api/*` requests to the backend service
+- Handles CORS (Cross-Origin Resource Sharing) issues automatically
+- Works in both HTTP and HTTPS development modes
+- Configured in `vite.config.ts`
+
+This enables seamless communication with the backend without CORS errors, regardless of whether you're running in HTTP or HTTPS mode.
 
 ## License
 
