@@ -210,7 +210,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
           >
             «
           </button>
-          <span className="block-info">Block {currentBlock} of {totalBlocks}</span>
+          <span className="block-info">Block {currentBlock} of {totalBlocks - 1}</span>
           <button 
             className="nav-button" 
             onClick={() => onNavigate('next')}

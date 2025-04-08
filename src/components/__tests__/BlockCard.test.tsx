@@ -34,7 +34,7 @@ describe('BlockCard', () => {
     
     expect(screen.getByText(`Block #${defaultProps.currentBlock}`)).toBeInTheDocument();
     expect(screen.getByText(mockBlock.blockHash)).toBeInTheDocument();
-    expect(screen.getByText(`Block ${defaultProps.currentBlock} of ${defaultProps.totalBlocks}`)).toBeInTheDocument();
+    expect(screen.getByText(`Block ${defaultProps.currentBlock} of ${defaultProps.totalBlocks - 1}`)).toBeInTheDocument();
   });
 
   it('should calculate and display statistics correctly', () => {

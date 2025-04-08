@@ -129,7 +129,7 @@ describe('Explorer', () => {
     const totalAgents = 
       mockCategories.sources.length + 
       mockCategories.sinks.length + 
-      mockCategories.sourceSinks.length;
+      mockCategories.sourceSinks.length - 1;
     expect(screen.getByText(totalAgents.toString())).toBeInTheDocument();
     expect(screen.getByText('Active agents')).toBeInTheDocument();
   });

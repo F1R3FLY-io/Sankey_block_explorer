@@ -78,7 +78,7 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
             marginBottom: '12px',
             lineHeight: '1'
           }}>
-            {currentBlocks.length}
+            {currentBlocks.length - 1}
           </span>
           <span style={{ 
             fontSize: '14px', 
@@ -132,7 +132,12 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
             lineHeight: '1',
             textAlign: 'center'
           }}>
-            {currentCategories.sources.length + currentCategories.sinks.length + currentCategories.sourceSinks.length}
+            {/*
+            TODO:
+            this logic should be updated, when we will communicate with the MORK db and can easily get info
+            about agents that performed at least one operation in the last hour
+            */}
+            {currentCategories.sources.length + currentCategories.sinks.length + currentCategories.sourceSinks.length - 1}
           </span>
           <span style={{ 
             fontSize: '14px', 
