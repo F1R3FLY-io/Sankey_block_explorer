@@ -1,7 +1,10 @@
 import React, { useMemo } from 'react';
 import { Block, Deploy } from '../services/blockService.ts';
 import SankeyDiagram from './SankeyDiagram.tsx';
+import type { SankeyNode, SankeyLink } from './SankeyDiagram.tsx';
 import HelpButton from './HelpButton.tsx';
+
+const GENESIS_CEREMONY_BLOCK_INDEX = 1;
 
 interface BlockCardProps {
   block: Block;
@@ -24,7 +27,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
         colors.set(deploy.deployer, generateRandomColor());
       }
 
-      if (currentBlock !== 1) {
+      if (currentBlock !== GENESIS_CEREMONY_BLOCK_INDEX) {
         const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
         if (termMatch) {
           const [, from, to] = termMatch;
@@ -51,18 +54,52 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
     return acc;
   }, {} as Record<string, { deploys: Deploy[], totalCost: number, totalPhlo: number }>);
 
-  let nodes = [];
-  let links = [];
+  let nodes: SankeyNode[];
+  let links: SankeyLink[];
 
-  // Check if we're in a test environment or the term has the match pattern
-  const hasMatchPattern = deploys.some(deploy => 
-    deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/)
-  );
+  if (currentBlock === GENESIS_CEREMONY_BLOCK_INDEX) {
+    // Special case - genesis ceremony with parallel lines
+    const deployerEntries = Object.entries(deployerGroups);
+    
+    nodes = deployerEntries.flatMap(([deployer, data]) => [
+      {
+        id: `${deployer}_start`,
+        name: `0x${deployer.substring(0, 6)}`,
+        value: data.totalCost,
+        color: addressColors.get(deployer) || generateRandomColor()
+      },
+      {
+        id: `${deployer}_end`,
+        name: '',
+        value: data.totalCost,
+        color: addressColors.get(deployer) || generateRandomColor()
+      }
+    ]);
 
-  if (currentBlock === 1 || !hasMatchPattern) {
-    // For test environment or when we don't have match patterns, use a different approach
-    if (!hasMatchPattern) {
-      // For tests, use a structure that matches the test expectation
+    links = deployerEntries.map(([deployer, data]) => ({
+      source: `${deployer}_start`,
+      target: `${deployer}_end`,
+      value: data.totalCost,
+      color: addressColors.get(deployer) || generateRandomColor(),
+      details: `Deployer: 0x${deployer.substring(0, 6)}\nDeploys: ${data.deploys.length}\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+    }));
+  } else {
+    // All other blocks - process based on deploy patterns
+    const processedDeploys = deploys
+      .map(deploy => {
+        const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
+        if (!termMatch) return null;
+        return {
+          from: termMatch[1],
+          to: termMatch[2],
+          amount: parseInt(termMatch[3]),
+          phlo: deploy.phloLimit
+        };
+      })
+      .filter(deploy => deploy !== null);
+
+    if (processedDeploys.length === 0) {
+      // No match patterns found - show simple block-centered view
       nodes = [
         // Add block node
         {
@@ -88,57 +125,29 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
         details: `Deployer: 0x${deployer.substring(0, 6)}\nDeploys: ${data.deploys.length}\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
       }));
     } else {
-      // Normal first block rendering
-      nodes = Object.entries(deployerGroups).map(([deployer, data]) => ({
-        id: deployer,
-        name: `0x${deployer.substring(0, 6)}`,
-        value: data.totalCost,
-        color: addressColors.get(deployer)
+      // Has match patterns - show transfers between addresses
+      const uniqueAddresses = new Set([
+        ...processedDeploys.map(d => d.from),
+        ...processedDeploys.map(d => d.to)
+      ]);
+
+      nodes = Array.from(uniqueAddresses).map(address => ({
+        id: address,
+        name: `0x${address.substring(0, 6)}`,
+        value: processedDeploys
+          .filter(d => d.from === address || d.to === address)
+          .reduce((sum, d) => sum + d.amount, 0),
+        color: addressColors.get(address)
       }));
 
-      links = Object.entries(deployerGroups).map(([deployer, data]) => ({
-        source: deployer,
-        target: deployer,
-        value: data.totalCost,
-        color: addressColors.get(deployer),
-        details: `Deployer: 0x${deployer.substring(0, 6)}\nDeploys: ${data.deploys.length}\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+      links = processedDeploys.map(deploy => ({
+        source: deploy.from,
+        target: deploy.to,
+        value: deploy.amount,
+        color: addressColors.get(deploy.from),
+        details: `From: 0x${deploy.from.substring(0, 6)}\nTo: 0x${deploy.to.substring(0, 6)}\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
       }));
     }
-  } else {
-    const processedDeploys = deploys
-      .map(deploy => {
-        const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
-        if (!termMatch) return null;
-        return {
-          from: termMatch[1],
-          to: termMatch[2],
-          amount: parseInt(termMatch[3]),
-          phlo: deploy.phloLimit
-        };
-      })
-      .filter(deploy => deploy !== null);
-
-    const uniqueAddresses = new Set([
-      ...processedDeploys.map(d => d.from),
-      ...processedDeploys.map(d => d.to)
-    ]);
-
-    nodes = Array.from(uniqueAddresses).map(address => ({
-      id: address,
-      name: `0x${address.substring(0, 6)}`,
-      value: processedDeploys
-        .filter(d => d.from === address || d.to === address)
-        .reduce((sum, d) => sum + d.amount, 0),
-      color: addressColors.get(address)
-    }));
-
-    links = processedDeploys.map(deploy => ({
-      source: deploy.from,
-      target: deploy.to,
-      value: deploy.amount,
-      color: addressColors.get(deploy.from),
-      details: `From: 0x${deploy.from.substring(0, 6)}\nTo: 0x${deploy.to.substring(0, 6)}\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
-    }));
   }
 
   return (
