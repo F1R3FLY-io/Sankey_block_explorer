@@ -49,7 +49,7 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
       <div style={{ 
         position: 'absolute',
         right: '90px',
-        top: '0',
+        top: '16px',
         display: 'flex',
         flexDirection: 'column',
         gap: '24px',
@@ -58,23 +58,28 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
         <div style={{
           background: 'rgb(22, 30, 38)',
           borderRadius: '12px',
-          padding: '16px',
+          padding: '24px',
           boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
-          textAlign: 'center'
+          textAlign: 'center',
+          height: '140px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
         }}>
           <span style={{ 
             fontSize: '36px', 
             fontWeight: '500', 
             color: 'white', 
             display: 'block', 
-            marginBottom: '8px',
+            marginBottom: '12px',
             lineHeight: '1'
           }}>
             {blocks.length}
           </span>
           <span style={{ 
             fontSize: '14px', 
-            color: 'rgb(157, 167, 177)' 
+            color: 'rgb(157, 167, 177)',
+            marginBottom: '16px'
           }}>
             Blocks
           </span>
@@ -88,7 +93,6 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
             })}
             style={{
               display: 'block',
-              marginTop: '12px',
               fontSize: '14px',
               color: 'rgb(0, 122, 255)',
               textDecoration: 'none',
@@ -107,23 +111,31 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
         <div style={{
           background: 'rgb(22, 30, 38)',
           borderRadius: '12px',
-          padding: '16px',
-          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)'
+          padding: '24px',
+          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
+          height: '140px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center'
         }}>
           <span style={{ 
             fontSize: '36px', 
             fontWeight: '500', 
             color: 'white', 
             display: 'block', 
-            marginBottom: '8px',
-            lineHeight: '1'
+            marginBottom: '12px',
+            lineHeight: '1',
+            textAlign: 'center'
           }}>
             {categories.sources.length + categories.sinks.length + categories.sourceSinks.length}
           </span>
           <span style={{ 
             fontSize: '14px', 
             color: 'rgb(157, 167, 177)',
-            display: 'block'
+            display: 'block',
+            textAlign: 'center',
+            marginBottom: '8px'
           }}>
             Active agents
           </span>
@@ -131,7 +143,8 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
             fontSize: '12px', 
             color: 'rgb(157, 167, 177)',
             display: 'block',
-            marginTop: '4px'
+            textAlign: 'center',
+            maxWidth: '180px'
           }}>
             Agents that performed at least one operation in the last hour
           </span>
