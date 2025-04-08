@@ -45,7 +45,7 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
   if (!blocks.length) return <div style={{ color: 'white', padding: '32px 90px' }}>No data available</div>;
 
   return (
-    <div className="example-container" style={{ position: 'relative' }}>
+    <div className="information-container" style={{ position: 'relative' }}>
       <div style={{ 
         position: 'absolute',
         right: '90px',

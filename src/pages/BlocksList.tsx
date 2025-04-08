@@ -84,8 +84,13 @@ const BlocksList: React.FC<BlocksListProps> = ({
 
   return (
     <div style={{
-      padding: '32px 90px',
-      color: 'white'
+      padding: '32px 0',
+      paddingLeft: '90px',
+      color: 'white',
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100%',
+      width: '100%'
     }}>
       <div style={{
         display: 'flex',
@@ -124,7 +129,7 @@ const BlocksList: React.FC<BlocksListProps> = ({
       <div style={{
         background: 'rgb(22, 30, 38)',
         borderRadius: '12px',
-        overflow: 'hidden'
+        width: 'calc(100% - 310px)'
       }}>
         <table style={{
           width: '100%',
@@ -176,7 +181,10 @@ const BlocksList: React.FC<BlocksListProps> = ({
         </table>
       </div>
 
-      <div className="pagination-container">
+      <div className="pagination-container" style={{ 
+        marginTop: '32px',
+        marginBottom: '32px'
+      }}>
         <div className="navigation-controls">
           <button 
             className="nav-button"
