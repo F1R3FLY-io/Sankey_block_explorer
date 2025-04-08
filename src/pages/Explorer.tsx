@@ -18,11 +18,15 @@ interface InfoProps {
 export default function Explorer({ blocks, categories, loading }: InfoProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { currentBlockIndex?: number };
+  const state = location.state as { currentBlockIndex?: number, blocks?: BlockWithDeploys[], categories?: BlockCategories };
   
   const [currentBlockIndex, setCurrentBlockIndex] = useState<number>(
     state?.currentBlockIndex || 0
   );
+
+  //use data from state if exist
+  const currentBlocks = state?.blocks || blocks;
+  const currentCategories = state?.categories || categories;
 
   const handleNavigation = (direction: string) => {
     switch (direction) {
@@ -33,16 +37,16 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
         setCurrentBlockIndex(prev => (prev > 0 ? prev - 1 : prev));
         break;
       case 'next':
-        setCurrentBlockIndex(prev => (prev < blocks.length - 1 ? prev + 1 : prev));
+        setCurrentBlockIndex(prev => (prev < currentBlocks.length - 1 ? prev + 1 : prev));
         break;
       case 'last':
-        setCurrentBlockIndex(blocks.length - 1);
+        setCurrentBlockIndex(currentBlocks.length - 1);
         break;
     }
   };
 
   if (loading) return <div style={{ color: 'white', padding: '32px 90px' }}>Loading...</div>;
-  if (!blocks.length) return <div style={{ color: 'white', padding: '32px 90px' }}>No data available</div>;
+  if (!currentBlocks?.length) return <div style={{ color: 'white', padding: '32px 90px' }}>No data available</div>;
 
   return (
     <div className="information-container" style={{ position: 'relative' }}>
@@ -74,7 +78,7 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
             marginBottom: '12px',
             lineHeight: '1'
           }}>
-            {blocks.length}
+            {currentBlocks.length}
           </span>
           <span style={{ 
             fontSize: '14px', 
@@ -86,8 +90,8 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
           <button 
             onClick={() => navigate('/blocks', { 
               state: { 
-                blocks, 
-                categories,
+                blocks: currentBlocks, 
+                categories: currentCategories,
                 currentBlockIndex
               } 
             })}
@@ -128,7 +132,7 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
             lineHeight: '1',
             textAlign: 'center'
           }}>
-            {categories.sources.length + categories.sinks.length + categories.sourceSinks.length}
+            {currentCategories.sources.length + currentCategories.sinks.length + currentCategories.sourceSinks.length}
           </span>
           <span style={{ 
             fontSize: '14px', 
@@ -152,11 +156,11 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
       </div>
 
       <BlockCard
-        key={blocks[currentBlockIndex].blockInfo.blockHash}
-        block={blocks[currentBlockIndex].blockInfo}
-        deploys={blocks[currentBlockIndex].deploys}
+        key={currentBlocks[currentBlockIndex].blockInfo.blockHash}
+        block={currentBlocks[currentBlockIndex].blockInfo}
+        deploys={currentBlocks[currentBlockIndex].deploys}
         currentBlock={currentBlockIndex + 1}
-        totalBlocks={blocks.length}
+        totalBlocks={currentBlocks.length}
         onNavigate={handleNavigation}
       />
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {useNavigate } from 'react-router-dom';
+import {useNavigate, useLocation } from 'react-router-dom';
 import { BlockWithDeploys } from '../services/blockService';
 
 interface BlockCategories {
@@ -20,18 +20,21 @@ const BlocksList: React.FC<BlocksListProps> = ({
   loading
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { 
+    currentBlockIndex?: number, 
+    blocks?: BlockWithDeploys[], 
+    categories?: BlockCategories 
+  };
   
   const [currentPage, setCurrentPage] = useState(1);
-  const [blocks, setBlocks] = useState<BlockWithDeploys[]>(propsBlocks);
-  const [categories, setCategories] = useState(propsCategories);
+
+  //use data from state if exist
+  const blocks = state?.blocks || propsBlocks;
+  const categories = state?.categories || propsCategories;
 
   const itemsPerPage = 10;
   const totalPages = Math.ceil(blocks.length / itemsPerPage);
-
-  React.useEffect(() => {
-    setBlocks(propsBlocks);
-    setCategories(propsCategories);
-  }, [propsBlocks, propsCategories]);
 
   const getCurrentPageBlocks = () => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -68,15 +71,13 @@ const BlocksList: React.FC<BlocksListProps> = ({
   };
 
   const handleBackToExplorer = () => {
-    if (blocks.length > 0) {
-      navigate('/', { 
-        state: { 
-          currentBlockIndex: 0
-        } 
-      });
-    } else {
-      navigate('/');
-    }
+    navigate('/', { 
+      state: { 
+        currentBlockIndex: state?.currentBlockIndex || 0,
+        blocks,
+        categories
+      } 
+    });
   };
 
   if (loading) return <div style={{ color: 'white', padding: '32px 90px' }}>Loading...</div>;

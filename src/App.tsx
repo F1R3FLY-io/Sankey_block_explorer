@@ -86,7 +86,7 @@ function App() {
     {
       path: "/",
       element: (
-        <MainLayout onRefresh={handleRefresh} loading={loading}>
+        <MainLayout onRefresh={handleRefresh} loading={loading} blocks={blocksData.blocks} categories={blocksData.categories}>
           <div className="main-content-wrapper">
             {error && <div style={{ color: 'white', padding: '32px 90px' }}>Error: {error}</div>}
             <Explorer
@@ -101,7 +101,7 @@ function App() {
     {
       path: "/blocks",
       element: (
-        <MainLayout onRefresh={handleRefresh} loading={loading}>
+        <MainLayout onRefresh={handleRefresh} loading={loading} blocks={blocksData.blocks} categories={blocksData.categories}>
           <div className="main-content-wrapper">
             {error && <div style={{ color: 'white', padding: '32px 90px' }}>Error: {error}</div>}
             <BlocksList 
