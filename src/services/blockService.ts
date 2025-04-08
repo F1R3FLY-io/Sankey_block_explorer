@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { siteConfig } from '../siteMetdata';
+import { siteConfig } from '../siteMetadata';
 
 const API_URL = siteConfig.apiUrl;
 
