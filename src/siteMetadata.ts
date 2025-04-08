@@ -35,7 +35,7 @@ export const mainNavigation: NavItem[] = [
 ];
 
 export const siteConfig = {
-  name: 'DUNA Block Explorer',
+  name: 'Sankey Block Explorer',
   description: 'A Sankey diagram block explorer for energy flows',
   logo: '/src/assets/f1r3fly-io-logo-bg.png',
   apiUrl: '/api',
