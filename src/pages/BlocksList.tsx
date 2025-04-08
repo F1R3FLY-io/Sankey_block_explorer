@@ -153,7 +153,7 @@ const BlocksList: React.FC<BlocksListProps> = ({
           <tbody>
             {getCurrentPageBlocks().map((block, index) => {
               const blockType = getBlockType(block);
-              const actualIndex = (currentPage - 1) * itemsPerPage + index + 1;
+              const actualIndex = (currentPage - 1) * itemsPerPage + index;
               return (
                 <tr 
                   key={block.blockInfo.blockHash}
