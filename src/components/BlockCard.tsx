@@ -4,7 +4,7 @@ import SankeyDiagram from './SankeyDiagram.tsx';
 import type { SankeyNode, SankeyLink } from './SankeyDiagram.tsx';
 import HelpButton from './HelpButton.tsx';
 
-const GENESIS_CEREMONY_BLOCK_INDEX = 1;
+const GENESIS_CEREMONY_BLOCK_INDEX = 0;
 
 interface BlockCardProps {
   block: Block;

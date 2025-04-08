@@ -159,7 +159,7 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
         key={currentBlocks[currentBlockIndex].blockInfo.blockHash}
         block={currentBlocks[currentBlockIndex].blockInfo}
         deploys={currentBlocks[currentBlockIndex].deploys}
-        currentBlock={currentBlockIndex + 1}
+        currentBlock={currentBlockIndex}
         totalBlocks={currentBlocks.length}
         onNavigate={handleNavigation}
       />

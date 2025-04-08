@@ -136,8 +136,8 @@ describe('BlockCard', () => {
     });
   });
   
-  it('should handle block #1 correctly', () => {
-    render(<BlockCard {...defaultProps} currentBlock={1} />);
+  it('should handle block #0 correctly', () => {
+    render(<BlockCard {...defaultProps} currentBlock={0} />);
     
     const sankeyNodes = screen.getByTestId('sankey-nodes');
     const sankeyLinks = screen.getByTestId('sankey-links');
@@ -146,7 +146,7 @@ describe('BlockCard', () => {
     const nodes = JSON.parse(sankeyNodes.textContent || '[]');
     const links = JSON.parse(sankeyLinks.textContent || '[]');
     
-    // Even for block #1, with the fixed implementation, we expect the same structure
+    // Even for block #0, with the fixed implementation, we expect the same structure
     expect(nodes.length).toBeGreaterThan(0);
     expect(links.length).toBeGreaterThan(0);
     

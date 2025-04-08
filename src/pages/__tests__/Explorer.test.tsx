@@ -101,7 +101,7 @@ describe('Explorer', () => {
     const blockInfo = JSON.parse(screen.getByTestId('block-info').textContent || '{}');
     expect(blockInfo.blockHash).toBe(mockBlock.blockHash);
     expect(blockInfo.blockNumber).toBe(mockBlock.blockNumber);
-    expect(blockInfo.currentBlock).toBe(1); // 1-indexed
+    expect(blockInfo.currentBlock).toBe(0); // 0-indexed
     expect(blockInfo.totalBlocks).toBe(mockBlocks.length);
     
     // Verify that the correct deploy data is being passed
