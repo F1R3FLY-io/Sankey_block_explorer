@@ -31,7 +31,8 @@
  
 ## Common Tasks
 - Use the existing component hierarchy and structure
-- Run `pnpm lint` before committing changes
+- Follow React 19 and Next.js 15 best practices
+- Run `pnpm lint` before moving to next step in task or running dev server
 - Keep component hierarchy consistent with the existing architecture
 - Use framer-motion for animations following existing patterns
 - Test UI on mobile and desktop viewports
