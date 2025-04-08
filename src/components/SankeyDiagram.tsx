@@ -103,22 +103,42 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           if (sankeyLink.details) {
             const tooltip = svg.append("g")
               .attr("class", "tooltip")
-              .attr("transform", `translate(${event.offsetX},${event.offsetY - 10})`);
+              .attr("transform", `translate(${event.offsetX * 0.75},${event.offsetY - 10})`);
 
+            // Removed large background rectangle
+
+            // Display just the first line with a background
+            const lines = sankeyLink.details.split('\n');
+            const firstLine = lines[0];
+            
+            // Add background only for the first line (deployer info)
             tooltip.append("rect")
               .attr("x", -5)
               .attr("y", -15)
-              .attr("width", 200)
-              .attr("height", 25)
+              .attr("width", firstLine.length * 7 + 20)
+              .attr("height", 20)
               .attr("fill", "rgba(0,0,0,0.8)")
               .attr("rx", 5);
-
+              
+            // Add first line of text (deployer info)
             tooltip.append("text")
-              .text(sankeyLink.details)
+              .text(firstLine)
               .attr("x", 5)
               .attr("y", 0)
               .style("font-size", "12px")
               .style("fill", "#ffffff");
+              
+            // Add remaining lines (cost info) without background, positioned to the right
+            for (let i = 2; i < lines.length; i++) {
+              if (lines[i] && lines[i].trim()) {
+                tooltip.append("text")
+                  .text(lines[i])
+                  .attr("x", 300) // Move much further to the right
+                  .attr("y", (i - 1.5) * 18) // Move up by adjusting the vertical position
+                  .style("font-size", "12px")
+                  .style("fill", "#ffffff");
+              }
+            }
           }
         })
         .on("mouseout", function() {
@@ -201,22 +221,42 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
             if (d.details) {
               const tooltip = svg.append("g")
                 .attr("class", "tooltip")
-                .attr("transform", `translate(${event.offsetX},${event.offsetY - 10})`);
+                .attr("transform", `translate(${event.offsetX * 0.75},${event.offsetY - 10})`);
 
+              // Removed large background rectangle
+
+              // Display just the first line with a background
+              const lines = d.details.split('\n');
+              const firstLine = lines[0];
+              
+              // Add background only for the first line (deployer info)
               tooltip.append("rect")
                 .attr("x", -5)
                 .attr("y", -15)
-                .attr("width", 200)
-                .attr("height", 25)
+                .attr("width", firstLine.length * 7 + 20)
+                .attr("height", 20)
                 .attr("fill", "rgba(0,0,0,0.8)")
                 .attr("rx", 5);
-
+                
+              // Add first line of text (deployer info)
               tooltip.append("text")
-                .text(d.details)
+                .text(firstLine)
                 .attr("x", 5)
                 .attr("y", 0)
                 .style("font-size", "12px")
                 .style("fill", "#ffffff");
+                
+              // Add remaining lines (cost info) without background, positioned to the right
+              for (let i = 2; i < lines.length; i++) {
+                if (lines[i] && lines[i].trim()) {
+                  tooltip.append("text")
+                    .text(lines[i])
+                    .attr("x", 300) // Move much further to the right
+                    .attr("y", (i - 1.5) * 18) // Move up by adjusting the vertical position
+                    .style("font-size", "12px")
+                    .style("fill", "#ffffff");
+                }
+              }
             }
           })
           .on("mouseout", function() {

@@ -81,7 +81,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
       target: `${deployer}_end`,
       value: data.totalCost,
       color: addressColors.get(deployer) || generateRandomColor(),
-      details: `Deployer: 0x${deployer.substring(0, 6)}\nDeploys: ${data.deploys.length}\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+      details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
     }));
   } else {
     // All other blocks - process based on deploy patterns
@@ -122,7 +122,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
         target: block.blockHash,
         value: data.totalCost,
         color: addressColors.get(deployer) || generateRandomColor(),
-        details: `Deployer: 0x${deployer.substring(0, 6)}\nDeploys: ${data.deploys.length}\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
       }));
     } else {
       // Has match patterns - show transfers between addresses
@@ -145,7 +145,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ block, deploys, currentBlock, tot
         target: deploy.to,
         value: deploy.amount,
         color: addressColors.get(deploy.from),
-        details: `From: 0x${deploy.from.substring(0, 6)}\nTo: 0x${deploy.to.substring(0, 6)}\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
+        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
       }));
     }
   }
