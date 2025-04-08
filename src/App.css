@@ -667,12 +667,11 @@ main {
   background-color: rgb(22, 30, 38);
   padding: 24px;
   border-radius: 12px;
-  max-width: 400px;
+  max-width: 600px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
   color: white;
-  text-align: center;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
@@ -682,38 +681,39 @@ main {
   align-items: center;
   gap: 8px;
   margin-bottom: 24px;
+  text-align: center;
 }
 
 .modal-header h2 {
   margin: 0;
   color: white;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 400;
 }
 
 .modal-body {
-  line-height: 1.5;
-  text-align: left;
+  line-height: 1.6;
 }
 
 .modal-body h3 {
   color: white;
-  margin: 24px 24px 8px;
-  font-size: 20px;
+  margin: 24px 0 16px;
+  font-size: 24px;
   font-weight: 400;
 }
 
 .modal-body p {
-  margin: 8px 24px;
+  margin: 16px 0;
   color: rgb(157, 167, 177);
+  font-size: 16px;
 }
 
 .modal-body .block-description {
-  margin: 0 24px;
+  margin: 16px 0;
 }
 
 .modal-body .block-description p {
-  margin: 4px 0;
+  margin: 8px 0;
   padding: 0;
 }
 
