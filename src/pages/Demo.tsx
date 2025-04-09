@@ -97,7 +97,7 @@ const BlockCardSection = () => {
       <Typography variant="h3" className="mb-4" style={{ color: 'white', background: '#333', padding: '10px', borderRadius: '5px' }}>
         BlockCard - Block #650 - Internal Phlo Consumption Only
       </Typography>
-      <div style={{ maxWidth: '1000px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
+      <div style={{ maxWidth: '1000px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px', backgroundColor: 'rgba(20, 20, 30, 0.7)' }}>
         <Typography variant="body" className="mb-4" style={{ color: 'yellow', background: '#222', padding: '10px', borderRadius: '5px' }}>
           ⚠️ This block demonstrates internal Phlo consumption with Rholang code execution that has no external transfers.
           Note the orange self-referential link showing internal consumption.
@@ -118,7 +118,7 @@ const BlockCardSection = () => {
       <Typography variant="h3" className="mb-4" style={{ color: 'white', background: '#333', padding: '10px', borderRadius: '5px' }}>
         BlockCard - Block #651 - Mixed (Internal + External)
       </Typography>
-      <div style={{ maxWidth: '1000px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
+      <div style={{ maxWidth: '1000px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px', backgroundColor: 'rgba(20, 20, 30, 0.7)' }}>
         <Typography variant="body" className="mb-4" style={{ color: 'yellow', background: '#222', padding: '10px', borderRadius: '5px' }}>
           ⚠️ This block demonstrates both internal Phlo consumption AND external transfers.
           Note both regular links and the orange self-referential link for internal consumption.

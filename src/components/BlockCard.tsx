@@ -167,6 +167,8 @@ const BlockCard: React.FC<BlockCardProps> = ({
         value: totalInternalCost,
         isInternalConsumption: true,
         color: '#ffa500', // Orange color for internal consumption
+        opacity: 0.9, // Higher opacity for better visibility
+        dashArray: "10,5", // Dashed line pattern
         details: `${totalInternalCost} Phlo consumed internally by Rholang code execution`
       }
     ];
@@ -221,7 +223,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
       }));
       
-      // Add self-referential link for internal consumption
+      // Add self-referential link for internal consumption with higher opacity and dashed line
       links = [
         ...regularLinks,
         {
@@ -229,7 +231,9 @@ const BlockCard: React.FC<BlockCardProps> = ({
           target: block.blockHash,
           value: blockNode.phloConsumed || 0, // Default to 0 if undefined
           isInternalConsumption: true,
-          color: '#ffa500', // Orange color
+          color: '#ffa500', // Orange color for internal consumption
+          dashArray: "10,5", // Dashed line pattern
+          opacity: 0.9, // Higher opacity for better visibility
           details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
         }
       ];
@@ -271,6 +275,8 @@ const BlockCard: React.FC<BlockCardProps> = ({
           value: blockNode.phloConsumed || 0, // Default to 0 if undefined
           isInternalConsumption: true,
           color: '#ffa500', // Exact color from PDF spec
+          opacity: 0.9, // Higher opacity for better visibility
+          dashArray: "10,5", // Dashed line pattern
           details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
         }
       ];
