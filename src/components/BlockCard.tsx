@@ -3,7 +3,7 @@ import { Block, Deploy } from '../services/blockService.ts';
 import SankeyDiagram from './SankeyDiagram.tsx';
 import type { SankeyNode, SankeyLink } from './SankeyDiagram.tsx';
 import HelpButton from './HelpButton.tsx';
-import { siteConfig } from '../siteMetadata';
+// import { siteConfig } from '../siteMetadata'; // Using hardcoded colors from PDF spec
 
 const GENESIS_CEREMONY_BLOCK_INDEX = 0;
 
@@ -128,7 +128,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
       id: block.blockHash,
       name: `Block #${block.blockNumber}`,
       value: deploys.reduce((sum, d) => sum + d.cost, 0),
-      color: siteConfig.branding.primaryColor,
+      color: '#ffa500', // Exact color from PDF spec
       phloConsumed: deploys.reduce((sum, d) => {
         // Only count as internal consumption if no match pattern
         const termMatch = d.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
@@ -180,7 +180,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
           target: block.blockHash,
           value: blockNode.phloConsumed || 0, // Default to 0 if undefined
           isInternalConsumption: true,
-          color: siteConfig.branding.warningColor || '#FFA500',
+          color: '#ffa500', // Exact color from PDF spec
           details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
         }
       ];
@@ -221,7 +221,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
           target: block.blockHash,
           value: blockNode.phloConsumed || 0, // Default to 0 if undefined
           isInternalConsumption: true,
-          color: siteConfig.branding.warningColor || '#FFA500',
+          color: '#ffa500', // Exact color from PDF spec
           details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
         }
       ];
