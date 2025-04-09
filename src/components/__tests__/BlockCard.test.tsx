@@ -424,7 +424,7 @@ describe('BlockCard', () => {
     expect(addr3Node).toBeDefined();
     
     // 3. Should have exactly 2 links as shown in the PDF example: 1 external transfer, 1 internal consumption
-    expect(links.length).toBe(2);
+    expect(links.length).toBe(2); // PDF spec requires exactly 2
     
     // 4. Should have the external transfer link with exact value from PDF example
     const externalLinks = links.filter((l: SankeyLink) => 

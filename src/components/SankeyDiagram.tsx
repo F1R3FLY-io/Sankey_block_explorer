@@ -128,7 +128,15 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
         });
     };
     const updateDiagram = () => {
-      if (!svgRef.current || !containerRef.current || !nodes.length || !links.length) return;
+      if (!svgRef.current || !containerRef.current || !nodes.length || !links.length) {
+        console.warn("Can't update diagram - missing elements:", {
+          svgRef: !!svgRef.current,
+          containerRef: !!containerRef.current,
+          nodesLength: nodes.length,
+          linksLength: links.length
+        });
+        return;
+      }
 
       const container = containerRef.current;
       const svg = d3.select(svgRef.current);
@@ -195,7 +203,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           .style("stroke-opacity", (d: SankeyLink) => d.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.3))
           .style("stroke-dasharray", (d: SankeyLink) => d.isInternalConsumption ? "10,5" : "none")
           .style("stroke", (d: SankeyLink) => d.color || "#aaa")
-          .style("stroke-width", (d) => Math.max(1, d.width || 0))
+          .style("stroke-width", (d) => d.isInternalConsumption ? Math.max(2, (d.width || 0) * 1.2) : Math.max(1, d.width || 0))
           .attr("x", (d) => {
             const sourceNode = d.source as SankeyNode;
             const targetNode = d.target as SankeyNode;
@@ -208,8 +216,9 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           })
           .on("mouseover", function(_event: MouseEvent, d: SankeyLink) {
             d3.select(this)
-              .style("stroke-opacity", d.isInternalConsumption ? 1.0 : 0.5)
-              .style("stroke-width", Math.max(2, (d.width || 0) * 1.2));
+              .style("stroke-opacity", 1.0)
+              .style("stroke-width", Math.max(3, (d.width || 0) * 1.5))
+              .style("stroke-dasharray", d.isInternalConsumption ? "5,3" : "none");
             if (d.details) {
               const sourceNode = d.source as SankeyNode;
               const targetNode = d.target as SankeyNode;
@@ -231,7 +240,8 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           .on("mouseout", function(_, d: SankeyLink) {
             d3.select(this)
               .style("stroke-opacity", d.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.3))
-              .style("stroke-width", Math.max(1, d.width || 0));
+              .style("stroke-width", d.isInternalConsumption ? Math.max(2, (d.width || 0) * 1.2) : Math.max(1, d.width || 0))
+              .style("stroke-dasharray", d.isInternalConsumption ? "10,5" : "none");
             svg.selectAll(".tooltip").remove();
           });
 
@@ -296,7 +306,16 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
   }, [nodes, links, options]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
+    <div 
+      ref={containerRef} 
+      style={{ 
+        width: '100%', 
+        height: '100%', 
+        position: 'relative', 
+        minHeight: '300px',
+        backgroundColor: 'rgba(255, 255, 255, 0.05)' // Very subtle background for debugging
+      }}
+    >
       <svg
         ref={svgRef}
         style={{
@@ -305,6 +324,24 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           overflow: 'visible'
         }}
       />
+      {/* Debug overlay to verify SVG exists */}
+      {(!nodes.length || !links.length) && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#ffa500',
+          fontWeight: 'bold',
+          zIndex: 10
+        }}>
+          Internal Phlo Consumption Visualization
+        </div>
+      )}
     </div>
   );
 };

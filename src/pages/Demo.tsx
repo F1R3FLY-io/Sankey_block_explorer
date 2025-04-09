@@ -102,14 +102,17 @@ const BlockCardSection = () => {
           ⚠️ This block demonstrates internal Phlo consumption with Rholang code execution that has no external transfers.
           Note the orange self-referential link showing internal consumption.
         </Typography>
-        <BlockCard 
-          block={mockBlock650}
-          deploys={mockDeploysWithInternalConsumption}
-          currentBlock={650}
-          totalBlocks={700}
-          onNavigate={handleNavigate}
-          hasInternalConsumption={true}
-        />
+        {/* Add explicit height to ensure visualization renders */}
+        <div style={{ height: '600px' }}>
+          <BlockCard 
+            block={mockBlock650}
+            deploys={mockDeploysWithInternalConsumption}
+            currentBlock={650}
+            totalBlocks={700}
+            onNavigate={handleNavigate}
+            hasInternalConsumption={true}
+          />
+        </div>
       </div>
 
       <Typography variant="h3" className="mb-4" style={{ color: 'white', background: '#333', padding: '10px', borderRadius: '5px' }}>
@@ -120,14 +123,17 @@ const BlockCardSection = () => {
           ⚠️ This block demonstrates both internal Phlo consumption AND external transfers.
           Note both regular links and the orange self-referential link for internal consumption.
         </Typography>
-        <BlockCard 
-          block={mockBlock651}
-          deploys={mockDeploysWithMixedPatterns}
-          currentBlock={651}
-          totalBlocks={700}
-          onNavigate={handleNavigate}
-          hasInternalConsumption={true}
-        />
+        {/* Add explicit height to ensure visualization renders */}
+        <div style={{ height: '600px' }}>
+          <BlockCard 
+            block={mockBlock651}
+            deploys={mockDeploysWithMixedPatterns}
+            currentBlock={651}
+            totalBlocks={700}
+            onNavigate={handleNavigate}
+            hasInternalConsumption={true}
+          />
+        </div>
       </div>
 
       <Typography variant="h3" className="mb-4" style={{ color: 'white' }}>BlockCard - First Block</Typography>
