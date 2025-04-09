@@ -45,3 +45,5 @@
 - Follow React 19 and Next.js 15 best practices
 - Use Next.js App Router patterns
 - Implement proper types for all components and functions
+- Work with the user to develop feature enhancements using a test driven development strategy. Unit tests should be created for new components, they should initially fail and then work once the corresponding funcationality is poperly implemented.
+- Check if the development servers are running using `ps` in the shell MCP tool before attempting to start them. Ask the user to independently start these servers using `pnpm dev` or `pnpm dev-https`
