@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1744206933092" clover="3.2.0">
-  <project timestamp="1744206933092" name="All files">
-    <metrics statements="1838" coveredstatements="1499" conditionals="255" coveredconditionals="224" methods="66" coveredmethods="53" elements="2159" coveredelements="1776" complexity="0" loc="1838" ncloc="1838" packages="10" files="23" classes="23"/>
+<coverage generated="1744207664038" clover="3.2.0">
+  <project timestamp="1744207664039" name="All files">
+    <metrics statements="1838" coveredstatements="1515" conditionals="256" coveredconditionals="225" methods="66" coveredmethods="54" elements="2160" coveredelements="1794" complexity="0" loc="1838" ncloc="1838" packages="10" files="23" classes="23"/>
     <package name="Sankey_block_explorer">
       <metrics statements="50" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
       <file name="postcss.config.js" path="/Users/jeff/src/Sankey_block_explorer/postcss.config.js">
@@ -238,7 +238,7 @@
       </file>
     </package>
     <package name="Sankey_block_explorer.src.components">
-      <metrics statements="503" coveredstatements="272" conditionals="50" coveredconditionals="45" methods="12" coveredmethods="11"/>
+      <metrics statements="503" coveredstatements="288" conditionals="51" coveredconditionals="46" methods="12" coveredmethods="12"/>
       <file name="BlockCard.tsx" path="/Users/jeff/src/Sankey_block_explorer/src/components/BlockCard.tsx">
         <metrics statements="200" coveredstatements="200" conditionals="42" coveredconditionals="37" methods="6" coveredmethods="6"/>
         <line num="1" count="1" type="stmt"/>
@@ -516,14 +516,14 @@
         <line num="60" count="1" type="stmt"/>
       </file>
       <file name="SankeyDiagram.tsx" path="/Users/jeff/src/Sankey_block_explorer/src/components/SankeyDiagram.tsx">
-        <metrics statements="236" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="236" coveredstatements="21" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
-        <line num="52" count="1" type="stmt"/>
-        <line num="53" count="0" type="stmt"/>
-        <line num="54" count="0" type="stmt"/>
-        <line num="56" count="0" type="stmt"/>
+        <line num="52" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
         <line num="57" count="0" type="stmt"/>
         <line num="58" count="0" type="stmt"/>
         <line num="59" count="0" type="stmt"/>
@@ -739,19 +739,19 @@
         <line num="322" count="0" type="stmt"/>
         <line num="324" count="0" type="stmt"/>
         <line num="325" count="0" type="stmt"/>
-        <line num="326" count="0" type="stmt"/>
-        <line num="328" count="0" type="stmt"/>
-        <line num="329" count="0" type="stmt"/>
-        <line num="330" count="0" type="stmt"/>
-        <line num="331" count="0" type="stmt"/>
-        <line num="332" count="0" type="stmt"/>
-        <line num="333" count="0" type="stmt"/>
-        <line num="334" count="0" type="stmt"/>
-        <line num="335" count="0" type="stmt"/>
-        <line num="336" count="0" type="stmt"/>
-        <line num="337" count="0" type="stmt"/>
-        <line num="338" count="0" type="stmt"/>
-        <line num="340" count="0" type="stmt"/>
+        <line num="326" count="1" type="stmt"/>
+        <line num="328" count="1" type="stmt"/>
+        <line num="329" count="1" type="stmt"/>
+        <line num="330" count="1" type="stmt"/>
+        <line num="331" count="1" type="stmt"/>
+        <line num="332" count="1" type="stmt"/>
+        <line num="333" count="1" type="stmt"/>
+        <line num="334" count="1" type="stmt"/>
+        <line num="335" count="1" type="stmt"/>
+        <line num="336" count="1" type="stmt"/>
+        <line num="337" count="1" type="stmt"/>
+        <line num="338" count="1" type="stmt"/>
+        <line num="340" count="1" type="stmt"/>
         <line num="342" count="1" type="stmt"/>
       </file>
     </package>
