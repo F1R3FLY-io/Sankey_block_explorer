@@ -34,6 +34,7 @@ describe('App', () => {
       sources: ['hash1'],
       sinks: ['hash3'],
       sourceSinks: ['hash2'],
+      internalConsumers: ['hash2'],
       totalBlocks: 3
     });
 
@@ -149,6 +150,7 @@ describe('App', () => {
       sources: ['hash3'],
       sinks: ['hash1'],
       sourceSinks: ['hash2'],
+      internalConsumers: [],
       totalBlocks: 3
     });
 

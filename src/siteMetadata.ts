@@ -44,6 +44,7 @@ export const siteConfig = {
     secondaryColor: '#6c757d',
     accentColor: '#28a745',
     errorColor: '#dc3545',
+    warningColor: '#FFA500',
   },
   socialLinks: {
     twitter: 'https://twitter.com/example',

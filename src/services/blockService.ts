@@ -58,6 +58,7 @@ export interface BlockAnalysis {
   sources: string[]; // blocks without parents
   sinks: string[]; // blocks without children
   sourceSinks: string[]; // blocks with both parents and children
+  internalConsumers: string[]; // blocks with internal Phlo consumption but no outgoing transaction
   totalBlocks: number;
 }
 
@@ -66,11 +67,14 @@ export interface SankeyData {
     id: string;
     name: string;
     color?: string;
+    phloConsumed?: number;
   }[];
   links: {
     source: string;
     target: string;
     value: number;
+    isInternalConsumption?: boolean;
+    details?: string;
   }[];
 }
 
@@ -97,6 +101,7 @@ export const getBlockByHash = async (hash: string): Promise<BlockWithDeploys> =>
 export const analyzeBlockChain = async (): Promise<BlockAnalysis> => {
   const initialBlocks = await getBlocks();
   const allBlocks = new Map<string, Block>();
+  const blocksWithDeploys = new Map<string, BlockWithDeploys>();
   const processedHashes = new Set<string>();
   
   // Function to recursively fetch all blocks
@@ -107,6 +112,7 @@ export const analyzeBlockChain = async (): Promise<BlockAnalysis> => {
     try {
       const block = await getBlockByHash(hash);
       allBlocks.set(hash, block.blockInfo);
+      blocksWithDeploys.set(hash, block);
       
       // Recursively fetch all parent blocks
       for (const parentHash of block.blockInfo.parentsHashList) {
@@ -145,11 +151,28 @@ export const analyzeBlockChain = async (): Promise<BlockAnalysis> => {
       Array.from(parentHashes).includes(block.blockHash)
     )
     .map(block => block.blockHash);
+    
+  // Find blocks with internal Phlo consumption
+  // These are blocks that have deploys with Phlo cost but don't create outgoing transactions
+  const internalConsumers = Array.from(blocksWithDeploys.entries())
+    .filter(([hash, block]) => {
+      // Check if it has any deploys with Phlo consumption
+      const hasPhloConsumption = block.deploys.some(deploy => deploy.cost > 0);
+      
+      // Check if it's not already a source or sink
+      const isNotSource = !sources.includes(hash);
+      const isNotSink = !sinks.includes(hash);
+      
+      // A block with internal consumption has Phlo usage but isn't a sink
+      return hasPhloConsumption && isNotSource && isNotSink;
+    })
+    .map(([hash]) => hash);
 
   return {
     sources,
     sinks,
     sourceSinks,
+    internalConsumers,
     totalBlocks: allBlocks.size
   };
 };
@@ -157,12 +180,14 @@ export const analyzeBlockChain = async (): Promise<BlockAnalysis> => {
 export const getBlockchainSankeyData = async (): Promise<SankeyData> => {
   const analysis = await analyzeBlockChain();
   const allBlocks = new Map<string, Block>();
+  const blocksWithDeploys = new Map<string, BlockWithDeploys>();
   
   // Collect all block hashes
   const allHashes = [
     ...analysis.sources,
     ...analysis.sinks, 
-    ...analysis.sourceSinks
+    ...analysis.sourceSinks,
+    ...analysis.internalConsumers
   ];
   
   // Get details for each block
@@ -170,6 +195,7 @@ export const getBlockchainSankeyData = async (): Promise<SankeyData> => {
     try {
       const block = await getBlockByHash(hash);
       allBlocks.set(hash, block.blockInfo);
+      blocksWithDeploys.set(hash, block);
     } catch (error) {
       console.error(`Error fetching block ${hash}:`, error);
     }
@@ -186,17 +212,28 @@ export const getBlockchainSankeyData = async (): Promise<SankeyData> => {
       color = siteConfig.branding.errorColor; // Sink
     } else if (analysis.sourceSinks.includes(block.blockHash)) {
       color = siteConfig.branding.primaryColor; // Source-Sink
+    } else if (analysis.internalConsumers.includes(block.blockHash)) {
+      color = siteConfig.branding.warningColor || '#FFA500'; // Internal consumer - orange if not defined
     }
+    
+    // Calculate total Phlo consumed in this block
+    const blockWithDeploys = blocksWithDeploys.get(block.blockHash);
+    const phloConsumed = blockWithDeploys ? 
+      blockWithDeploys.deploys.reduce((total, deploy) => total + deploy.cost, 0) : 
+      0;
     
     return {
       id: block.blockHash,
       name: `Block#${block.blockNumber}`,
-      color
+      color,
+      phloConsumed
     };
   });
   
   // Create links for Sankey diagram
   const links = [];
+  
+  // First, add normal parent-child relationships
   for (const block of allBlocks.values()) {
     for (const parentHash of block.parentsHashList) {
       // Check if parent block exists in our data
@@ -207,6 +244,26 @@ export const getBlockchainSankeyData = async (): Promise<SankeyData> => {
           value: 1 // Standard weight for all links
         });
       }
+    }
+  }
+  
+  // Then, add internal consumption links for blocks that consume Phlo
+  for (const hash of analysis.internalConsumers) {
+    const blockWithDeploys = blocksWithDeploys.get(hash);
+    if (!blockWithDeploys) continue;
+    
+    // Calculate total Phlo consumed
+    const totalPhlo = blockWithDeploys.deploys.reduce((sum, deploy) => sum + deploy.cost, 0);
+    
+    if (totalPhlo > 0) {
+      // Create a self-referential link to show internal consumption
+      links.push({
+        source: hash,
+        target: hash,
+        value: totalPhlo, // Use actual Phlo consumption as the value
+        isInternalConsumption: true,
+        details: `${totalPhlo} Phlo consumed by ${blockWithDeploys.deploys.length} deploys`
+      });
     }
   }
   
