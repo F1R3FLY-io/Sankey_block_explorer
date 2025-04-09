@@ -44,19 +44,22 @@ vi.mock('../../components/BlockCard', () => ({
     block, 
     deploys, 
     currentBlock, 
-    totalBlocks 
+    totalBlocks,
+    hasInternalConsumption
   }: { 
     block: Block; 
     deploys: Deploy[]; 
     currentBlock: number; 
     totalBlocks: number;
-    onNavigate: (direction: string) => void;  
+    onNavigate: (direction: string) => void;
+    hasInternalConsumption?: boolean;
   }) => (
     <div data-testid="block-card">
       <div>Block Hash: {block.blockHash}</div>
       <div>Current Block: {currentBlock}</div>
       <div>Total Blocks: {totalBlocks}</div>
       <div>Deploys: {deploys.length}</div>
+      {hasInternalConsumption && <div>Has Internal Consumption: {String(hasInternalConsumption)}</div>}
     </div>
   )
 }));
@@ -148,12 +151,14 @@ describe('Demo', () => {
     const blockCardSection = screen.getByTestId('section-blockcard');
     const blockCardElements = blockCardSection.querySelectorAll('[data-testid="block-card"]');
     
-    // Check if there are multiple BlockCard examples
-    expect(blockCardElements.length).toBe(3);
+    // Check if there are multiple BlockCard examples - now we have 5 with the two new internal consumption ones
+    expect(blockCardElements.length).toBe(5);
     
     // Check for section header typography
     expect(screen.getByText('BlockCard - Standard View')).toBeInTheDocument();
     expect(screen.getByText('BlockCard - With Transfer Patterns')).toBeInTheDocument();
+    expect(screen.getByText('BlockCard - Block #650 - Internal Phlo Consumption Only')).toBeInTheDocument();
+    expect(screen.getByText('BlockCard - Block #651 - Mixed (Internal + External)')).toBeInTheDocument();
     expect(screen.getByText('BlockCard - First Block')).toBeInTheDocument();
   });
 

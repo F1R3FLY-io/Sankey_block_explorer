@@ -7,6 +7,7 @@ export interface SankeyNode extends d3.SimulationNodeDatum {
   name: string;
   value?: number;
   color?: string;
+  phloConsumed?: number;
   x0?: number;
   x1?: number;
   y0?: number;
@@ -23,6 +24,7 @@ export interface SankeyLink {
   width?: number;
   details?: string;
   isParallel?: boolean;
+  isInternalConsumption?: boolean;
 }
 
 interface SankeyData {
@@ -75,7 +77,8 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
         .attr("y2", (_, i) => padding + i * lineHeight)
         .style("stroke", (d: SankeyLink) => d.color || "#aaa")
         .style("stroke-width", (d: SankeyLink) => widthScale(d.value))
-        .style("stroke-opacity", options.link?.opacity || 0.8);
+        .style("stroke-opacity", (d: SankeyLink) => d.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.8))
+        .style("stroke-dasharray", (d: SankeyLink) => d.isInternalConsumption ? "10,5" : "none");
 
       svg.append("g")
         .selectAll("text")
@@ -99,7 +102,8 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
         .on("mouseover", function(event: MouseEvent, d: unknown) {
           const sankeyLink = d as SankeyLink;
           d3.select(this)
-            .style("stroke-opacity", 1);
+            .style("stroke-opacity", 1)
+            .style("stroke-width", widthScale(sankeyLink.value) * 1.2);
           if (sankeyLink.details) {
             const tooltip = svg.append("g")
               .attr("class", "tooltip")
@@ -114,9 +118,12 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
               .style("fill", "#ffffff");
           }
         })
-        .on("mouseout", function() {
+        .on("mouseout", function(_, d: unknown) {
+          const sankeyLink = d as SankeyLink;
           d3.select(this)
-            .style("stroke-opacity", options.link?.opacity || 0.8);
+            .style("stroke-opacity", sankeyLink.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.8))
+            .style("stroke-dasharray", sankeyLink.isInternalConsumption ? "10,5" : "none")
+            .style("stroke-width", widthScale(sankeyLink.value));
           svg.selectAll(".tooltip").remove();
         });
     };
@@ -185,7 +192,8 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           .join("path")
           .attr("d", sankeyLinkHorizontal())
           .style("fill", "none")
-          .style("stroke-opacity", options.link?.opacity || 0.3)
+          .style("stroke-opacity", (d: SankeyLink) => d.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.3))
+          .style("stroke-dasharray", (d: SankeyLink) => d.isInternalConsumption ? "10,5" : "none")
           .style("stroke", (d: SankeyLink) => d.color || "#aaa")
           .style("stroke-width", (d) => Math.max(1, d.width || 0))
           .attr("x", (d) => {
@@ -200,7 +208,8 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           })
           .on("mouseover", function(_event: MouseEvent, d: SankeyLink) {
             d3.select(this)
-              .style("stroke-opacity", 0.5);
+              .style("stroke-opacity", d.isInternalConsumption ? 1.0 : 0.5)
+              .style("stroke-width", Math.max(2, (d.width || 0) * 1.2));
             if (d.details) {
               const sourceNode = d.source as SankeyNode;
               const targetNode = d.target as SankeyNode;
@@ -219,9 +228,10 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
                 .style("fill", "#ffffff");
             }
           })
-          .on("mouseout", function() {
+          .on("mouseout", function(_, d: SankeyLink) {
             d3.select(this)
-              .style("stroke-opacity", options.link?.opacity || 0.3);
+              .style("stroke-opacity", d.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.3))
+              .style("stroke-width", Math.max(1, d.width || 0));
             svg.selectAll(".tooltip").remove();
           });
 

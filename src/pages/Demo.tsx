@@ -5,7 +5,15 @@ import Card from '../components/ui/Card';
 import Typography from '../components/ui/Typography';
 import BlockCard from '../components/BlockCard';
 import SankeyDiagram from '../components/SankeyDiagram';
-import { mockBlock, mockDeploys, mockDeploysWithPattern } from '../test/mocks';
+import { 
+  mockBlock, 
+  mockBlock650,
+  mockBlock651,
+  mockDeploys, 
+  mockDeploysWithPattern,
+  mockDeploysWithInternalConsumption,
+  mockDeploysWithMixedPatterns
+} from '../test/mocks';
 
 // Button Demo Section
 const ButtonsSection = () => (
@@ -83,6 +91,42 @@ const BlockCardSection = () => {
           currentBlock={3}
           totalBlocks={5}
           onNavigate={handleNavigate}
+        />
+      </div>
+
+      <Typography variant="h3" className="mb-4" style={{ color: 'white', background: '#333', padding: '10px', borderRadius: '5px' }}>
+        BlockCard - Block #650 - Internal Phlo Consumption Only
+      </Typography>
+      <div style={{ maxWidth: '1000px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
+        <Typography variant="body" className="mb-4" style={{ color: 'yellow', background: '#222', padding: '10px', borderRadius: '5px' }}>
+          ⚠️ This block demonstrates internal Phlo consumption with Rholang code execution that has no external transfers.
+          Note the orange self-referential link showing internal consumption.
+        </Typography>
+        <BlockCard 
+          block={mockBlock650}
+          deploys={mockDeploysWithInternalConsumption}
+          currentBlock={650}
+          totalBlocks={700}
+          onNavigate={handleNavigate}
+          hasInternalConsumption={true}
+        />
+      </div>
+
+      <Typography variant="h3" className="mb-4" style={{ color: 'white', background: '#333', padding: '10px', borderRadius: '5px' }}>
+        BlockCard - Block #651 - Mixed (Internal + External)
+      </Typography>
+      <div style={{ maxWidth: '1000px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px' }}>
+        <Typography variant="body" className="mb-4" style={{ color: 'yellow', background: '#222', padding: '10px', borderRadius: '5px' }}>
+          ⚠️ This block demonstrates both internal Phlo consumption AND external transfers.
+          Note both regular links and the orange self-referential link for internal consumption.
+        </Typography>
+        <BlockCard 
+          block={mockBlock651}
+          deploys={mockDeploysWithMixedPatterns}
+          currentBlock={651}
+          totalBlocks={700}
+          onNavigate={handleNavigate}
+          hasInternalConsumption={true}
         />
       </div>
 

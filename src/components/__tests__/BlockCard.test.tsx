@@ -2,7 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BlockCard from '../BlockCard';
 import { SankeyNode, SankeyLink } from '../SankeyDiagram';
-import { mockBlock, mockDeploys, mockDeploysWithPattern } from '../../test/mocks';
+import { 
+  mockBlock, 
+  mockDeploys, 
+  mockDeploysWithPattern,
+  mockDeploysWithInternalConsumption,
+  mockBlock650
+} from '../../test/mocks';
 
 // Mock the SankeyDiagram component
 vi.mock('../SankeyDiagram', () => ({
@@ -38,7 +44,7 @@ describe('BlockCard', () => {
   });
 
   it('should calculate and display statistics correctly', () => {
-    render(<BlockCard {...defaultProps} />);
+    render(<BlockCard {...defaultProps} hasInternalConsumption={false} />);
     
     // Check agents count
     const uniqueDeployers = new Set(mockDeploys.map(d => d.deployer)).size;
@@ -46,7 +52,9 @@ describe('BlockCard', () => {
     
     // Check total cost
     const totalCost = mockDeploys.reduce((sum, d) => sum + d.cost, 0);
-    expect(screen.getByText(String(totalCost))).toBeInTheDocument();
+    const totalCostElement = screen.getByText(String(totalCost));
+    expect(totalCostElement).toBeInTheDocument();
+    expect(totalCostElement.nextElementSibling?.textContent).toBe('Total cost');
     
     // Check total phlo
     const totalPhlo = mockDeploys.reduce((sum, d) => sum + d.phloLimit, 0);
@@ -55,6 +63,10 @@ describe('BlockCard', () => {
     // Check deploy count (using the closest label to disambiguate)
     const deployCount = screen.getAllByText(String(mockDeploys.length))[0];
     expect(deployCount.nextElementSibling).toHaveTextContent('Deploys');
+    
+    // Check that Internal Phlo label is not present when hasInternalConsumption is false
+    const internalPhloLabels = screen.queryAllByText('Internal Phlo');
+    expect(internalPhloLabels.length).toBe(0);
   });
 
   it('should call onNavigate with correct params when navigation buttons are clicked', () => {
@@ -78,7 +90,8 @@ describe('BlockCard', () => {
   });
 
   it('should prepare correct data for Sankey diagram with regular deploys', () => {
-    render(<BlockCard {...defaultProps} />);
+    // Explicitly set hasInternalConsumption to false for the test
+    render(<BlockCard {...defaultProps} hasInternalConsumption={false} />);
     
     const sankeyNodes = screen.getByTestId('sankey-nodes');
     const sankeyLinks = screen.getByTestId('sankey-links');
@@ -93,7 +106,7 @@ describe('BlockCard', () => {
     expect(nodes.find((n: SankeyNode) => n.id === 'deployer1')).toBeDefined();
     expect(nodes.find((n: SankeyNode) => n.id === 'deployer2')).toBeDefined();
     
-    // Verify links structure
+    // Verify links structure - no internal consumption links
     expect(links).toHaveLength(2); // One link for each unique deployer
     
     // Check links from deployer1
@@ -126,6 +139,10 @@ describe('BlockCard', () => {
       .reduce((sum, d) => sum + d.cost, 0);
     expect(deployer2Link?.value).toBe(deployer2Costs);
     
+    // Make sure there are no internal consumption links
+    const internalLinks = links.filter((l: SankeyLink) => l.isInternalConsumption);
+    expect(internalLinks.length).toBe(0);
+    
     // Verify that color properties are present
     nodes.forEach((node: SankeyNode) => {
       expect(node.color).toBeDefined();
@@ -137,7 +154,7 @@ describe('BlockCard', () => {
   });
   
   it('should handle block #0 correctly', () => {
-    render(<BlockCard {...defaultProps} currentBlock={0} />);
+    render(<BlockCard {...defaultProps} currentBlock={0} hasInternalConsumption={false} />);
     
     const sankeyNodes = screen.getByTestId('sankey-nodes');
     const sankeyLinks = screen.getByTestId('sankey-links');
@@ -159,7 +176,8 @@ describe('BlockCard', () => {
   it('should correctly handle deploys with transfer patterns', () => {
     render(<BlockCard {...{
       ...defaultProps,
-      deploys: mockDeploysWithPattern
+      deploys: mockDeploysWithPattern,
+      hasInternalConsumption: false
     }} />);
     
     const sankeyNodes = screen.getByTestId('sankey-nodes');
@@ -214,7 +232,7 @@ describe('BlockCard', () => {
   });
   
   it('should pass appropriate options to SankeyDiagram', () => {
-    render(<BlockCard {...defaultProps} />);
+    render(<BlockCard {...defaultProps} hasInternalConsumption={false} />);
     
     const sankeyOptions = screen.getByTestId('sankey-options');
     const options = JSON.parse(sankeyOptions.textContent || '{}');
@@ -224,5 +242,53 @@ describe('BlockCard', () => {
     
     // Check that link opacity is set to 0.2
     expect(options.link?.opacity).toBe(0.2);
+  });
+  
+  it('should handle internal Phlo consumption correctly', () => {
+    // Use the internal consumption specific mocks
+    render(<BlockCard 
+      block={mockBlock650} 
+      deploys={mockDeploysWithInternalConsumption}
+      currentBlock={650}
+      totalBlocks={700}
+      onNavigate={vi.fn()}
+      hasInternalConsumption={true}
+    />);
+    
+    const sankeyNodes = screen.getByTestId('sankey-nodes');
+    const sankeyLinks = screen.getByTestId('sankey-links');
+    
+    // Parse nodes and links data
+    const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+    const links = JSON.parse(sankeyLinks.textContent || '[]');
+    
+    // Verify block node has phloConsumed property
+    const blockNode = nodes.find((n: SankeyNode) => n.id === mockBlock650.blockHash);
+    expect(blockNode).toBeDefined();
+    expect(blockNode.phloConsumed).toBeDefined();
+    
+    // Verify presence of internal consumption link
+    const internalLinks = links.filter((l: SankeyLink) => l.isInternalConsumption === true);
+    expect(internalLinks.length).toBe(1);
+    
+    const internalLink = internalLinks[0];
+    expect(internalLink.source).toBe(mockBlock650.blockHash);
+    expect(internalLink.target).toBe(mockBlock650.blockHash);
+    expect(internalLink.value).toBe(2400); // Total internal consumption from both deploys
+    
+    // Verify Internal Phlo stat is shown
+    const internalPhloLabel = screen.getByText('Internal Phlo');
+    expect(internalPhloLabel).toBeInTheDocument();
+    
+    // Verify internal Phlo consumption value
+    const totalInternalPhlo = mockDeploysWithInternalConsumption.reduce((sum, d) => sum + d.cost, 0);
+    
+    // Use getAllByText to handle multiple instances and then find the one next to "Internal Phlo"
+    const internalPhloValues = screen.getAllByText(String(totalInternalPhlo));
+    const internalPhloValue = Array.from(internalPhloValues)
+      .find(element => element.nextElementSibling?.textContent === 'Internal Phlo');
+      
+    expect(internalPhloValue).toBeDefined();
+    expect(internalPhloValue?.nextElementSibling?.textContent).toBe('Internal Phlo');
   });
 });
