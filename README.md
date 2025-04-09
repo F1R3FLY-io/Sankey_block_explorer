@@ -10,15 +10,18 @@ A visualization tool for exploring blockchain data using Sankey diagrams. This a
 - Gradient-based styling with Tailwind CSS
 - Animated UI components with Framer Motion
 - Comprehensive test coverage
+- App Router-based navigation
+- HTTPS development mode for secure contexts
 
 ## Technologies
 
-- React with TypeScript
+- React 18 with TypeScript
 - Tailwind CSS for styling
 - Framer Motion for animations
 - D3.js for data visualization
 - Vitest for testing
 - Vite for build tooling
+- React Router for navigation
 - API proxy for CORS-free backend communication
 
 ## Getting Started
@@ -65,6 +68,14 @@ To preview the production build:
 pnpm preview
 ```
 
+### Testing
+
+Run the test suite:
+
+```bash
+pnpm test
+```
+
 ## Project Structure
 
 ```
@@ -99,6 +110,7 @@ pnpm preview
 │   ├── colorUtils.ts     # Color manipulation utilities
 │   └── dataFormatters.ts # Data formatting utilities
 ├── test/                 # Test utilities and mocks
+├── siteMetadata.ts       # Site configuration and navigation
 ├── App.tsx               # Main application component
 ├── App.css               # Application styles
 ├── index.css             # Global styles with Tailwind
@@ -110,10 +122,12 @@ The project follows a structured approach with:
 - **Component Organization**: UI components are organized by domain and purpose
 - **Tailwind Integration**: Uses Tailwind CSS for styling with custom gradients
 - **Animation Support**: Framer Motion for smooth animations
-- **Responsive Design**: Responsive layouts and components
+- **Responsive Design**: Responsive layouts and components with viewport hooks
 - **Design System**: Reusable UI components with consistent styling
 - **Testing**: Component tests with Vitest and React Testing Library
 - **TypeScript**: Type-safe development throughout the codebase
+- **React Router**: App Router-based navigation with clean route structure
+- **Site Configuration**: Centralized configuration in siteMetadata.ts
 
 ## API Proxy Configuration
 
@@ -125,6 +139,17 @@ The application includes a built-in API proxy to communicate with the backend bl
 - Configured in `vite.config.ts`
 
 This enables seamless communication with the backend without CORS errors, regardless of whether you're running in HTTP or HTTPS mode.
+
+## Current Development Status
+
+The project is currently in active development with the following recent updates:
+
+- Integrated UI component library with Tailwind CSS
+- Implemented responsive layouts for both mobile and desktop
+- Added HTTPS development mode for secure contexts
+- Fixed site metadata and navigation structure
+- Updated block explorer visualization components
+- Added comprehensive test coverage with Vitest
 
 ## License
 
