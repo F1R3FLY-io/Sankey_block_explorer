@@ -33,6 +33,9 @@ const BlockCard: React.FC<BlockCardProps> = ({
   const hasInternalConsumptionDetected = useMemo(() => {
     if (hasInternalConsumption !== undefined) return hasInternalConsumption;
     
+    // Skip auto-detection for standard views to avoid false positives
+    if (currentBlock < 100) return false;
+    
     // Check for deploys that don't have match patterns and do have cost
     const internalConsumptionDeploys = deploys.filter(deploy => {
       const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
@@ -40,7 +43,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
     });
     
     return internalConsumptionDeploys.length > 0;
-  }, [deploys, hasInternalConsumption]);
+  }, [deploys, hasInternalConsumption, currentBlock]);
 
   const addressColors = useMemo(() => {
     const colors = new Map();
