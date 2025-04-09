@@ -16,7 +16,7 @@ vi.mock('react-router-dom', () => ({
   createBrowserRouter: vi.fn(() => ({
     routes: []
   })),
-  RouterProvider: ({ router }: { router: any }) => (
+  RouterProvider: ({ router }: { router: { routes: unknown[] } }) => (
     <div data-testid="router-provider">
       <span>Router Provider Mock</span>
       <span data-testid="router-data">{JSON.stringify(router)}</span>

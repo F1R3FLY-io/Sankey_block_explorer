@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1744207664038" clover="3.2.0">
-  <project timestamp="1744207664039" name="All files">
-    <metrics statements="1838" coveredstatements="1515" conditionals="256" coveredconditionals="225" methods="66" coveredmethods="54" elements="2160" coveredelements="1794" complexity="0" loc="1838" ncloc="1838" packages="10" files="23" classes="23"/>
+<coverage generated="1744208489533" clover="3.2.0">
+  <project timestamp="1744208489533" name="All files">
+    <metrics statements="1838" coveredstatements="1524" conditionals="255" coveredconditionals="225" methods="65" coveredmethods="54" elements="2158" coveredelements="1803" complexity="0" loc="1838" ncloc="1838" packages="10" files="23" classes="23"/>
     <package name="Sankey_block_explorer">
       <metrics statements="50" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
       <file name="postcss.config.js" path="/Users/jeff/src/Sankey_block_explorer/postcss.config.js">
@@ -62,7 +62,7 @@
       </file>
     </package>
     <package name="Sankey_block_explorer.src">
-      <metrics statements="161" coveredstatements="150" conditionals="20" coveredconditionals="18" methods="4" coveredmethods="2"/>
+      <metrics statements="161" coveredstatements="159" conditionals="19" coveredconditionals="18" methods="3" coveredmethods="2"/>
       <file name="App.tsx" path="/Users/jeff/src/Sankey_block_explorer/src/App.tsx">
         <metrics statements="108" coveredstatements="106" conditionals="18" coveredconditionals="17" methods="2" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
@@ -175,16 +175,16 @@
         <line num="135" count="1" type="stmt"/>
       </file>
       <file name="main.tsx" path="/Users/jeff/src/Sankey_block_explorer/src/main.tsx">
-        <metrics statements="9" coveredstatements="0" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="0" type="cond" truecount="0" falsecount="1"/>
-        <line num="2" count="0" type="stmt"/>
-        <line num="3" count="0" type="stmt"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="6" count="0" type="stmt"/>
-        <line num="7" count="0" type="stmt"/>
-        <line num="8" count="0" type="stmt"/>
-        <line num="9" count="0" type="stmt"/>
-        <line num="10" count="0" type="stmt"/>
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
       </file>
       <file name="siteMetada.ts" path="/Users/jeff/src/Sankey_block_explorer/src/siteMetada.ts">
         <metrics statements="0" coveredstatements="0" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>

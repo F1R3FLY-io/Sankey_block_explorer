@@ -31,7 +31,7 @@ describe('blockService', () => {
       
       // Instead of using mockResolvedValueOnce, use the vi.mocked pattern with returnValue
       vi.spyOn(axios, 'get').mockImplementation(() => 
-        Promise.resolve({ data: mockBlocks } as any)
+        Promise.resolve({ data: mockBlocks } as { data: Block[] })
       );
       
       const result = await getBlocks();
@@ -62,7 +62,7 @@ describe('blockService', () => {
       };
       
       vi.spyOn(axios, 'get').mockImplementation(() => 
-        Promise.resolve({ data: mockBlockWithDeploys } as any)
+        Promise.resolve({ data: mockBlockWithDeploys } as { data: BlockWithDeploys })
       );
       
       const result = await getBlockByHash(blockHash);
@@ -109,19 +109,19 @@ describe('blockService', () => {
       // Setup mock responses
       vi.spyOn(axios, 'get').mockImplementation((url: string) => {
         if (url === `${API_URL}/blocks`) {
-          return Promise.resolve({ data: [block1, block2, block3] } as any);
+          return Promise.resolve({ data: [block1, block2, block3] } as { data: Block[] });
         } else if (url === `${API_URL}/block/hash1`) {
           return Promise.resolve({ 
             data: { blockInfo: block1, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         } else if (url === `${API_URL}/block/hash2`) {
           return Promise.resolve({ 
             data: { blockInfo: block2, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         } else if (url === `${API_URL}/block/hash3`) {
           return Promise.resolve({ 
             data: { blockInfo: block3, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         }
         return Promise.reject(new Error('Block not found'));
       });
@@ -145,11 +145,11 @@ describe('blockService', () => {
       // Mock axios for different URLs
       vi.spyOn(axios, 'get').mockImplementation((url: string) => {
         if (url === `${API_URL}/blocks`) {
-          return Promise.resolve({ data: [block1] } as any);
+          return Promise.resolve({ data: [block1] } as { data: Block[] });
         } else if (url === `${API_URL}/block/hash1`) {
           return Promise.resolve({ 
             data: { blockInfo: block1, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         } else if (url === `${API_URL}/block/hash-error`) {
           return Promise.reject(new Error('Block not found'));
         }
@@ -157,7 +157,7 @@ describe('blockService', () => {
       });
       
       // Spy on console.error to verify it's called
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { /* empty function */ });
       
       const result = await analyzeBlockChain();
       
@@ -199,19 +199,19 @@ describe('blockService', () => {
       // Setup mock responses
       vi.spyOn(axios, 'get').mockImplementation((url: string) => {
         if (url === `${API_URL}/blocks`) {
-          return Promise.resolve({ data: [block1, block2, block3] } as any);
+          return Promise.resolve({ data: [block1, block2, block3] } as { data: Block[] });
         } else if (url === `${API_URL}/block/hash1`) {
           return Promise.resolve({ 
             data: { blockInfo: block1, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         } else if (url === `${API_URL}/block/hash2`) {
           return Promise.resolve({ 
             data: { blockInfo: block2, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         } else if (url === `${API_URL}/block/hash3`) {
           return Promise.resolve({ 
             data: { blockInfo: block3, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         }
         return Promise.reject(new Error('Block not found'));
       });
@@ -263,15 +263,15 @@ describe('blockService', () => {
       // Mock responses
       vi.spyOn(axios, 'get').mockImplementation((url: string) => {
         if (url === `${API_URL}/blocks`) {
-          return Promise.resolve({ data: [block1, block2] } as any);
+          return Promise.resolve({ data: [block1, block2] } as { data: Block[] });
         } else if (url === `${API_URL}/block/hash1`) {
           return Promise.resolve({ 
             data: { blockInfo: block1, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         } else if (url === `${API_URL}/block/hash2`) {
           return Promise.resolve({ 
             data: { blockInfo: block2, deploys: mockDeploys } 
-          } as any);
+          } as { data: BlockWithDeploys });
         } else if (url === `${API_URL}/block/hash-error`) {
           return Promise.reject(new Error('Block not found'));
         }
@@ -279,7 +279,7 @@ describe('blockService', () => {
       });
       
       // Spy on console.error to verify it's called
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { /* empty function */ });
       
       const result = await getBlockchainSankeyData();
       
