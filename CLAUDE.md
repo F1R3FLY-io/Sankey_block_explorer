@@ -24,7 +24,7 @@
 - **Component Structure**: Functional components with React hooks.
 - **Naming**: PascalCase for components, camelCase for functions/variables.
 - **Error Handling**: Log errors with proper context, avoid console.log in production.
-- **CSS**: Use Tailwind CSS for styling with proper responsive classes.
+- **CSS**: Use Tailwind CSS for styling with proper responsive classes. DO NOT user inline JavaScript styling if possible.
 - Follow existing component patterns with clear props interfaces.
 - Follow existing error handling patterns with optional chaining and fallbacks.
 - When adding source code or new files, enhance, update, and provide new unit tests using the existing Vitest patterns.
