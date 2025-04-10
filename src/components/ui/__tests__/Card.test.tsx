@@ -41,8 +41,9 @@ describe('Card', () => {
     const { container } = render(<Card>Basic Card</Card>);
     const cardElement = container.firstChild;
     expect(cardElement).toHaveClass('rounded-lg');
-    expect(cardElement).toHaveClass('shadow-md');
     expect(cardElement).toHaveClass('overflow-hidden');
+    // The component now uses a custom shadow style with CSS variables
+    expect(cardElement).toHaveClass('shadow-[0_0_0_1px_rgba(255,255,255,0.1)]');
   });
 
   it('applies custom style prop correctly', () => {

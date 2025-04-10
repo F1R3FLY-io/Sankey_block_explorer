@@ -109,15 +109,11 @@ describe('MainLayout', () => {
     render(<RouterProvider router={router} />);
     
     const explorerLink = screen.getByText('Explorer');
-    expect(explorerLink).toHaveStyle({
-      backgroundColor: 'rgb(0, 102, 215)'
-    });
+    expect(explorerLink).toHaveClass('bg-blue-600');
     
     // Other links should not be highlighted
     const blocksLink = screen.getByText('Blocks');
-    expect(blocksLink).not.toHaveStyle({
-      backgroundColor: 'rgb(0, 102, 215)'
-    });
+    expect(blocksLink).not.toHaveClass('bg-blue-600');
   });
 
   it('renders children content', () => {

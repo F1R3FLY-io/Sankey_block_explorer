@@ -62,31 +62,23 @@ describe('DemoLayout', () => {
     
     // First section button should have active style
     const section1Button = screen.getByText('Section 1');
-    expect(section1Button).toHaveStyle({
-      background: 'rgba(0, 122, 255, 0.1)',
-      color: 'rgb(0, 122, 255)'
-    });
+    expect(section1Button).toHaveClass('bg-blue-500/10');
+    expect(section1Button).toHaveClass('text-blue-500');
     
     // Other section buttons should have inactive style
     const section2Button = screen.getByText('Section 2');
-    expect(section2Button).toHaveStyle({
-      background: 'transparent',
-      color: 'rgb(157, 167, 177)'
-    });
+    expect(section2Button).toHaveClass('bg-transparent');
+    expect(section2Button).toHaveClass('text-neutral-400');
     
     // Click on section 2 button
     fireEvent.click(section2Button);
     
     // Now section 2 button should have active style and section 1 button should not
-    expect(section2Button).toHaveStyle({
-      background: 'rgba(0, 122, 255, 0.1)',
-      color: 'rgb(0, 122, 255)'
-    });
+    expect(section2Button).toHaveClass('bg-blue-500/10');
+    expect(section2Button).toHaveClass('text-blue-500');
     
-    expect(section1Button).toHaveStyle({
-      background: 'transparent',
-      color: 'rgb(157, 167, 177)'
-    });
+    expect(section1Button).toHaveClass('bg-transparent');
+    expect(section1Button).toHaveClass('text-neutral-400');
   });
 
   it('handles empty sections array gracefully', () => {

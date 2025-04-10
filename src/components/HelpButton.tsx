@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import Button from './ui/Button';
 import Typography from './ui/Typography';
 import Card from './ui/Card';
 
-const HelpButton: React.FC = () => {
+interface HelpButtonProps {
+  className?: string;
+  style?: CSSProperties;
+}
+
+const HelpButton: React.FC<HelpButtonProps> = ({ className, style }) => {
   const [showHelp, setShowHelp] = useState(false);
 
   const toggleHelp = () => setShowHelp(!showHelp);
@@ -14,7 +19,8 @@ const HelpButton: React.FC = () => {
         variant="outline" 
         size="sm" 
         onClick={toggleHelp}
-        className="fixed bottom-4 right-4 z-50 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+        className={`fixed bottom-4 right-4 z-50 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white ${className || ''}`}
+        style={style}
       >
         Help (?)
       </Button>
