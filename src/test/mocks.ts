@@ -176,7 +176,7 @@ export const mockBlock: Block = {
   totalPhlo: 3100
 };
 
-// Block #651 referenced in the spec - internal consumption only
+// Block #650 referenced in the spec - internal consumption only
 export const mockBlock650: Block = {
   blockHash: '0x9b559a4ebffb9052cf7a89a6e59a3b166a3dbbe6e8e5942c3d3a9e94efb3e4e8',
   sender: 'validator1',
@@ -189,7 +189,7 @@ export const mockBlock650: Block = {
   timestamp: 1649086650000,
   headerExtraBytes: '',
   parentsHashList: ['parent3', 'parent4'],
-  blockNumber: 651, // Number shown in the spec image
+  blockNumber: 650, // Number shown in the spec
   preStateHash: 'preState650',
   postStateHash: 'postState650',
   bodyExtraBytes: '',
