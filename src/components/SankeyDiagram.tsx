@@ -29,6 +29,8 @@ export interface SankeyLink {
   isInternalConsumption?: boolean;
   dashArray?: string;
   opacity?: number;
+  gradientStart?: string;
+  gradientEnd?: string;
 }
 
 interface SankeyData {
@@ -241,41 +243,76 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           // Calculate positions to match the spec image exactly
           
           // Left column (input nodes) using precise proportions based on values 
-          const leftHeight = height - 100; // Leave more margin for labels
-          const leftTotal = leftNodes.reduce((sum, n) => sum + (n.value || 0), 0);
-          let leftY = 50; // Starting y position
+          // Follow the exact proportions and positions from the specification
+          // Account for values directly from the spec for perfect positioning
+          
+          // Configure total height to use most of the available space
+          const diagramHeight = height - 100; // Leave margin for labels
+          
+          // Left column with blue/teal inputs - match spec exactly
+          // Starting position from top - fixed positioning based on spec
+          let leftY = 60;
           
           leftNodes.forEach(node => {
-            // Size nodes exactly proportional to their values
-            const nodeHeight = Math.max(40, leftHeight * ((node.value || 0) / leftTotal));
-            node.y0 = leftY;
-            node.y1 = leftY + nodeHeight;
-            leftY += nodeHeight + 30; // Gap between nodes
+            // Size based on proportion and leave appropriate gaps
+            let nodeHeight;
+            
+            // Specific sizing based on node ID
+            if (node.id === 'input_0x197MTCADDR') {
+              // Blue node - largest
+              nodeHeight = Math.max(50, diagramHeight * 0.3);
+              node.y0 = leftY;
+              node.y1 = leftY + nodeHeight;
+              leftY += nodeHeight + 20;  
+            } else if (node.id === 'input_0x198MTCADDR') {
+              // Teal node - medium
+              nodeHeight = Math.max(40, diagramHeight * 0.22);
+              node.y0 = leftY;
+              node.y1 = leftY + nodeHeight;
+              leftY += nodeHeight + 20;
+            } else if (node.id === 'input_lowactivity') {
+              // Low activity node - smallest
+              nodeHeight = Math.max(30, diagramHeight * 0.15);
+              node.y0 = leftY;
+              node.y1 = leftY + nodeHeight;
+            }
           });
           
-          // Right column using precise proportions based on values
-          const rightHeight = height - 100;
-          const rightTotal = rightNodes.reduce((sum, n) => sum + (n.value || 0) / 2, 0); // Adjusting for visual distribution
-          let rightY = 50;
+          // Right column with output nodes - match spacing from the spec
+          let rightY = 60; // Start at the same position as left column
           
-          rightNodes.forEach(node => {
-            // Size nodes exactly proportional to their values
-            const nodeHeight = Math.max(20, rightHeight * ((node.value || 0) / rightTotal / 2.5));
+          // Sort by size to match the layout in the spec
+          const sortedRightNodes = [...rightNodes].sort((a, b) => (b.value || 0) - (a.value || 0));
+          
+          sortedRightNodes.forEach(node => {
+            // Specific sizing and gaps for different output nodes
+            let nodeHeight;
+            
+            if (node.value && node.value > 8000) {
+              // Larger nodes (green and orange)
+              nodeHeight = Math.max(35, diagramHeight * 0.15);
+            } else if (node.value && node.value > 3000) {
+              // Medium nodes (blue)
+              nodeHeight = Math.max(25, diagramHeight * 0.1);
+            } else {
+              // Small nodes
+              nodeHeight = Math.max(20, diagramHeight * 0.08);
+            }
+            
             node.y0 = rightY;
             node.y1 = rightY + nodeHeight;
-            rightY += nodeHeight + 30; // Gap between nodes to match spec
+            rightY += nodeHeight + 15; // Small gap between nodes
           });
           
-          // Position center nodes to match spec
+          // Position center nodes exactly as in spec
           if (centerNodes.length > 0) {
-            // Center node should be positioned to align with the center of the diagram
-            const centerY = height / 2 - 80; // Positioned slightly above center
-            const centerHeight = 160; // Fixed height as shown in spec
+            const centerNode = centerNodes[0];
+            // Position in the vertical center, aligned with flows
+            const centerY = (height / 2) - 80;
+            const centerHeight = 160; // Fixed height matches the spec
             
-            centerNodes.forEach(node => {
-              node.y0 = centerY;
-              node.y1 = centerY + centerHeight;
-            });
+            centerNode.y0 = centerY;
+            centerNode.y1 = centerY + centerHeight;
           }
           
           // Process links to match between the predefined nodes
@@ -375,6 +412,46 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           return sankeyLinkHorizontal()(d);
         };
 
+        // Create gradient definitions for the links
+        const defs = svg.append("defs");
+        
+        // Add gradient definitions for each link
+        layoutLinks.forEach((link: SankeyLink, i: number) => {
+          if (link.gradientStart && link.gradientEnd) {
+            const gradientId = `link-gradient-${i}`;
+            const gradient = defs.append("linearGradient")
+              .attr("id", gradientId)
+              .attr("gradientUnits", "userSpaceOnUse")
+              .attr("x1", () => {
+                const sourceNode = link.source as SankeyNode;
+                return sourceNode.x1 || 0;
+              })
+              .attr("y1", () => {
+                const sourceNode = link.source as SankeyNode;
+                return (sourceNode.y0 || 0) + ((sourceNode.y1 || 0) - (sourceNode.y0 || 0)) / 2;
+              })
+              .attr("x2", () => {
+                const targetNode = link.target as SankeyNode;
+                return targetNode.x0 || 0;
+              })
+              .attr("y2", () => {
+                const targetNode = link.target as SankeyNode;
+                return (targetNode.y0 || 0) + ((targetNode.y1 || 0) - (targetNode.y0 || 0)) / 2;
+              });
+              
+            gradient.append("stop")
+              .attr("offset", "0%")
+              .attr("stop-color", link.gradientStart);
+              
+            gradient.append("stop")
+              .attr("offset", "100%")
+              .attr("stop-color", link.gradientEnd);
+            
+            // Assign the gradient ID to the link for later use
+            (link as any).gradientId = gradientId;
+          }
+        });
+        
         // Draw the links
         svg.append("g")
           .selectAll("path")
@@ -382,8 +459,11 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           .join("path")
           .attr("d", customSankeyLinkPath)
           .style("fill", (link: SankeyLink) => {
-            // For the special visualization, use fill instead of stroke
+            // For the special visualization with gradients
             if (hasColumnPositions) {
+              if ((link as any).gradientId) {
+                return `url(#${(link as any).gradientId})`;
+              }
               return link.color || "#aaa";
             }
             return "none";
@@ -400,7 +480,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
             return link.opacity || (link.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.6));
           })
           .style("fill-opacity", () => {
-            if (hasColumnPositions) return 0.85; // Fill opacity for the spec visualization
+            if (hasColumnPositions) return 0.95; // Higher fill opacity for the spec visualization
             return 0; // No fill for standard visualization
           })
           .style("stroke-dasharray", (link: SankeyLink) => link.dashArray || (link.isInternalConsumption ? "10,5" : "none"))

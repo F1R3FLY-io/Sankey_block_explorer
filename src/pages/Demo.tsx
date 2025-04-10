@@ -95,21 +95,24 @@ const BlockCardSection = () => {
       </div>
 
       <Typography variant="h3" className="mb-4 text-white">
-        BlockCard - Block #650 - Internal Phlo Consumption
+        Block #650 - Internal Phlo Consumption
       </Typography>
       <Typography variant="body" className="mb-4 text-yellow-500 italic">
-        This block demonstrates internal Phlo consumption with Rholang code execution. This visualization shows flow from input nodes (left)
-        through a processing pipeline to output nodes (right), exactly matching the specification.
+        This block demonstrates internal Phlo consumption with Rholang code execution. 
+        The visualization shows flows from input nodes (left) through the execution pipeline to output nodes (right).
       </Typography>
-      <div className="max-w-[1000px]">
-        <BlockCard
-          block={mockBlock650}
-          deploys={mockDeploysWithInternalConsumption}
-          currentBlock={650}
-          totalBlocks={700}
-          onNavigate={handleNavigate}
-          hasInternalConsumption={true}
-        />
+      {/* Use a larger container with fixed height to match spec image exactly */}
+      <div className="w-full max-w-[1024px] border border-gray-700 rounded-lg bg-[#1a1a24] overflow-hidden">
+        <div className="h-[600px]">
+          <BlockCard
+            block={mockBlock650}
+            deploys={mockDeploysWithInternalConsumption}
+            currentBlock={650} /* Exact block number from the spec image */
+            totalBlocks={871}
+            onNavigate={handleNavigate}
+            hasInternalConsumption={true}
+          />
+        </div>
       </div>
 
       <Typography variant="h3" className="mb-4 text-white">
