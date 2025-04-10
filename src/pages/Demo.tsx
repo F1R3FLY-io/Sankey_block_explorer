@@ -94,20 +94,20 @@ const BlockCardSection = () => {
         />
       </div>
 
-      <Typography variant="h3" className="mb-4" style={{ color: 'white', background: '#333', padding: '10px', borderRadius: '5px' }}>
-        BlockCard - Block #650 - Internal Phlo Consumption Only
+      <Typography variant="h3" className="mb-4" style={{ color: 'white', background: '#333', padding: '10px', borderRadius: '5px', boxShadow: '0 4px 8px rgba(0,0,0,0.5)' }}>
+        BlockCard - Block #651 - Internal Phlo Consumption Flow (Based on Spec)
       </Typography>
-      <div style={{ maxWidth: '1000px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px', backgroundColor: 'rgba(20, 20, 30, 0.7)' }}>
+      <div style={{ maxWidth: '1200px', border: '2px solid #FFA500', padding: '15px', borderRadius: '10px', marginBottom: '20px', backgroundColor: 'rgba(20, 20, 30, 0.7)', boxShadow: '0 4px 12px rgba(255, 165, 0, 0.3)' }}>
         <Typography variant="body" className="mb-4" style={{ color: 'yellow', background: '#222', padding: '10px', borderRadius: '5px' }}>
-          ⚠️ This block demonstrates internal Phlo consumption with Rholang code execution that has no external transfers.
-          Note the orange self-referential link showing internal consumption.
+          ⚠️ This block demonstrates internal Phlo consumption with Rholang code execution. This visualization shows flow from input nodes (left)
+          through a processing pipeline to output nodes (right), exactly matching the specification.
         </Typography>
-        {/* Add explicit height to ensure visualization renders */}
-        <div style={{ height: '600px' }}>
+        {/* Add explicit height to ensure visualization renders exactly as in the spec */}
+        <div style={{ height: '600px', maxWidth: '1200px' }}>
           <BlockCard 
             block={mockBlock650}
             deploys={mockDeploysWithInternalConsumption}
-            currentBlock={650}
+            currentBlock={650} /* Fixed to match the spec block number */
             totalBlocks={700}
             onNavigate={handleNavigate}
             hasInternalConsumption={true}

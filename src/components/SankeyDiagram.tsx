@@ -14,6 +14,8 @@ export interface SankeyNode extends d3.SimulationNodeDatum {
   y1?: number;
   index?: number;
   width?: number;
+  internalConsumption?: boolean;
+  columnPosition?: 'left' | 'right' | 'center';
 }
 
 export interface SankeyLink {
@@ -176,24 +178,139 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
         .nodePadding(20)
         .extent([[1, 1], [width - 1, height - 1]]);
 
+      // Check if this is a special internal phlo consumption diagram (with left/right/center positions)
+      const hasColumnPositions = nodes.some(node => node.columnPosition);
+      
       // Prepare the data
       const sankeyData: SankeyData = {
-        nodes: nodes.map(node => ({
-          ...node,
-          index: nodeMap.get(node.id)
-        })),
+        nodes: nodes.map(node => {
+          // For nodes with explicit column positions, set their positions directly
+          if (hasColumnPositions && node.columnPosition) {
+            const nodeWidth = 15;
+            // Set up x positions based on column position
+            let x0, x1;
+            if (node.columnPosition === 'left') {
+              x0 = 1;
+              x1 = x0 + nodeWidth;
+            } else if (node.columnPosition === 'right') {
+              x0 = width - nodeWidth - 1;
+              x1 = width - 1;
+            } else { // center
+              x0 = (width - nodeWidth) / 2;
+              x1 = x0 + nodeWidth;
+            }
+            
+            return {
+              ...node,
+              index: nodeMap.get(node.id),
+              x0,
+              x1
+            };
+          }
+          
+          return {
+            ...node,
+            index: nodeMap.get(node.id)
+          };
+        }),
         links: links.map(link => ({
           source: nodeMap.get(typeof link.source === 'object' ? link.source.id : String(link.source))!,
           target: nodeMap.get(typeof link.target === 'object' ? link.target.id : String(link.target))!,
           value: link.value,
           color: link.color,
+          dashArray: link.dashArray,
+          opacity: link.opacity,
           details: link.details
         }))
       };
 
       try {
-        // Generate the layout
-        const { nodes: layoutNodes, links: layoutLinks } = sankeyLayout(sankeyData);
+        // For internal phlo consumption visualization with preset positions,
+        // we need to customize the layout process
+        let layoutNodes: SankeyNode[], layoutLinks: SankeyLink[];
+        
+        if (hasColumnPositions) {
+          // For nodes with explicit column positions, we'll calculate y positions manually
+          layoutNodes = [...sankeyData.nodes] as SankeyNode[];
+          
+          // Set initial y positions for explicitly positioned nodes (left column)
+          const leftNodes = layoutNodes.filter(n => n.columnPosition === 'left');
+          const rightNodes = layoutNodes.filter(n => n.columnPosition === 'right');
+          const centerNodes = layoutNodes.filter(n => n.columnPosition === 'center');
+          
+          // Calculate positions to match the spec image exactly
+          
+          // Left column (input nodes) using precise proportions based on values 
+          const leftHeight = height - 60; // Leave more margin for labels
+          const leftTotal = leftNodes.reduce((sum, n) => sum + (n.value || 0), 0);
+          let leftY = 30; // Starting y position
+          
+          leftNodes.forEach(node => {
+            // Size nodes exactly proportional to their values
+            const nodeHeight = Math.max(25, leftHeight * ((node.value || 0) / leftTotal));
+            node.y0 = leftY;
+            node.y1 = leftY + nodeHeight;
+            leftY += nodeHeight + 10; // Gap between nodes
+          });
+          
+          // Right column using precise proportions based on values
+          const rightHeight = height - 60;
+          const rightTotal = rightNodes.reduce((sum, n) => sum + (n.value || 0), 0);
+          let rightY = 30;
+          
+          rightNodes.forEach(node => {
+            // Size nodes exactly proportional to their values
+            const nodeHeight = Math.max(20, rightHeight * ((node.value || 0) / rightTotal));
+            node.y0 = rightY;
+            node.y1 = rightY + nodeHeight;
+            rightY += nodeHeight + 10; // Gap between nodes
+          });
+          
+          // Position center nodes to match spec
+          if (centerNodes.length > 0) {
+            // Center node should be positioned to align with the center of the diagram
+            const centerY = height / 2 - 80; // Positioned slightly above center
+            const centerHeight = 160; // Fixed height as shown in spec
+            
+            centerNodes.forEach(node => {
+              node.y0 = centerY;
+              node.y1 = centerY + centerHeight;
+            });
+          }
+          
+          // Process links to match between the predefined nodes
+          layoutLinks = links.map(link => {
+            const sourceNode = layoutNodes.find((n: SankeyNode) => 
+              n.id === (typeof link.source === 'object' ? link.source.id : String(link.source))
+            );
+            const targetNode = layoutNodes.find((n: SankeyNode) => 
+              n.id === (typeof link.target === 'object' ? link.target.id : String(link.target))
+            );
+            
+            if (!sourceNode || !targetNode) {
+              console.warn('Source or target node not found', { link, sourceNode, targetNode });
+              // Return a placeholder to avoid errors
+              return {
+                source: layoutNodes[0],
+                target: layoutNodes[0],
+                value: 0,
+                width: 0
+              } as SankeyLink;
+            }
+            
+            return {
+              ...link,
+              source: sourceNode,
+              target: targetNode,
+              width: Math.max(1, 2 * Math.sqrt(link.value || 1))
+            } as SankeyLink;
+          });
+        } else {
+          // Use standard sankey layout for everything else
+          const result = sankeyLayout(sankeyData);
+          layoutNodes = result.nodes;
+          layoutLinks = result.links as any; // Type cast to make TypeScript happy
+        }
 
         // Draw the links
         svg.append("g")
@@ -202,10 +319,17 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
           .join("path")
           .attr("d", sankeyLinkHorizontal())
           .style("fill", "none")
-          .style("stroke-opacity", (d: SankeyLink) => d.opacity || (d.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.3)))
+          .style("stroke-opacity", (d: SankeyLink) => d.opacity || (d.isInternalConsumption ? 0.9 : (options.link?.opacity || 0.6)))
           .style("stroke-dasharray", (d: SankeyLink) => d.dashArray || (d.isInternalConsumption ? "10,5" : "none"))
           .style("stroke", (d: SankeyLink) => d.color || "#aaa")
-          .style("stroke-width", (d) => d.isInternalConsumption ? Math.max(3, (d.width || 0) * 1.5) : Math.max(1, d.width || 0))
+          .style("stroke-width", (d) => {
+            // For the special Block #651 visualization with preset column positions
+            // Use thicker strokes that match the spec
+            if (hasColumnPositions) {
+              return Math.max(4, (d.width || 0) * 1.8);
+            }
+            return d.isInternalConsumption ? Math.max(3, (d.width || 0) * 1.5) : Math.max(1, d.width || 0);
+          })
           .attr("x", (d) => {
             const sourceNode = d.source as SankeyNode;
             const targetNode = d.target as SankeyNode;
@@ -282,14 +406,91 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
             return (parentData.x0 || 0) < width / 2 ? "start" : "end";
           })
           .style("fill", "#ffffff")
-          .style("font-size", "12px")
+          .style("font-size", function(d) {
+            // Customized font size for the Phlo visualization
+            const textLength = d.length;
+            
+            try {
+              // Safely get the parent node's data with proper type casting
+              const element = this as SVGTextElement;
+              const parentNode = element.parentNode as Element;
+              if (!parentNode) return "12px"; 
+              
+              const node = d3.select(parentNode).datum() as SankeyNode;
+              
+              // For spec visualization, use slightly different font sizes
+              if (node?.columnPosition) {
+                // Larger font for addresses, smaller for values
+                if (d.startsWith('0x') || d.includes('Low activity')) {
+                  return "12px";
+                } else {
+                  return "11px";
+                }
+              }
+            } catch (e) {
+              // Fallback if there's any error
+              console.warn('Error setting font size:', e);
+            }
+            
+            return textLength > 15 ? "10px" : "12px";
+          })
           .style("font-weight", "bold")
           .style("paint-order", "stroke")
           .style("stroke", "#000000")
           .style("stroke-width", "2px")
           .style("stroke-linecap", "butt")
           .style("stroke-linejoin", "miter")
-          .text(d => d);
+          .text(d => d)
+          // Add a second label for the values when following the spec's appearance
+          .each(function() {
+            try {
+              // Safely get the parent node with proper type casting
+              const element = this as SVGTextElement;
+              const parentNode = element.parentNode as Element;
+              if (!parentNode) return;
+              
+              const nodeElement = d3.select(parentNode);
+              const node = nodeElement.datum() as SankeyNode;
+              
+              // Only add value labels for nodes with columnPosition (spec visualization)
+              if (node?.columnPosition && node.value) {
+                // Position differently based on column
+                let xOffset = 0;
+                let yOffset = 20; // Default below the name
+                
+                if (node.columnPosition === 'left') {
+                  xOffset = 0;
+                } else if (node.columnPosition === 'right') {
+                  xOffset = 0;
+                } else if (node.columnPosition === 'center') {
+                  xOffset = 0;
+                  yOffset = 25;
+                }
+                
+                // Format the value with commas
+                const formattedValue = node.value.toLocaleString();
+                
+                nodeElement.append("text")
+                  .attr("x", xOffset)
+                  .attr("y", yOffset)
+                  .attr("dy", "0.35em")
+                  .attr("text-anchor", node.columnPosition === 'left' ? "end" : 
+                                      node.columnPosition === 'right' ? "start" : "middle")
+                  .style("fill", "#ffffff")
+                  .style("font-size", "11px")
+                  .style("font-weight", "normal")
+                  .style("paint-order", "stroke")
+                  .style("stroke", "#000000")
+                  .style("stroke-width", "1px")
+                  .style("stroke-linecap", "butt")
+                  .style("stroke-linejoin", "miter")
+                  .text(formattedValue);
+              }
+            } catch (e) {
+              // Fallback if there's any error
+              console.warn('Error setting value label:', e);
+            }
+          });
 
       } catch (error) {
         console.error('Error generating Sankey diagram:', error);

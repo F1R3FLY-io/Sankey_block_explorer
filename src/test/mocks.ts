@@ -84,10 +84,10 @@ export const mockDeploysWithPattern: Deploy[] = [
   }
 ];
 
-// Mock deploys for internal Phlo consumption - Rholang code execution
+// Mock deploys for internal Phlo consumption - first set for exact spec visualization
 export const mockDeploysWithInternalConsumption: Deploy[] = [
   {
-    deployer: 'deployer1',
+    deployer: '0x197MTCADDR', // Using exact addresses from the spec
     term: 'new x in { x!(10) | for(y <- x) { y * 2 } }', // Rholang code that only consumes Phlo
     timestamp: 1649086000000,
     sig: 'sig4',
@@ -95,12 +95,12 @@ export const mockDeploysWithInternalConsumption: Deploy[] = [
     phloPrice: 100,
     phloLimit: 2000,
     validAfterBlockNumber: 650,
-    cost: 1500, // Internal consumption (cost without external transfers)
+    cost: 1200, // Match Phlo value from spec
     errored: false,
     systemDeployError: ''
   },
   {
-    deployer: 'deployer2',
+    deployer: '0x198MTCADDR', // Using exact addresses from the spec
     term: 'for(@x <- @"registry") { @"output"!(x) }', // Rholang code that only reads registry
     timestamp: 1649086100000,
     sig: 'sig5',
@@ -108,7 +108,7 @@ export const mockDeploysWithInternalConsumption: Deploy[] = [
     phloPrice: 120,
     phloLimit: 1800,
     validAfterBlockNumber: 650,
-    cost: 900, // Internal consumption
+    cost: 1200, // Match Phlo value from spec
     errored: false,
     systemDeployError: ''
   }
@@ -178,7 +178,7 @@ export const mockBlock: Block = {
 
 // Block #650 referenced in the spec - internal consumption only
 export const mockBlock650: Block = {
-  blockHash: 'hash650',
+  blockHash: '0x9b559a4ebffb9052cf7a89a6e59a3b166a3dbbe6e8e5942c3d3a9e94efb3e4e8',
   sender: 'validator1',
   seqNum: 15,
   sig: 'blockSig650',
@@ -189,7 +189,7 @@ export const mockBlock650: Block = {
   timestamp: 1649086650000,
   headerExtraBytes: '',
   parentsHashList: ['parent3', 'parent4'],
-  blockNumber: 650,
+  blockNumber: 651, // Number shown in the spec image
   preStateHash: 'preState650',
   postStateHash: 'postState650',
   bodyExtraBytes: '',
@@ -198,15 +198,15 @@ export const mockBlock650: Block = {
     { validator: 'validator3', stake: 300 }
   ],
   blockSize: '2048',
-  deployCount: 2,
+  deployCount: 91, // Values from the spec
   faultTolerance: 0.7,
   justifications: [
     { validator: 'validator1', latestBlockHash: 'latestHash3' },
     { validator: 'validator3', latestBlockHash: 'latestHash4' }
   ],
   rejectedDeploys: [],
-  totalCost: 2400, // Total internal Phlo consumption
-  totalPhlo: 3800
+  totalCost: 892430, // Values from the spec
+  totalPhlo: 14201890 // Values from the spec
 };
 
 // Block #651 referenced in the spec - mixed (internal consumption and transfer)
