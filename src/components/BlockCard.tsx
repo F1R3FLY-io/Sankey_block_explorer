@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Block, Deploy } from '../services/blockService.ts';
-import SankeyDiagram from './SankeyDiagram.tsx';
-import type { SankeyNode, SankeyLink } from './SankeyDiagram.tsx';
+import SankeyDiagram from './visualizations/SankeyDiagram';
+import type { SankeyNode, SankeyLink } from './visualizations/SankeyTypes';
 import HelpButton from './HelpButton.tsx';
 // import { siteConfig } from '../siteMetadata'; // Using hardcoded colors from PDF spec
 
@@ -121,8 +121,8 @@ const BlockCard: React.FC<BlockCardProps> = ({
       color: addressColors.get(deployer) || generateRandomColor(),
       details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
     }));
-  } else if (hasInternalConsumptionDetected && (currentBlock === 650 || block.blockNumber === 650 || currentBlock === 651 || block.blockNumber === 651)) {
-    // Internal Phlo Consumption implementation to match the spec image exactly
+  } else if (hasInternalConsumptionDetected && (currentBlock === 650 || block.blockNumber === 650)) {
+    // Block #650 - Internal Phlo Consumption implementation to match the spec image exactly
     
     // Create input nodes from the exact spec diagram values and colors
     const inputNodes = [
@@ -317,6 +317,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
       '0x258MTCADDR': '#46c49b'
     };
     
+<<<<<<< Updated upstream
     // Use colors from the spec diagram
     const inputNodes = Object.entries(deployerGroups).map(([deployer, data]) => {
       // Exact colors from spec or fallback
@@ -342,6 +343,51 @@ const BlockCard: React.FC<BlockCardProps> = ({
       { name: '0x261MTCADDR', value: 1445, color: '#CC66FF' },
       { name: '0x262MTCADDR', value: 990, color: '#99CC33' },
       { name: '0x267MTCADDR', value: 11886, color: '#33CC99' }
+=======
+    // Create output nodes based on the spec with exact values and colors
+    const outputNodes = [
+      {
+        id: 'output_0x257MTCADDR',
+        name: '0x257MTCADDR',
+        value: 11886,
+        color: '#33CC99',  // Green from spec
+        columnPosition: 'right' as const
+      },
+      {
+        id: 'output_0x258MTCADDR',
+        name: '0x258MTCADDR',
+        value: 12009,  // Match the value from the spec image - full amount from low activity nodes
+        color: '#66CCFF',  // Light blue from spec
+        columnPosition: 'right' as const
+      },
+      {
+        id: 'output_0x259MTCADDR',
+        name: '0x259MTCADDR',
+        value: 3388,
+        color: '#3399FF',  // Medium blue from spec
+        columnPosition: 'right' as const
+      },
+      {
+        id: 'output_0x260MTCADDR',
+        name: '0x260MTCADDR',
+        value: 8987,
+        color: '#FF9933',  // Orange from spec
+        columnPosition: 'right' as const
+      },
+      {
+        id: 'output_0x261MTCADDR',
+        name: '0x261MTCADDR',
+        value: 1445,
+        color: '#CC66FF',  // Purple from spec
+        columnPosition: 'right' as const
+      },
+      {
+        id: 'output_0x262MTCADDR',
+        name: '0x262MTCADDR',
+        value: 990,
+        color: '#99CC33',  // Green from spec
+        columnPosition: 'right' as const
+      }
     ];
     
     const outputNodes = outputValues.map(item => ({
@@ -355,24 +401,101 @@ const BlockCard: React.FC<BlockCardProps> = ({
     // For Block #651, create an advanced Sankey diagram as shown in the spec
     nodes = [
       ...inputNodes,
+      centerNode,
       ...outputNodes
     ];
 
-    // Create links from deployers to outputs, matching the spec diagram flow
-    const diagramLinks: SankeyLink[] = [];
-    
-    // Input links
-    Object.entries(deployerGroups).forEach(([deployer, data]) => {
-      // Define outputs for each input based on spec diagram
-      let targetOutputs: string[];
-      if (deployer === '0x197MTCADDR') {
-        targetOutputs = ['0x257MTCADDR', '0x258MTCADDR', '0x267MTCADDR'];
-      } else if (deployer === '0x198MTCADDR') {
-        targetOutputs = ['0x259MTCADDR', '0x260MTCADDR'];
-      } else if (deployer === '0x257MTCADDR') {
-        targetOutputs = ['0x261MTCADDR', '0x262MTCADDR'];
-      } else {
-        targetOutputs = ['0x267MTCADDR']; // Default link
+    // Create links to exactly match the spec image with proper gradient colors and splits
+    links = [
+      // Links from 0x197MTCADDR (largest blue input)
+      {
+        source: 'input_0x197MTCADDR',
+        target: 'center_0x257MTCADDR',
+        value: 78847,
+        color: '#4a7eff',
+        gradientStart: '#4a7eff',
+        gradientEnd: '#8046c4',
+        details: 'From: 0x197MTCADDR\nTo: 0x257MTCADDR\nPhlo: 78,847'
+      },
+      
+      // Links from center to outputs - splits into upper flow
+      {
+        source: 'center_0x257MTCADDR',
+        target: 'output_0x257MTCADDR',
+        value: 11886,
+        color: '#8046c4',
+        gradientStart: '#8046c4',
+        gradientEnd: '#33CC99',
+        details: 'From: 0x257MTCADDR\nTo: 0x257MTCADDR\nPhlo: 11,886'
+      },
+      {
+        source: 'center_0x257MTCADDR',
+        target: 'output_0x258MTCADDR',
+        value: 1399,
+        color: '#8046c4',
+        gradientStart: '#8046c4',
+        gradientEnd: '#66CCFF',
+        details: 'From: 0x257MTCADDR\nTo: 0x258MTCADDR\nPhlo: 1,399'
+      },
+      {
+        source: 'center_0x257MTCADDR',
+        target: 'output_0x259MTCADDR',
+        value: 3388,
+        color: '#8046c4',
+        gradientStart: '#8046c4',
+        gradientEnd: '#3399FF',
+        details: 'From: 0x257MTCADDR\nTo: 0x259MTCADDR\nPhlo: 3,388'
+      },
+      {
+        source: 'center_0x257MTCADDR',
+        target: 'output_0x260MTCADDR',
+        value: 8987,
+        color: '#8046c4',
+        gradientStart: '#8046c4',
+        gradientEnd: '#FF9933',
+        details: 'From: 0x257MTCADDR\nTo: 0x260MTCADDR\nPhlo: 8,987'
+      },
+      {
+        source: 'center_0x257MTCADDR',
+        target: 'output_0x261MTCADDR',
+        value: 1445,
+        color: '#8046c4',
+        gradientStart: '#8046c4',
+        gradientEnd: '#CC66FF',
+        details: 'From: 0x257MTCADDR\nTo: 0x261MTCADDR\nPhlo: 1,445'
+      },
+      {
+        source: 'center_0x257MTCADDR',
+        target: 'output_0x262MTCADDR',
+        value: 990,
+        color: '#8046c4',
+        gradientStart: '#8046c4',
+        gradientEnd: '#99CC33',
+        details: 'From: 0x257MTCADDR\nTo: 0x262MTCADDR\nPhlo: 990'
+      },
+      
+      // Create a termination center node for 0x198MTCADDR (teal) - this should terminate after partially flowing through
+      {
+        source: 'input_0x198MTCADDR',
+        target: 'center_0x257MTCADDR',
+        value: 57920,
+        color: '#46c49b',
+        gradientStart: '#46c49b',
+        gradientEnd: '#8046c4',
+        details: 'From: 0x198MTCADDR\nTerminates midway',
+        isTerminating: true // Signal that this flow terminates
+      },
+      
+      // Links from low activity nodes directly to 0x258MTCADDR on the right (not to center)
+      {
+        source: 'input_lowactivity',
+        target: 'output_0x258MTCADDR',
+        value: 12009,
+        color: '#66c49b',
+        gradientStart: '#66c49b',
+        gradientEnd: '#66CCFF',
+        details: 'From: Low activity nodes\nTo: 0x258MTCADDR\nPhlo: 12,009'
+>>>>>>> Stashed changes
       }
       
       // Add links to the specified outputs with appropriate values
