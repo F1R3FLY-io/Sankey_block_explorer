@@ -97,19 +97,8 @@ const BlockCardSection = () => {
       <Typography variant="h3" className="mb-4 text-white bg-neutral-800 p-2.5 rounded-[5px] shadow-lg">
         BlockCard - Block #651 - Internal Phlo Consumption Flow (Based on Spec)
       </Typography>
-      
-      {/* Explanatory text placed outside, with italics */}
-      <div className="mb-3 flex">
-        <Typography variant="body" className="text-yellow-500 italic max-w-[1200px]">
-           <em>This block demonstrates internal Phlo consumption with Rholang code execution.
-          This visualization shows flow from input nodes (left) through a processing pipeline to output nodes (right).
-          The width of each flow indicates relative volume of Phlo.</em>
-        </Typography>
-      </div>
-      
-      {/* Visualization component taking almost full width */}
-      <div className="max-w-[1200px] border-2 border-orange-500 p-[15px] rounded-[10px] mb-5 bg-[rgba(20,20,30,0.7)] shadow-[0_4px_12px_rgba(255,165,0,0.3)]">
-        <div className="h-[700px]">
+      <div className="flex flex-col gap-8 max-w-[1200px] border-2 border-orange-500 p-[15px] rounded-[10px] mb-5 bg-[rgba(20,20,30,0.7)] shadow-[0_4px_12px_rgba(255,165,0,0.3)]">
+        <div className="h-[700px] max-w-[1200px]">
           <BlockCard
             block={mockBlock650}
             deploys={mockDeploysWithInternalConsumption}
@@ -119,16 +108,16 @@ const BlockCardSection = () => {
             hasInternalConsumption={true}
           />
         </div>
+        <Typography variant="body" className="mb-4 text-yellow-500 bg-neutral-900 p-2.5 rounded-[5px]">
+          This block demonstrates internal Phlo consumption with Rholang code execution. This visualization shows flow from input nodes (left)
+          through a processing pipeline to output nodes (right), exactly matching the specification.
+        </Typography>
       </div>
 
       <Typography variant="h3" className="mb-4 text-white bg-neutral-800 p-2.5 rounded-[5px]">
         BlockCard - Block #651 - Mixed (Internal + External)
       </Typography>
       <div className="max-w-[1000px] border-2 border-orange-500 p-[15px] rounded-[10px] mb-5 bg-[rgba(20,20,30,0.7)]">
-        <Typography variant="body" className="mb-4 text-yellow-500 bg-neutral-900 p-2.5 rounded-[5px]">
-          ⚠️ This block demonstrates both internal Phlo consumption AND external transfers.
-          Note both regular links and the orange self-referential link for internal consumption.
-        </Typography>
         {/* Add explicit height to ensure visualization renders */}
         <div className="h-[600px]">
           <BlockCard
@@ -140,6 +129,10 @@ const BlockCardSection = () => {
             hasInternalConsumption={true}
           />
         </div>
+        <Typography variant="body" className="mb-4 text-yellow-500 bg-neutral-900 p-2.5 rounded-[5px]">
+          This block demonstrates both internal Phlo consumption AND external transfers.
+          Note both regular links and the orange self-referential link for internal consumption.
+        </Typography>
       </div>
 
       <Typography variant="h3" className="mb-4 text-white">BlockCard - First Block</Typography>

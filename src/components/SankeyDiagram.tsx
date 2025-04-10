@@ -337,27 +337,29 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
             const targetControlX = sourceX + (targetX - sourceX) * 0.6;
             
             // Calculate widths based on value for visual representation
-            // Higher divisor for smaller flows, lower for larger flows
-            let divisor = 1000;
+            // Using fixed divisors for more precise control
+            let divisor = 500; // Base divisor - will be adjusted below
             
-            // Adjust based on source and target nodes
-            if (sourceNode.name === '0x197MTCADDR') divisor = 900; // Larger blue flow
-            if (sourceNode.name === '0x198MTCADDR') divisor = 1100; // Medium teal flow
-            if (sourceNode.name === '+56 Low activity\nnodes') divisor = 1200; // Smaller flow
+            // Adjust based on source and target nodes with more precise values
+            // Using more aggressive (smaller) divisors to make flows more visible
+            if (sourceNode.name === '0x197MTCADDR') divisor = 500; // Largest blue flow
+            if (sourceNode.name === '0x198MTCADDR') divisor = 600; // Medium teal flow
+            if (sourceNode.name === '+56 Low activity\nnodes') divisor = 700; // Smaller flow
             
-            // For output flows from center, use the value directly
+            // For output flows from center, using even more specific divisions to match diagram
             if (sourceNode.id === 'center_0x257MTCADDR') {
-              if (targetNode.name === '0x257MTCADDR') divisor = 1000; // Green flow
-              if (targetNode.name === '0x258MTCADDR') divisor = 3500; // Light blue (smaller)
-              if (targetNode.name === '0x259MTCADDR') divisor = 1800; // Medium blue
-              if (targetNode.name === '0x260MTCADDR') divisor = 1200; // Orange flow
-              if (targetNode.name === '0x261MTCADDR') divisor = 3000; // Purple (smaller)
-              if (targetNode.name === '0x262MTCADDR') divisor = 4000; // Green (smallest)
+              if (targetNode.name === '0x257MTCADDR') divisor = 600; // Green flow
+              if (targetNode.name === '0x258MTCADDR') divisor = 900; // Light blue (smaller)
+              if (targetNode.name === '0x259MTCADDR') divisor = 700; // Medium blue
+              if (targetNode.name === '0x260MTCADDR') divisor = 650; // Orange flow
+              if (targetNode.name === '0x261MTCADDR') divisor = 800; // Purple (smaller)
+              if (targetNode.name === '0x262MTCADDR') divisor = 900; // Green (smallest)
             }
             
-            // Calculate widths with min/max limits
-            const sourceWidth = Math.min(50, Math.max(10, (d.value || 1) / divisor));
-            const targetWidth = Math.min(50, Math.max(8, (d.value || 1) / divisor));
+            // Calculate widths with responsive min/max limits
+            // Larger min width ensures flows are always visible
+            const sourceWidth = Math.min(60, Math.max(15, (d.value || 1) / divisor));
+            const targetWidth = Math.min(60, Math.max(12, (d.value || 1) / divisor));
             
             // Create the curves as seen in the spec image - smooth flowing shapes
             return `
@@ -656,8 +658,9 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
         width: '100%', 
         height: '100%', 
         position: 'relative', 
-        minHeight: '300px',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)' // Very subtle background for debugging
+        minHeight: '500px',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)', // Slightly darker background to ensure visibility
+        overflow: 'hidden' // Prevent overflow issues
       }}
     >
       <svg
@@ -665,7 +668,8 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
         style={{
           width: '100%',
           height: '100%',
-          overflow: 'visible'
+          overflow: 'visible',
+          display: 'block' // Make sure it takes up the full space
         }}
       />
       {/* Debug overlay to verify SVG exists */}
