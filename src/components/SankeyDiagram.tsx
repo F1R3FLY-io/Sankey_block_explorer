@@ -654,39 +654,15 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
   return (
     <div 
       ref={containerRef} 
-      style={{ 
-        width: '100%', 
-        height: '100%', 
-        position: 'relative', 
-        minHeight: '500px',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)', // Slightly darker background to ensure visibility
-        overflow: 'hidden' // Prevent overflow issues
-      }}
+      className="w-full h-full relative min-h-[500px] bg-black/10 overflow-hidden"
     >
       <svg
         ref={svgRef}
-        style={{
-          width: '100%',
-          height: '100%',
-          overflow: 'visible',
-          display: 'block' // Make sure it takes up the full space
-        }}
+        className="w-full h-full block overflow-visible"
       />
       {/* Debug overlay to verify SVG exists */}
       {(!nodes.length || !links.length) && (
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#ffa500',
-          fontWeight: 'bold',
-          zIndex: 10
-        }}>
+        <div className="absolute inset-0 flex items-center justify-center text-orange-500 font-bold z-10">
           Internal Phlo Consumption Visualization
         </div>
       )}

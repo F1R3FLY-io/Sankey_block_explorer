@@ -87,14 +87,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onRefresh, loading = 
           <li>
             <button 
               onClick={() => handleNavigation('/')}
-              style={{
-                backgroundColor: isActive('/') ? '#0066d7' : 'transparent',
-                border: 'none',
-                color: 'white',
-                padding: '12px 20px',
-                cursor: 'pointer',
-                borderRadius: '4px 4px 0 0'
-              }}
+              className={`border-none text-white py-3 px-5 cursor-pointer rounded-t ${isActive('/') ? 'bg-blue-600' : 'bg-transparent hover:bg-blue-700/50'}`}
             >
               Explorer
             </button>
@@ -102,14 +95,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onRefresh, loading = 
           <li>
             <button 
               onClick={() => handleNavigation('/blocks')}
-              style={{
-                backgroundColor: isActive('/blocks') ? '#0066d7' : 'transparent',
-                border: 'none',
-                color: 'white',
-                padding: '12px 20px',
-                cursor: 'pointer',
-                borderRadius: '4px 4px 0 0'
-              }}
+              className={`border-none text-white py-3 px-5 cursor-pointer rounded-t ${isActive('/blocks') ? 'bg-blue-600' : 'bg-transparent hover:bg-blue-700/50'}`}
             >
               Blocks
             </button>
@@ -117,7 +103,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onRefresh, loading = 
           <li>
             <Link 
               to="/demo" 
-              style={isActive('/demo') ? { backgroundColor: '#0066d7' } : {}}
+              className={`py-3 px-5 rounded-t ${isActive('/demo') ? 'bg-blue-600' : 'bg-transparent hover:bg-blue-700/50'}`}
             >
               Demo
             </Link>

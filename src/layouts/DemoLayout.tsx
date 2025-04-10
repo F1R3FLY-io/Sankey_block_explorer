@@ -19,31 +19,19 @@ const DemoLayout: React.FC<DemoLayoutProps> = ({ sections }) => {
     <MainLayout>
       <div className="block-container">
         <div className="block-content">
-          <div style={{ 
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            paddingBottom: '16px',
-            marginBottom: '24px'
-          }}>
-            <nav style={{ 
-              display: 'flex',
-              overflowX: 'auto',
-              gap: '8px',
-              paddingBottom: '8px'
-            }}>
+          <div className="border-b border-white/10 pb-4 mb-6">
+            <nav className="flex overflow-x-auto gap-2 pb-2">
               {sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  style={{
-                    padding: '8px 16px',
-                    background: activeSection === section.id ? 'rgba(0, 122, 255, 0.1)' : 'transparent',
-                    color: activeSection === section.id ? 'rgb(0, 122, 255)' : 'rgb(157, 167, 177)',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    fontSize: '14px'
-                  }}
+                  className={`
+                    py-2 px-4 
+                    border-none rounded-md cursor-pointer whitespace-nowrap text-sm
+                    ${activeSection === section.id 
+                      ? 'bg-blue-500/10 text-blue-500' 
+                      : 'bg-transparent text-neutral-400 hover:text-blue-400'}
+                  `}
                 >
                   {section.title}
                 </button>
@@ -51,7 +39,7 @@ const DemoLayout: React.FC<DemoLayoutProps> = ({ sections }) => {
             </nav>
           </div>
 
-          <div style={{ padding: '0 8px' }}>
+          <div className="px-2">
             {sections.map((section) => (
               <motion.div
                 key={section.id}

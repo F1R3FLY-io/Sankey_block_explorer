@@ -80,74 +80,34 @@ const BlocksList: React.FC<BlocksListProps> = ({
     });
   };
 
-  if (loading) return <div style={{ color: 'white', padding: '32px 90px' }}>Loading...</div>;
-  if (!blocks.length) return <div style={{ color: 'white', padding: '32px 90px' }}>No data available</div>;
+  if (loading) return <div className="text-white py-8 px-20">Loading...</div>;
+  if (!blocks.length) return <div className="text-white py-8 px-20">No data available</div>;
 
   return (
-    <div style={{
-      padding: '32px 0',
-      paddingLeft: '90px',
-      color: 'white',
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100%',
-      width: '100%'
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        marginBottom: '32px'
-      }}>
+    <div className="py-8 pl-[90px] text-white flex flex-col min-h-full w-full">
+      <div className="flex items-center gap-4 mb-8">
         <button 
           onClick={handleBackToExplorer}
-          style={{
-            color: 'rgb(157, 167, 177)',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '14px',
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer'
-          }}
+          className="text-neutral-400 decoration-none flex items-center gap-2 text-sm bg-none border-none p-0 cursor-pointer hover:text-blue-400"
         >
           ← Back to Explorer
         </button>
       </div>
 
-      <h1 style={{
-        fontSize: '24px',
-        fontWeight: '400',
-        marginBottom: '32px',
-        textAlign: 'left'
-      }}>
+      <h1 className="text-2xl font-normal mb-8 text-left">
         Blocks list
       </h1>
 
-      <div style={{
-        background: 'rgb(22, 30, 38)',
-        borderRadius: '12px',
-        width: 'calc(100% - 310px)'
-      }}>
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontSize: '14px'
-        }}>
+      <div className="bg-neutral-900 rounded-xl w-[calc(100%-310px)] overflow-hidden">
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr style={{
-              textAlign: 'left',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-            }}>
-              <th style={{ padding: '16px 32px', color: 'rgb(157, 167, 177)', textAlign: 'left', width: '8%' }}>Block #</th>
-              <th style={{ padding: '16px 32px', color: 'rgb(157, 167, 177)', textAlign: 'left', width: '12%' }}>Type</th>
-              <th style={{ padding: '16px 32px', color: 'rgb(157, 167, 177)', textAlign: 'left', width: '10%' }}>Deploys</th>
-              <th style={{ padding: '16px 32px', color: 'rgb(157, 167, 177)', textAlign: 'left', width: '12%' }}>Total cost</th>
-              <th style={{ padding: '16px 32px', color: 'rgb(157, 167, 177)', textAlign: 'left', width: '12%' }}>Total Phlo</th>
-              <th style={{ padding: '16px 32px', color: 'rgb(157, 167, 177)', textAlign: 'left', width: '46%' }}>Address</th>
+            <tr className="text-left border-b border-white/10">
+              <th className="p-4 text-neutral-400 text-left w-[8%]">Block #</th>
+              <th className="p-4 text-neutral-400 text-left w-[12%]">Type</th>
+              <th className="p-4 text-neutral-400 text-left w-[10%]">Deploys</th>
+              <th className="p-4 text-neutral-400 text-left w-[12%]">Total cost</th>
+              <th className="p-4 text-neutral-400 text-left w-[12%]">Total Phlo</th>
+              <th className="p-4 text-neutral-400 text-left w-[46%]">Address</th>
             </tr>
           </thead>
           <tbody>
@@ -157,21 +117,15 @@ const BlocksList: React.FC<BlocksListProps> = ({
               return (
                 <tr 
                   key={block.blockInfo.blockHash}
-                  style={{
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}
+                  className="border-b border-white/10"
                 >
-                  <td style={{ padding: '16px 32px', textAlign: 'left' }}>#{actualIndex}</td>
-                  <td style={{ padding: '16px 32px', color: getBlockTypeColor(blockType), textAlign: 'left' }}>{blockType}</td>
-                  <td style={{ padding: '16px 32px', textAlign: 'left' }}>{block.deploys.length}</td>
-                  <td style={{ padding: '16px 32px', textAlign: 'left' }}>{calculateTotalCost(block)}</td>
-                  <td style={{ padding: '16px 32px', textAlign: 'left' }}>{calculateTotalPhlo(block)}</td>
-                  <td style={{ padding: '16px 32px', textAlign: 'left' }}>
-                    <span style={{
-                      color: 'rgb(0, 122, 255)',
-                      cursor: 'pointer',
-                      wordBreak: 'break-all'
-                    }}>
+                  <td className="p-4 text-left">#{actualIndex}</td>
+                  <td className="p-4 text-left" style={{ color: getBlockTypeColor(blockType) }}>{blockType}</td>
+                  <td className="p-4 text-left">{block.deploys.length}</td>
+                  <td className="p-4 text-left">{calculateTotalCost(block)}</td>
+                  <td className="p-4 text-left">{calculateTotalPhlo(block)}</td>
+                  <td className="p-4 text-left">
+                    <span className="text-blue-500 cursor-pointer break-all hover:underline">
                       {block.blockInfo.blockHash}
                     </span>
                   </td>
@@ -182,10 +136,7 @@ const BlocksList: React.FC<BlocksListProps> = ({
         </table>
       </div>
 
-      <div className="pagination-container" style={{ 
-        marginTop: '32px',
-        marginBottom: '32px'
-      }}>
+      <div className="pagination-container mt-8 mb-8">
         <div className="navigation-controls">
           <button 
             className="nav-button"

@@ -88,7 +88,7 @@ function App() {
       element: (
         <MainLayout onRefresh={handleRefresh} loading={loading} blocks={blocksData.blocks} categories={blocksData.categories}>
           <div className="main-content-wrapper">
-            {error && <div style={{ color: 'white', padding: '32px 90px' }}>Error: {error}</div>}
+            {error && <div className="text-white py-8 px-20">Error: {error}</div>}
             <Explorer
               blocks={blocksData.blocks}
               categories={blocksData.categories}
@@ -103,7 +103,7 @@ function App() {
       element: (
         <MainLayout onRefresh={handleRefresh} loading={loading} blocks={blocksData.blocks} categories={blocksData.categories}>
           <div className="main-content-wrapper">
-            {error && <div style={{ color: 'white', padding: '32px 90px' }}>Error: {error}</div>}
+            {error && <div className="text-white py-8 px-20">Error: {error}</div>}
             <BlocksList 
               blocks={blocksData.blocks} 
               categories={blocksData.categories}

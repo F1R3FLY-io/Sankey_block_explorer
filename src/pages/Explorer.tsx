@@ -45,46 +45,17 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
     }
   };
 
-  if (loading) return <div style={{ color: 'white', padding: '32px 90px' }}>Loading...</div>;
-  if (!currentBlocks?.length) return <div style={{ color: 'white', padding: '32px 90px' }}>No data available</div>;
+  if (loading) return <div className="text-white py-8 px-20">Loading...</div>;
+  if (!currentBlocks?.length) return <div className="text-white py-8 px-20">No data available</div>;
 
   return (
-    <div className="information-container" style={{ position: 'relative' }}>
-      <div style={{ 
-        position: 'absolute',
-        right: '90px',
-        top: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        width: '200px'
-      }}>
-        <div style={{
-          background: 'rgb(22, 30, 38)',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
-          textAlign: 'center',
-          height: '140px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}>
-          <span style={{ 
-            fontSize: '36px', 
-            fontWeight: '500', 
-            color: 'white', 
-            display: 'block', 
-            marginBottom: '12px',
-            lineHeight: '1'
-          }}>
+    <div className="information-container relative">
+      <div className="absolute right-[90px] top-4 flex flex-col gap-6 w-[200px]">
+        <div className="bg-neutral-900 rounded-xl p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.1)] text-center h-[140px] flex flex-col justify-center">
+          <span className="text-4xl font-medium text-white block mb-3 leading-none">
             {currentBlocks.length - 1}
           </span>
-          <span style={{ 
-            fontSize: '14px', 
-            color: 'rgb(157, 167, 177)',
-            marginBottom: '16px'
-          }}>
+          <span className="text-sm text-neutral-400 mb-4">
             Blocks
           </span>
           <button 
@@ -95,43 +66,14 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
                 currentBlockIndex
               } 
             })}
-            style={{
-              display: 'block',
-              fontSize: '14px',
-              color: 'rgb(0, 122, 255)',
-              textDecoration: 'none',
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              width: '100%',
-              textAlign: 'center'
-            }}
+            className="block text-sm text-blue-500 decoration-none bg-none border-none p-0 cursor-pointer w-full text-center hover:underline"
           >
             View all blocks →
           </button>
         </div>
 
-        <div style={{
-          background: 'rgb(22, 30, 38)',
-          borderRadius: '12px',
-          padding: '24px',
-          boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
-          height: '140px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
-          <span style={{ 
-            fontSize: '36px', 
-            fontWeight: '500', 
-            color: 'white', 
-            display: 'block', 
-            marginBottom: '12px',
-            lineHeight: '1',
-            textAlign: 'center'
-          }}>
+        <div className="bg-neutral-900 rounded-xl p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.1)] h-[140px] flex flex-col justify-center items-center">
+          <span className="text-4xl font-medium text-white block mb-3 leading-none text-center">
             {/*
             TODO:
             this logic should be updated, when we will communicate with the MORK db and can easily get info
@@ -139,22 +81,10 @@ export default function Explorer({ blocks, categories, loading }: InfoProps) {
             */}
             {currentCategories.sources.length + currentCategories.sinks.length + currentCategories.sourceSinks.length - 1}
           </span>
-          <span style={{ 
-            fontSize: '14px', 
-            color: 'rgb(157, 167, 177)',
-            display: 'block',
-            textAlign: 'center',
-            marginBottom: '8px'
-          }}>
+          <span className="text-sm text-neutral-400 block text-center mb-2">
             Active agents
           </span>
-          <span style={{ 
-            fontSize: '12px', 
-            color: 'rgb(157, 167, 177)',
-            display: 'block',
-            textAlign: 'center',
-            maxWidth: '180px'
-          }}>
+          <span className="text-xs text-neutral-400 block text-center max-w-[180px]">
             Agents that performed at least one operation in the last hour
           </span>
         </div>

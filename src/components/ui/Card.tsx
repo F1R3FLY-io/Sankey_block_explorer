@@ -8,6 +8,7 @@ interface CardProps {
   isHoverable?: boolean;
   isGradientBorder?: boolean;
   style?: React.CSSProperties;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   'data-testid'?: string;
 }
 
@@ -18,6 +19,7 @@ const Card: React.FC<CardProps> = ({
   isHoverable = false,
   isGradientBorder = false,
   style = {},
+  onClick,
   'data-testid': testId,
 }) => {
   const hoverableStyles = isHoverable
@@ -32,28 +34,17 @@ const Card: React.FC<CardProps> = ({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={`relative rounded-lg shadow-md overflow-hidden ${hoverableStyles} ${isGradientBorder ? '' : gradientBorderStyles} ${className}`}
-      style={{ 
-        backgroundColor: 'rgb(22, 30, 38)', 
-        boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
-        ...style
-      }}
+      className={`relative rounded-lg overflow-hidden bg-neutral-900 shadow-[0_0_0_1px_rgba(255,255,255,0.1)] ${hoverableStyles} ${isGradientBorder ? '' : gradientBorderStyles} ${className}`}
+      style={style}
+      onClick={onClick}
       data-testid={testId}
     >
       {title && (
-        <div style={{ 
-          padding: '16px 24px', 
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-        }}>
-          <h3 style={{ 
-            fontSize: '18px', 
-            fontWeight: 500, 
-            color: 'white', 
-            margin: 0 
-          }}>{title}</h3>
+        <div className="py-4 px-6 border-b border-white/10">
+          <h3 className="text-lg font-medium text-white m-0">{title}</h3>
         </div>
       )}
-      <div style={{ padding: '24px' }}>
+      <div className="p-6">
         {children}
       </div>
     </motion.div>

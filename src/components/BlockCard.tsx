@@ -554,18 +554,13 @@ const BlockCard: React.FC<BlockCardProps> = ({
   }
 
   return (
-    <div className="block-container" style={{ height: '100%' }}>
-      <div className="block-content" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div className="block-container h-full">
+      <div className="block-content h-full flex flex-col">
         <h2>Block #{currentBlock}</h2>
         <div className="block-hash">
           {block.blockHash}
         </div>
-        <div className="sankey-diagram" style={{ 
-          flex: 1, 
-          minHeight: '600px', 
-          display: 'flex',
-          alignItems: 'stretch'
-        }}>
+        <div className="sankey-diagram flex-1 min-h-[600px] flex items-stretch">
           <SankeyDiagram 
             nodes={nodes} 
             links={links}
