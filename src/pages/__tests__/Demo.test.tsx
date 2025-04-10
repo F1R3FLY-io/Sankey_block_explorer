@@ -157,10 +157,8 @@ describe('Demo', () => {
     // Verify Block Card section content
     expect(screen.getByText('BlockCard - Standard View')).toBeInTheDocument();
     expect(screen.getByText('BlockCard - With Transfer Patterns')).toBeInTheDocument();
-    // More flexible check for internal consumption titles since we changed it
-    const internalConsumptionTitle = screen.queryByText('BlockCard - Block #650 - Internal Phlo Consumption Only') || 
-                                   screen.queryByText('BlockCard - Block #651 - Internal Phlo Consumption Flow (Based on Spec)');
-    expect(internalConsumptionTitle).not.toBeNull();
+    // Check for the Block #650 internal consumption title with the new format
+    expect(screen.getByText('BlockCard - Block #650 - Internal Phlo Consumption')).toBeInTheDocument();
     expect(screen.getByText('BlockCard - Block #651 - Mixed (Internal + External)')).toBeInTheDocument();
     expect(screen.getByText('BlockCard - First Block')).toBeInTheDocument();
   });

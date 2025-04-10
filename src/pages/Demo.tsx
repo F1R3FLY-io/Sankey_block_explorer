@@ -94,45 +94,40 @@ const BlockCardSection = () => {
         />
       </div>
 
-      <Typography variant="h3" className="mb-4 text-white bg-neutral-800 p-2.5 rounded-[5px] shadow-lg">
-        BlockCard - Block #651 - Internal Phlo Consumption Flow (Based on Spec)
+      <Typography variant="h3" className="mb-4 text-white">
+        BlockCard - Block #650 - Internal Phlo Consumption
       </Typography>
-      <div className="flex flex-col gap-8 max-w-[1200px] border-2 border-orange-500 p-[15px] rounded-[10px] mb-5 bg-[rgba(20,20,30,0.7)] shadow-[0_4px_12px_rgba(255,165,0,0.3)]">
-        <div className="h-[700px] max-w-[1200px]">
-          <BlockCard
-            block={mockBlock650}
-            deploys={mockDeploysWithInternalConsumption}
-            currentBlock={650} /* Fixed to match the spec block number */
-            totalBlocks={700}
-            onNavigate={handleNavigate}
-            hasInternalConsumption={true}
-          />
-        </div>
-        <Typography variant="body" className="mb-4 text-yellow-500 bg-neutral-900 p-2.5 rounded-[5px]">
-          This block demonstrates internal Phlo consumption with Rholang code execution. This visualization shows flow from input nodes (left)
-          through a processing pipeline to output nodes (right), exactly matching the specification.
-        </Typography>
+      <Typography variant="body" className="mb-4 text-yellow-500 italic">
+        This block demonstrates internal Phlo consumption with Rholang code execution. This visualization shows flow from input nodes (left)
+        through a processing pipeline to output nodes (right), exactly matching the specification.
+      </Typography>
+      <div className="max-w-[1000px]">
+        <BlockCard
+          block={mockBlock650}
+          deploys={mockDeploysWithInternalConsumption}
+          currentBlock={650}
+          totalBlocks={700}
+          onNavigate={handleNavigate}
+          hasInternalConsumption={true}
+        />
       </div>
 
-      <Typography variant="h3" className="mb-4 text-white bg-neutral-800 p-2.5 rounded-[5px]">
+      <Typography variant="h3" className="mb-4 text-white">
         BlockCard - Block #651 - Mixed (Internal + External)
       </Typography>
-      <div className="max-w-[1000px] border-2 border-orange-500 p-[15px] rounded-[10px] mb-5 bg-[rgba(20,20,30,0.7)]">
-        {/* Add explicit height to ensure visualization renders */}
-        <div className="h-[600px]">
-          <BlockCard
-            block={mockBlock651}
-            deploys={mockDeploysWithMixedPatterns}
-            currentBlock={651}
-            totalBlocks={700}
-            onNavigate={handleNavigate}
-            hasInternalConsumption={true}
-          />
-        </div>
-        <Typography variant="body" className="mb-4 text-yellow-500 bg-neutral-900 p-2.5 rounded-[5px]">
-          This block demonstrates both internal Phlo consumption AND external transfers.
-          Note both regular links and the orange self-referential link for internal consumption.
-        </Typography>
+      <Typography variant="body" className="mb-4 text-yellow-500 italic">
+        This block demonstrates both internal Phlo consumption AND external transfers.
+        Note both regular links and the orange self-referential link for internal consumption.
+      </Typography>
+      <div className="max-w-[1000px]">
+        <BlockCard
+          block={mockBlock651}
+          deploys={mockDeploysWithMixedPatterns}
+          currentBlock={651}
+          totalBlocks={700}
+          onNavigate={handleNavigate}
+          hasInternalConsumption={true}
+        />
       </div>
 
       <Typography variant="h3" className="mb-4 text-white">BlockCard - First Block</Typography>

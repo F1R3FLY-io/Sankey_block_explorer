@@ -654,11 +654,12 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, options = {
   return (
     <div 
       ref={containerRef} 
-      className="w-full h-full relative min-h-[500px] bg-black/10 overflow-hidden"
+      className="w-full h-full relative min-h-[500px] bg-transparent overflow-hidden"
     >
       <svg
         ref={svgRef}
         className="w-full h-full block overflow-visible"
+        preserveAspectRatio="xMidYMid meet"
       />
       {/* Debug overlay to verify SVG exists */}
       {(!nodes.length || !links.length) && (

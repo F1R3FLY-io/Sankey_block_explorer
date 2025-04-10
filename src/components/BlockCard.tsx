@@ -560,19 +560,21 @@ const BlockCard: React.FC<BlockCardProps> = ({
         <div className="block-hash">
           {block.blockHash}
         </div>
-        <div className="sankey-diagram flex-1 min-h-[600px] flex items-stretch">
-          <SankeyDiagram 
-            nodes={nodes} 
-            links={links}
-            options={{
-              node: {
-                opacity: 1
-              },
-              link: {
-                opacity: 0.2
-              }
-            }}
-          />
+        <div className="sankey-diagram flex-1 min-h-[600px] w-full flex items-center justify-center">
+          <div className="w-full h-full">
+            <SankeyDiagram 
+              nodes={nodes} 
+              links={links}
+              options={{
+                node: {
+                  opacity: 1
+                },
+                link: {
+                  opacity: 0.3
+                }
+              }}
+            />
+          </div>
         </div>
         <div className="block-stats">
           <div>

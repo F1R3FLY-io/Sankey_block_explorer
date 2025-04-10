@@ -243,8 +243,8 @@ describe('BlockCard', () => {
     // Check that node opacity is set to 1
     expect(options.node?.opacity).toBe(1);
     
-    // Check that link opacity is set to 0.2
-    expect(options.link?.opacity).toBe(0.2);
+    // Check that link opacity is set to 0.3
+    expect(options.link?.opacity).toBe(0.3);
   });
   
   it('should handle internal Phlo consumption correctly', () => {
