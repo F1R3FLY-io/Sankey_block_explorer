@@ -159,7 +159,7 @@ describe('Demo', () => {
     expect(screen.getByText('BlockCard - With Transfer Patterns')).toBeInTheDocument();
     // Check for the Block #650 internal consumption title with the new format
     expect(screen.getByText('Block #650 - Internal Phlo Consumption')).toBeInTheDocument();
-    expect(screen.getByText('BlockCard - Block #651 - Mixed (Internal + External)')).toBeInTheDocument();
+    expect(screen.getByText('Block #651 - No Sink Split Phlo')).toBeInTheDocument();
     expect(screen.getByText('BlockCard - First Block')).toBeInTheDocument();
   });
 
