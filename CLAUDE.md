@@ -37,7 +37,6 @@
 - Keep component hierarchy consistent with the existing architecture
 - Use framer-motion for animations following existing patterns
 - Test UI on mobile and desktop viewports
-- If connected to a `mcp-shell-server` also known as just a "shell", run all shell commands through that mcp server. This approach will automatically restrict which commands can be run and properly configure the shell environment and tool calling capability. 
 
 ## Best Practices
 - Maintain responsive design across all components
@@ -46,4 +45,3 @@
 - Use Next.js App Router patterns
 - Implement proper types for all components and functions
 - Work with the user to develop feature enhancements using a test driven development strategy. Unit tests should be created for new components, they should initially fail and then work once the corresponding funcationality is poperly implemented.
-- Check if the development servers are running using `ps` in the shell MCP tool before attempting to start them. Ask the user to independently start these servers using `pnpm dev` or `pnpm dev-https`
