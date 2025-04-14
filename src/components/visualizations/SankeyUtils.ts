@@ -1,6 +1,5 @@
-import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
-import { PathParams, SankeyData, SankeyLayoutType, SankeyLink, SankeyNode } from './SankeyTypes';
+import { SankeyData, SankeyLayoutType, SankeyLink, SankeyNode } from './SankeyTypes';
 
 /**
  * Constants for diagram configuration
@@ -110,13 +109,19 @@ export function applyStandardLayout(
   sankeyData: SankeyData,
   width: number,
   height: number
-): { nodes: SankeyNode[], links: SankeyLink[] } {
-  const sankeyLayout = sankey<SankeyNode, SankeyLink>()
+): { layoutNodes: SankeyNode[], layoutLinks: SankeyLink[] } {
+  const sankeyGenerator = sankey<SankeyNode, SankeyLink>()
     .nodeWidth(CONSTANTS.NODE_WIDTH)
     .nodePadding(CONSTANTS.NODE_PADDING)
     .extent([[1, 1], [width - 1, height - 1]]);
   
-  return sankeyLayout(sankeyData);
+  const result = sankeyGenerator(sankeyData);
+  
+  // Return in the expected format
+  return { 
+    layoutNodes: result.nodes, 
+    layoutLinks: result.links 
+  };
 }
 
 /**
