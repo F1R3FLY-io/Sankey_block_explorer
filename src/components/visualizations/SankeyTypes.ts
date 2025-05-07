@@ -47,18 +47,28 @@ export interface SankeyData {
 }
 
 /**
- * Configuration options for Sankey diagram appearance
+ * Configuration options for Sankey diagram appearance and behavior
  */
 export interface SankeyOptions {
   node?: {
     fill?: string;
     stroke?: string;
     opacity?: number;
+    width?: number;
+    padding?: number;
   };
   link?: {
     fill?: string;
     stroke?: string;
     opacity?: number;
+    minWidth?: number;
+    maxWidth?: number;
+    minWidthTerminating?: number;
+    maxWidthTerminating?: number;
+  };
+  flowDivisors?: {
+    base?: number;
+    customValues?: Record<string, number>;
   };
 }
 
@@ -91,4 +101,5 @@ export interface PathParams {
   sourceWidth: number;
   targetWidth: number;
   value: number;
+  midWidth?: number; // Optional parameter for terminating paths
 }

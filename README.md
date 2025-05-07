@@ -37,6 +37,7 @@ A visualization tool for exploring blockchain data using Sankey diagrams. This a
 2. Install dependencies:
 
 ```bash
+# run npm i -g pnpm # if pnpm is not installed
 pnpm install
 ```
 
@@ -148,7 +149,11 @@ The project is currently in active development with the following recent updates
 - Implemented responsive layouts for both mobile and desktop
 - Added HTTPS development mode for secure contexts
 - Fixed site metadata and navigation structure
-- Updated block explorer visualization components
+- Enhanced Sankey diagram visualization components:
+  - Improved DOM measurements using ResizeObserver for more accurate rendering
+  - Added configurable styling options through a central configuration system
+  - Strengthened error handling and type safety throughout visualization code
+  - Optimized React dependency management to reduce unnecessary re-renders
 - Added comprehensive test coverage with Vitest
 
 ## License

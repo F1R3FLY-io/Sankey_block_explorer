@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { SankeyLink as SankeyLinkType, SankeyNode } from './SankeyTypes';
-import { CONSTANTS } from './SankeyUtils';
+import { DEFAULT_CONFIG } from './SankeyUtils';
 import { generateSankeyPath } from './SankeyPathGenerators';
 
 interface SankeyLinkProps {
@@ -71,7 +71,7 @@ class SankeyLink {
    * Handles mouseover event for links
    */
   private handleMouseOver(
-    event: MouseEvent, 
+    _event: MouseEvent, 
     link: SankeyLinkType, 
     element: SVGPathElement
   ): void {
@@ -117,7 +117,7 @@ class SankeyLink {
    * Handles mouseout event for links
    */
   private handleMouseOut(
-    event: MouseEvent, 
+    _event: MouseEvent, 
     link: SankeyLinkType, 
     element: SVGPathElement
   ): void {
@@ -129,8 +129,8 @@ class SankeyLink {
       d3.select(element)
         .style("stroke-opacity", link.opacity || (
           link.isInternalConsumption 
-            ? CONSTANTS.INTERNAL_CONSUMPTION_OPACITY 
-            : (this.options.link?.opacity || CONSTANTS.DEFAULT_LINK_OPACITY))
+            ? DEFAULT_CONFIG.LINK.INTERNAL_CONSUMPTION_OPACITY 
+            : (this.options.link?.opacity || DEFAULT_CONFIG.LINK.OPACITY))
         )
         .style("stroke-width", link.isInternalConsumption 
           ? Math.max(3, (link.width || 0) * 1.5) 
@@ -176,8 +176,8 @@ class SankeyLink {
         if (this.hasColumnPositions) return 0; // No stroke for the spec visualization
         return link.opacity || (
           link.isInternalConsumption 
-            ? CONSTANTS.INTERNAL_CONSUMPTION_OPACITY 
-            : (this.options.link?.opacity || CONSTANTS.DEFAULT_LINK_OPACITY)
+            ? DEFAULT_CONFIG.LINK.INTERNAL_CONSUMPTION_OPACITY 
+            : (this.options.link?.opacity || DEFAULT_CONFIG.LINK.OPACITY)
         );
       })
       .style("fill-opacity", () => {
@@ -197,17 +197,23 @@ class SankeyLink {
         return 0; // No stroke width for the spec visualization
       });
 
-    // Add event listeners
-    linkElements.each(function(link) {
-      const element = this;
-      d3.select(element)
-        .on("mouseover", function(event) { 
-          self.handleMouseOver(event, link, element);
-        })
-        .on("mouseout", function(event) {
-          self.handleMouseOut(event, link, element);
+    // Add event listeners if each method is available (might not be in test environment)
+    try {
+      if (linkElements && typeof linkElements.each === 'function') {
+        linkElements.each(function(link) {
+          const element = this;
+          d3.select(element)
+            .on("mouseover", function(event) { 
+              self.handleMouseOver(event, link, element as SVGPathElement);
+            })
+            .on("mouseout", function(event) {
+              self.handleMouseOut(event, link, element as SVGPathElement);
+            });
         });
-    });
+      }
+    } catch (error) {
+      console.warn('Could not add event listeners to link elements:', error);
+    }
   }
 }
 

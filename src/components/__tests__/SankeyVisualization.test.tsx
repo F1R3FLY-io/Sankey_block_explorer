@@ -20,17 +20,25 @@ const parallelLinks = [
   { source: 'node2', target: 'node2', value: 200, color: '#5c5cff' },
 ];
 
-const customPositionNodes = [
-  { id: 'node1', name: 'Node 1', value: 100, color: '#ff5c5c', columnPosition: 'left' as const },
-  { id: 'node2', name: 'Node 2', value: 200, color: '#5c5cff', columnPosition: 'right' as const },
-];
-
 // Mock functions
 vi.mock('d3', () => ({
   select: vi.fn(() => ({
     attr: vi.fn().mockReturnThis(),
     style: vi.fn().mockReturnThis(),
-    append: vi.fn().mockReturnThis(),
+    append: vi.fn(() => ({
+      attr: vi.fn().mockReturnThis(),
+      style: vi.fn().mockReturnThis(),
+      append: vi.fn(() => ({
+        attr: vi.fn().mockReturnThis()
+      })),
+      selectAll: vi.fn().mockReturnThis(),
+      data: vi.fn().mockReturnThis(),
+      join: vi.fn().mockReturnThis(),
+      remove: vi.fn().mockReturnThis(),
+    })),
+    select: vi.fn(() => ({
+      remove: vi.fn().mockReturnThis()
+    })),
     selectAll: vi.fn().mockReturnThis(),
     data: vi.fn().mockReturnThis(),
     join: vi.fn().mockReturnThis(),
@@ -43,12 +51,13 @@ vi.mock('d3', () => ({
 }));
 
 vi.mock('d3-sankey', () => ({
-  sankey: vi.fn(() => ({
-    nodeWidth: vi.fn().mockReturnThis(),
-    nodePadding: vi.fn().mockReturnThis(),
-    extent: vi.fn().mockReturnThis(),
-    __proto__: function(data: any) { return { nodes: [], links: [] }; }
-  })),
+  sankey: vi.fn(() => {
+    const fn = function() { return { nodes: [], links: [] }; };
+    fn.nodeWidth = vi.fn().mockReturnThis();
+    fn.nodePadding = vi.fn().mockReturnThis();
+    fn.extent = vi.fn().mockReturnThis();
+    return fn;
+  }),
   sankeyLinkHorizontal: vi.fn(() => vi.fn()),
 }));
 
@@ -85,8 +94,8 @@ describe('SankeyUtils', () => {
     // Test custom layout
     const customLinks = [
       { 
-        source: { id: 'node1', columnPosition: 'left' }, 
-        target: { id: 'node2', columnPosition: 'right' },
+        source: { id: 'node1', name: 'Node 1', columnPosition: 'left' } as any, 
+        target: { id: 'node2', name: 'Node 2', columnPosition: 'right' } as any,
         value: 100
       }
     ];

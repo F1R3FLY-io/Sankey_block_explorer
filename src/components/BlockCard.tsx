@@ -310,14 +310,6 @@ const BlockCard: React.FC<BlockCardProps> = ({
     // Special implementation for Block #651 (Internal Phlo Consumption Only) to match the spec
     
     // Create input nodes from the spec diagram with colors
-    const inputAddrColors: Record<string, string> = {
-      '0x197MTCADDR': '#4a7eff',
-      '0x198MTCADDR': '#46c49b',
-      '0x257MTCADDR': '#8046c4',
-      '0x258MTCADDR': '#46c49b'
-    };
-    
-    // Create input nodes from the spec diagram with colors
     const inputNodes = [
       {
         id: 'input_0x197MTCADDR',

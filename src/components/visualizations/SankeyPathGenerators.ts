@@ -1,13 +1,13 @@
 import { sankeyLinkHorizontal } from 'd3-sankey';
 import { PathParams, SankeyLink, SankeyNode } from './SankeyTypes';
-import { CONSTANTS, calculateFlowWidths, getFlowDivisor } from './SankeyUtils';
+import { DEFAULT_CONFIG, calculateFlowWidths, getFlowDivisor } from './SankeyUtils';
 
 /**
  * Generates SVG path for a terminating flow
  * Used for flows that stop midway and don't connect to target
  */
 export function generateTerminatingPath(params: PathParams): string {
-  const { sourceX, sourceY, targetY, sourceWidth, midWidth } = params;
+  const { sourceX, sourceY, targetY, sourceWidth, midWidth = 0 } = params;
   
   // For terminating flows, we'll stop halfway
   const midpointX = sourceX + 100; // Fixed distance for termination
@@ -109,7 +109,7 @@ export function generateSankeyPath(d: SankeyLink, hasColumnPositions: boolean): 
     
     // For direct flows from low activity nodes to output
     if (sourceNode.name === '+56 Low activity\nnodes' && targetNode.name === '0x258MTCADDR') {
-      const { sourceWidth, targetWidth } = calculateFlowWidths(d.value || 0, CONSTANTS.FLOW_DIVISORS.LOW_ACTIVITY);
+      const { sourceWidth, targetWidth } = calculateFlowWidths(d.value || 0, DEFAULT_CONFIG.FLOW_DIVISORS.CUSTOM_VALUES['+56 Low activity\nnodes']);
       
       return generateDirectPath({
         sourceX,
@@ -137,5 +137,6 @@ export function generateSankeyPath(d: SankeyLink, hasColumnPositions: boolean): 
   }
   
   // Default to standard D3 Sankey path for other cases
-  return sankeyLinkHorizontal()(d);
+  const path = sankeyLinkHorizontal()(d);
+  return path || '';
 }
