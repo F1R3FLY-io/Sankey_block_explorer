@@ -10,7 +10,9 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: 'http://146.235.215.215:30003',
+          //target: 'http://146.235.215.215:30003', //asi-dev
+          //target: 'http://167.234.221.56:30003', // asi-prod
+          target: 'http://159.54.181.185:30003', // f1r3fly-dev
           changeOrigin: true,
           secure: false,
         }

@@ -11,8 +11,7 @@ import {
   mockBlock651,
   mockDeploys,
   mockDeploysWithPattern,
-  mockDeploysWithInternalConsumption,
-  mockDeploysWithMixedPatterns
+  mockDeploysWithInternalConsumption
 } from '../test/mocks';
 
 // Button Demo Section
@@ -110,7 +109,7 @@ const BlockCardSection = () => {
       id: 'block-650',
       blockNumber: 650,
       title: 'Block #650 - Internal Phlo Consumption',
-      description: 'This block demonstrates internal Phlo consumption with Rholang code execution. The visualization shows flows from input nodes (left) through the execution pipeline to output nodes (right).',
+      description: 'This block demonstrates internal Phlo consumption with Rholang code execution. The visualization shows flows from input nodes (left) through a center processing node to output nodes (right).',
       block: mockBlock650,
       deploys: mockDeploysWithInternalConsumption,
       totalBlocks: 871,
@@ -120,13 +119,13 @@ const BlockCardSection = () => {
     {
       id: 'block-651',
       blockNumber: 651,
-      title: 'BlockCard - Block #651 - Mixed (Internal + External)',
-      description: 'This block demonstrates both internal Phlo consumption AND external transfers. Note both regular links and the orange self-referential link for internal consumption.',
+      title: 'Block #651 - No Sink Split Phlo',
+      description: 'This block demonstrates a specialized flow pattern with a flow termination midway and splits into higher values in the upper part of the diagram.',
       block: mockBlock651,
-      deploys: mockDeploysWithMixedPatterns,
-      totalBlocks: 700,
+      deploys: mockDeploysWithInternalConsumption, // Using the same deploys as block 650
+      totalBlocks: 871,
       hasInternalConsumption: true,
-      customHeight: false
+      customHeight: true // Using custom height for proper visualization
     }
   ];
 

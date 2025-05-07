@@ -29,11 +29,20 @@ vi.mock('d3', () => ({
         }))
       }))
     })),
+    select: vi.fn(() => ({
+      remove: vi.fn()
+    })),
     attr: vi.fn(() => ({
       attr: vi.fn()
     })),
     append: vi.fn(() => ({
-      selectAll: vi.fn()
+      selectAll: vi.fn(),
+      select: vi.fn(),
+      append: vi.fn(() => ({
+        attr: vi.fn(() => ({
+          attr: vi.fn()
+        }))
+      }))
     }))
   })),
   scaleLinear: vi.fn(() => ({
