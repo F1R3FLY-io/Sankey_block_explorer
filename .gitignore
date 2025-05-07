@@ -7,3 +7,4 @@ dist/
 .mcp.json
 .claude/
 .DS_Store
+coverage
