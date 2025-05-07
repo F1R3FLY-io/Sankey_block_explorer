@@ -11,8 +11,7 @@ import {
   mockBlock651,
   mockDeploys,
   mockDeploysWithPattern,
-  mockDeploysWithInternalConsumption,
-  mockDeploysWithMixedPatterns
+  mockDeploysWithInternalConsumption
 } from '../test/mocks';
 
 // Button Demo Section
@@ -120,13 +119,13 @@ const BlockCardSection = () => {
     {
       id: 'block-651',
       blockNumber: 651,
-      title: 'Block #651 - Sink Split Phlo',
-      description: 'This block demonstrates a specialized flow pattern with TWO key differences: 1) The teal flow (0x198MTCADDR) terminates midway and never reaches outputs, and 2) Low activity nodes connect directly to 0x258MTCADDR, bypassing the center node.',
+      title: 'Block #651 - No Sink Split Phlo',
+      description: 'This block demonstrates a specialized flow pattern with a flow termination midway and splits into higher values in the upper part of the diagram.',
       block: mockBlock651,
-      deploys: mockDeploysWithMixedPatterns,
-      totalBlocks: 700,
+      deploys: mockDeploysWithInternalConsumption, // Using the same deploys as block 650
+      totalBlocks: 871,
       hasInternalConsumption: true,
-      customHeight: false
+      customHeight: true // Using custom height for proper visualization
     }
   ];
 

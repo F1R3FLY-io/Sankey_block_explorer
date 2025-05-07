@@ -307,9 +307,9 @@ const BlockCard: React.FC<BlockCardProps> = ({
       }
     ];
   } else if (hasInternalConsumptionDetected && (currentBlock === 651 || block.blockNumber === 651)) {
-    // Special implementation for Block #651 (Internal Phlo Consumption Only) to match the spec
+    // Special implementation for Block #651 to match the No_sink_split_phlo.png spec
     
-    // Create input nodes from the spec diagram with colors
+    // Create input nodes from the exact spec diagram values and colors
     const inputNodes = [
       {
         id: 'input_0x197MTCADDR',
@@ -337,12 +337,22 @@ const BlockCard: React.FC<BlockCardProps> = ({
       }
     ];
     
-    // Create center node for processing
+    // Create center node for processing - midway termination point
     const centerNode = {
       id: 'center_0x257MTCADDR',
       name: '0x257MTCADDR',
       value: 32847,
       color: '#8046c4', // Purple from spec
+      internalConsumption: true,
+      columnPosition: 'center' as const
+    };
+    
+    // Create center additional node to handle the flow termination midway
+    const centerNode2 = {
+      id: 'center_0x258MTCADDR',
+      name: '0x258MTCADDR',
+      value: 12009,
+      color: '#3399FF', // Blue from spec
       internalConsumption: true,
       columnPosition: 'center' as const
     };
@@ -359,7 +369,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
       {
         id: 'output_0x258MTCADDR',
         name: '0x258MTCADDR',
-        value: 12009,  // Match the value from the spec image - full amount from low activity nodes
+        value: 1399,
         color: '#66CCFF',  // Light blue from spec
         columnPosition: 'right' as const
       },
@@ -393,10 +403,11 @@ const BlockCard: React.FC<BlockCardProps> = ({
       }
     ];
     
-    // For Block #651, create an advanced Sankey diagram as shown in the spec
+    // Combine all nodes
     nodes = [
       ...inputNodes,
       centerNode,
+      centerNode2,
       ...outputNodes
     ];
 
@@ -469,7 +480,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         details: 'From: 0x257MTCADDR\nTo: 0x262MTCADDR\nPhlo: 990'
       },
       
-      // Create a termination center node for 0x198MTCADDR (teal) - this should terminate after partially flowing through
+      // Links from 0x198MTCADDR (teal input) - termination midway
       {
         source: 'input_0x198MTCADDR',
         target: 'center_0x257MTCADDR',
@@ -477,18 +488,17 @@ const BlockCard: React.FC<BlockCardProps> = ({
         color: '#46c49b',
         gradientStart: '#46c49b',
         gradientEnd: '#8046c4',
-        details: 'From: 0x198MTCADDR\nTerminates midway',
-        isTerminating: true // Signal that this flow terminates
+        details: 'From: 0x198MTCADDR\nTo: 0x257MTCADDR\nPhlo: 57,920'
       },
       
-      // Links from low activity nodes directly to 0x258MTCADDR on the right (not to center)
+      // Links from low activity nodes to second center node - flow terminates midway
       {
         source: 'input_lowactivity',
-        target: 'output_0x258MTCADDR',
+        target: 'center_0x258MTCADDR',
         value: 12009,
         color: '#66c49b',
         gradientStart: '#66c49b',
-        gradientEnd: '#66CCFF',
+        gradientEnd: '#3399FF',
         details: 'From: Low activity nodes\nTo: 0x258MTCADDR\nPhlo: 12,009'
       }
     ];

@@ -209,9 +209,9 @@ export const mockBlock650: Block = {
   totalPhlo: 14201890 // Values from the spec
 };
 
-// Block #651 referenced in the spec - mixed (internal consumption and transfer)
+// Block #651 referenced in the spec - showing No_sink_split_phlo diagram
 export const mockBlock651: Block = {
-  blockHash: 'hash651',
+  blockHash: '0x9b559a4ebffb9052cf7a89a6e59a3b166a3dbbe6e8e5942c3d3a9e94efb3e4e8',
   sender: 'validator3',
   seqNum: 10,
   sig: 'blockSig651',
@@ -231,15 +231,15 @@ export const mockBlock651: Block = {
     { validator: 'validator3', stake: 300 }
   ],
   blockSize: '1536',
-  deployCount: 2,
+  deployCount: 91, // Values from the spec image
   faultTolerance: 0.65,
   justifications: [
     { validator: 'validator1', latestBlockHash: 'hash650' },
     { validator: 'validator3', latestBlockHash: 'hash650' }
   ],
   rejectedDeploys: [],
-  totalCost: 1400, // Combined internal and external
-  totalPhlo: 2700
+  totalCost: 892430, // Values from the spec image
+  totalPhlo: 14201890 // Values from the spec image
 };
 
 export const mockSankeyNodes = [
