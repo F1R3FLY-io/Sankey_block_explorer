@@ -62,7 +62,7 @@ class SankeyGradientDefs {
           .attr("stop-color", link.gradientEnd);
         
         // Assign the gradient ID to the link for later use
-        (link as any).gradientId = gradientId;
+        link.gradientId = gradientId;
       }
     });
   }
