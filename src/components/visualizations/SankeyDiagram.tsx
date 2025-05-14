@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import * as d3 from 'd3';
 import { SankeyDiagramProps, SankeyLayoutType } from './SankeyTypes';
 import useSankeyData from './useSankeyData';
@@ -39,8 +39,9 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
   
   /**
    * Main function to update and render the diagram
+   * Wrapped in useCallback to avoid re-creation on each render
    */
-  const updateDiagram = () => {
+  const updateDiagram = useCallback(() => {
     if (!svgRef.current || !containerRef.current || !nodes.length || !links.length) {
       console.warn("Can't update diagram - missing elements:", {
         svgRef: !!svgRef.current,
@@ -107,7 +108,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
     } catch (error) {
       console.error('Error generating Sankey diagram:', error);
     }
-  };
+  }, [nodes, links, options, layoutNodes, layoutLinks, layoutType, hasColumnPositions]);
 
   // Effect to update diagram when data or container changes
   useEffect(() => {
@@ -120,7 +121,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
     
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [nodes, links, options, layoutNodes, layoutLinks, layoutType, hasColumnPositions]);
+  }, [updateDiagram]);
 
   return (
     <div 
@@ -143,5 +144,5 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
 };
 
 // Export the component and all related types
-export * from './SankeyTypes';
+export type { SankeyDiagramProps, SankeyLayoutType };
 export default SankeyDiagram;

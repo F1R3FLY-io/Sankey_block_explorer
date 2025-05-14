@@ -71,7 +71,7 @@ class SankeyLink {
    * Handles mouseover event for links
    */
   private handleMouseOver(
-    event: MouseEvent, 
+    _event: MouseEvent, 
     link: SankeyLinkType, 
     element: SVGPathElement
   ): void {
@@ -117,7 +117,7 @@ class SankeyLink {
    * Handles mouseout event for links
    */
   private handleMouseOut(
-    event: MouseEvent, 
+    _event: MouseEvent, 
     link: SankeyLinkType, 
     element: SVGPathElement
   ): void {
@@ -148,7 +148,7 @@ class SankeyLink {
    * Renders the links using D3
    */
   private renderLinks(): void {
-    const self = this; // Store reference to this for event handlers
+    // Use event listeners with arrow functions to preserve 'this' context
     
     const linkElements = this.svgSelection.append("g")
       .selectAll("path")
@@ -158,8 +158,8 @@ class SankeyLink {
       .style("fill", (link: SankeyLinkType) => {
         // For the special visualization with gradients
         if (this.hasColumnPositions) {
-          if ((link as any).gradientId) {
-            return `url(#${(link as any).gradientId})`;
+          if (link.gradientId) {
+            return `url(#${link.gradientId})`;
           }
           return link.color || "#aaa";
         }
@@ -197,17 +197,14 @@ class SankeyLink {
         return 0; // No stroke width for the spec visualization
       });
 
-    // Add event listeners
-    linkElements.each(function(link) {
-      const element = this;
-      d3.select(element)
-        .on("mouseover", function(event) { 
-          self.handleMouseOver(event, link, element);
-        })
-        .on("mouseout", function(event) {
-          self.handleMouseOut(event, link, element);
-        });
-    });
+    // Add event listeners directly to the selection elements
+    linkElements
+      .on("mouseover", (event, link) => { 
+        this.handleMouseOver(event, link, event.currentTarget as SVGPathElement);
+      })
+      .on("mouseout", (event, link) => {
+        this.handleMouseOut(event, link, event.currentTarget as SVGPathElement);
+      });
   }
 }
 

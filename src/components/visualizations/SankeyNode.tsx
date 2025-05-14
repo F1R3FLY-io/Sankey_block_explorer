@@ -17,7 +17,7 @@ class SankeyNode {
   private hasColumnPositions: boolean;
   private width: number;
   private svg: d3.Selection<SVGElement | SVGSVGElement, unknown, null, undefined>;
-  private selection: d3.Selection<any, any, SVGElement | null, unknown>;
+  private selection: d3.Selection<SVGGElement, SankeyNodeType, SVGElement | null, unknown>;
 
   constructor({ nodes, hasColumnPositions, width, svgSelection }: SankeyNodeProps) {
     this.nodes = nodes;
@@ -25,14 +25,16 @@ class SankeyNode {
     this.width = width;
     
     // Get or find the SVG element
-    this.svg = svgSelection || d3.select('svg');
+    this.svg = (svgSelection || d3.select('svg')) as d3.Selection<SVGSVGElement | SVGElement, unknown, null, undefined>;
     
-    // Create selection for nodes
-    this.selection = this.svg.append("g")
-      .selectAll("g")
+    // Create selection for nodes 
+    // Cast the selection to the correct type
+    const nodesGroup = this.svg.append("g");
+    this.selection = nodesGroup
+      .selectAll<SVGGElement, SankeyNodeType>("g")
       .data(this.nodes)
       .join("g")
-      .attr("transform", (d) => `translate(${d.x0 || 0},${d.y0 || 0})`);
+      .attr("transform", (d) => `translate(${d.x0 || 0},${d.y0 || 0})`) as d3.Selection<SVGGElement, SankeyNodeType, SVGElement | null, unknown>;
     
     this.renderNodes();
     this.renderNodeLabels();
@@ -135,6 +137,12 @@ class SankeyNode {
         try {
           // Safely get the parent node with proper type casting
           const element = this as SVGTextElement;
+          // Check if we're in a test environment and safely handle the parentNode
+          if (!element || typeof element.parentNode === 'undefined') {
+            // In test environment, simulate the node without accessing DOM
+            return;
+          }
+          
           const parentNode = element.parentNode as Element;
           if (!parentNode) return;
           

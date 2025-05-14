@@ -1,6 +1,5 @@
-import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
-import { PathParams, SankeyData, SankeyLayoutType, SankeyLink, SankeyNode } from './SankeyTypes';
+import { SankeyData, SankeyLayoutType, SankeyLink, SankeyNode } from './SankeyTypes';
 
 /**
  * Constants for diagram configuration
