@@ -1,8 +1,10 @@
 node_modules/
 .aider*
-.env
+.env*
 .aider.*
 .idea/
 dist/
+coverage/
 .mcp.json
 .claude/
+.DS_Store
