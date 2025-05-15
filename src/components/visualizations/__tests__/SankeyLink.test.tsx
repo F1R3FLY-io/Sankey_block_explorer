@@ -106,8 +106,7 @@ describe('SankeyLink in CAPS mode', () => {
   const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   const svgSelection = d3.select(svgElement) as any;
 
-  // Store original implementations
-  const originalFormatTooltipDetails = vi.fn();
+  // Setup for mocking
   
   beforeEach(() => {
     vi.clearAllMocks();

@@ -3,7 +3,7 @@ import { Block, Deploy } from '../services/blockService.ts';
 import SankeyDiagram from './visualizations/SankeyDiagram';
 import type { SankeyNode, SankeyLink } from './visualizations/SankeyTypes';
 import HelpButton from './HelpButton.tsx';
-import { getTokenName, isCapsMode, formatTooltipDetails } from '../utils/capsUtils';
+import { getTokenName } from '../utils/capsUtils';
 // import { siteConfig } from '../siteMetadata'; // Using hardcoded colors from PDF spec
 
 const GENESIS_CEREMONY_BLOCK_INDEX = 0;
