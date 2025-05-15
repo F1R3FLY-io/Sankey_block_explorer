@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { SankeyLink as SankeyLinkType, SankeyNode } from './SankeyTypes';
 import { CONSTANTS } from './SankeyUtils';
 import { generateSankeyPath } from './SankeyPathGenerators';
+import { formatTooltipDetails } from '../../utils/capsUtils';
 
 interface SankeyLinkProps {
   links: SankeyLinkType[];
@@ -46,21 +47,24 @@ class SankeyLink {
       .attr("class", "tooltip")
       .attr("transform", `translate(${x},${y})`);
 
+    // Always format tooltip details to use the correct token name (Phlo or CAPS)
+    const formattedDetails = formatTooltipDetails(link.details);
+    
     // For custom positioned nodes, add a background
     if (this.hasColumnPositions) {
       tooltip.append("rect")
         .attr("x", -10)
         .attr("y", -20)
-        .attr("width", link.details.length * 7) // Approximate width
+        .attr("width", formattedDetails.length * 7) // Approximate width
         .attr("height", 30)
         .attr("fill", "#000")
         .attr("opacity", 0.7)
         .attr("rx", 5);
     }
     
-    // Add the text
+    // Add the text - apply CAPS formatting if in CAPS mode
     tooltip.append("text")
-      .text(link.details.replace(/\n/g, ' '))
+      .text(formattedDetails.replace(/\n/g, ' '))
       .attr("x", 5)
       .attr("y", 0)
       .style("font-size", "14px")

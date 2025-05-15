@@ -10,6 +10,9 @@ export default defineConfig(({ mode }) => {
   // Get the BLOCK_EXPLORER_ENDPOINT from environment or use default
   const apiTarget = env.VITE_BLOCK_EXPLORER_ENDPOINT || 'http://159.54.181.185:30003';
   
+  // Check if we should build with CAPS support (tokenized security instead of Phlo/Rev)
+  const buildWithCaps = env.VITE_BUILD_CAPS === 'true';
+  
   // Create base configuration
   const config = {
     plugins: [react()],
@@ -27,7 +30,8 @@ export default defineConfig(({ mode }) => {
     },
     // Make environment variables available to the client-side code
     define: {
-      'process.env': env
+      'process.env': env,
+      __CAPS_MODE__: buildWithCaps
     }
   }
 

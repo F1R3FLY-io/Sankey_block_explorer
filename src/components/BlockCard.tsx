@@ -3,6 +3,7 @@ import { Block, Deploy } from '../services/blockService.ts';
 import SankeyDiagram from './visualizations/SankeyDiagram';
 import type { SankeyNode, SankeyLink } from './visualizations/SankeyTypes';
 import HelpButton from './HelpButton.tsx';
+import { getTokenName, isCapsMode, formatTooltipDetails } from '../utils/capsUtils';
 // import { siteConfig } from '../siteMetadata'; // Using hardcoded colors from PDF spec
 
 const GENESIS_CEREMONY_BLOCK_INDEX = 0;
@@ -119,7 +120,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
       target: `${deployer}_end`,
       value: data.totalCost,
       color: addressColors.get(deployer) || generateRandomColor(),
-      details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+      details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal ${getTokenName()}: ${data.totalPhlo}`
     }));
   } else if (hasInternalConsumptionDetected && (currentBlock === 650 || block.blockNumber === 650)) {
     // Block #650 - Internal Phlo Consumption implementation to match the spec image exactly
@@ -225,7 +226,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         color: '#4a7eff',
         gradientStart: '#4a7eff',
         gradientEnd: '#8046c4',
-        details: 'From: 0x197MTCADDR\nTo: 0x257MTCADDR\nPhlo: 78,847'
+        details: `From: 0x197MTCADDR\nTo: 0x257MTCADDR\n${getTokenName()}: 78,847`
       },
       
       // Links from center to outputs
@@ -384,7 +385,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         color: '#4a7eff',
         gradientStart: '#4a7eff',
         gradientEnd: '#8046c4',
-        details: 'From: 0x197MTCADDR\nTo: 0x257MTCADDR\nPhlo: 78,847'
+        details: `From: 0x197MTCADDR\nTo: 0x257MTCADDR\n${getTokenName()}: 78,847`
       },
       
       // Links from center to outputs - splits into upper flow
@@ -492,7 +493,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
             color: (inputAddrColors as Record<string, string>)[deployer] || 
                    addressColors.get(deployer) || 
                    generateRandomColor(),
-            details: `From: ${deployer}\nTo: ${target}\nPhlo: ${value.toLocaleString()}`
+            details: `From: ${deployer}\nTo: ${target}\n${getTokenName()}: ${value.toLocaleString()}`
           });
         }
       });
@@ -547,7 +548,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: block.blockHash,
         value: data.totalCost,
         color: addressColors.get(deployer) || generateRandomColor(),
-        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal ${getTokenName()}: ${data.totalPhlo}`
       }));
       
       // Add self-referential link for internal consumption with higher opacity and dashed line
@@ -561,7 +562,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
           color: '#ffa500', // Orange color for internal consumption
           dashArray: "10,5", // Dashed line pattern
           opacity: 0.9, // Higher opacity for better visibility
-          details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
+          details: `${blockNode.phloConsumed || 0} ${getTokenName()} consumed internally by Rholang code execution`
         }
       ];
     } else {
@@ -590,7 +591,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: deploy.to,
         value: deploy.amount,
         color: addressColors.get(deploy.from) || generateRandomColor(),
-        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
+        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\n${getTokenName()}: ${deploy.phlo}`
       }));
       
       // Add self-referential link for internal consumption
@@ -604,7 +605,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
           color: '#ffa500', // Exact color from PDF spec
           opacity: 0.9, // Higher opacity for better visibility
           dashArray: "10,5", // Dashed line pattern
-          details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
+          details: `${blockNode.phloConsumed || 0} ${getTokenName()} consumed internally by Rholang code execution`
         }
       ];
     }
@@ -647,7 +648,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: block.blockHash,
         value: data.totalCost,
         color: addressColors.get(deployer) || generateRandomColor(),
-        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal ${getTokenName()}: ${data.totalPhlo}`
       }));
     } else {
       // Has match patterns - show transfers between addresses
@@ -670,7 +671,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: deploy.to,
         value: deploy.amount,
         color: addressColors.get(deploy.from) || generateRandomColor(),
-        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
+        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\n${getTokenName()}: ${deploy.phlo}`
       }));
     }
   }
@@ -736,7 +737,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
             <span className="block text-2xl font-bold text-white">
               {new Intl.NumberFormat().format(deploys.reduce((sum, d) => sum + d.phloLimit, 0) || 14201890)}
             </span>
-            <label className="text-gray-400 text-sm">Total Phlo</label>
+            <label className="text-gray-400 text-sm">Total {getTokenName()}</label>
           </div>
         </div>
       </div>
