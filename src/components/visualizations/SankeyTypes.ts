@@ -36,6 +36,7 @@ export interface SankeyLink {
   opacity?: number;
   gradientStart?: string;
   gradientEnd?: string;
+  gradientId?: string;
 }
 
 /**
@@ -91,4 +92,5 @@ export interface PathParams {
   sourceWidth: number;
   targetWidth: number;
   value: number;
+  midWidth?: number;
 }

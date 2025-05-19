@@ -3,6 +3,7 @@ import { Block, Deploy } from '../services/blockService.ts';
 import SankeyDiagram from './visualizations/SankeyDiagram';
 import type { SankeyNode, SankeyLink } from './visualizations/SankeyTypes';
 import HelpButton from './HelpButton.tsx';
+import { getTokenName } from '../utils/capsUtils';
 // import { siteConfig } from '../siteMetadata'; // Using hardcoded colors from PDF spec
 
 const GENESIS_CEREMONY_BLOCK_INDEX = 0;
@@ -119,7 +120,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
       target: `${deployer}_end`,
       value: data.totalCost,
       color: addressColors.get(deployer) || generateRandomColor(),
-      details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+      details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal ${getTokenName()}: ${data.totalPhlo}`
     }));
   } else if (hasInternalConsumptionDetected && (currentBlock === 650 || block.blockNumber === 650)) {
     // Block #650 - Internal Phlo Consumption implementation to match the spec image exactly
@@ -225,7 +226,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         color: '#4a7eff',
         gradientStart: '#4a7eff',
         gradientEnd: '#8046c4',
-        details: 'From: 0x197MTCADDR\nTo: 0x257MTCADDR\nPhlo: 78,847'
+        details: `From: 0x197MTCADDR\nTo: 0x257MTCADDR\n${getTokenName()}: 78,847`
       },
       
       // Links from center to outputs
@@ -317,7 +318,6 @@ const BlockCard: React.FC<BlockCardProps> = ({
       '0x258MTCADDR': '#46c49b'
     };
     
-<<<<<<< Updated upstream
     // Use colors from the spec diagram
     const inputNodes = Object.entries(deployerGroups).map(([deployer, data]) => {
       // Exact colors from spec or fallback
@@ -334,60 +334,14 @@ const BlockCard: React.FC<BlockCardProps> = ({
       };
     });
     
-    // Create output nodes based on the spec
+    // Create output nodes based on the spec with exact values and colors
     const outputValues = [
-      { name: '0x257MTCADDR', value: 32847, color: '#fa6d1d' },
-      { name: '0x258MTCADDR', value: 12009, color: '#3399FF' },
-      { name: '0x259MTCADDR', value: 3388, color: '#66CCFF' },
+      { name: '0x257MTCADDR', value: 11886, color: '#33CC99' },
+      { name: '0x258MTCADDR', value: 12009, color: '#66CCFF' },
+      { name: '0x259MTCADDR', value: 3388, color: '#3399FF' },
       { name: '0x260MTCADDR', value: 8987, color: '#FF9933' },
       { name: '0x261MTCADDR', value: 1445, color: '#CC66FF' },
       { name: '0x262MTCADDR', value: 990, color: '#99CC33' },
-      { name: '0x267MTCADDR', value: 11886, color: '#33CC99' }
-=======
-    // Create output nodes based on the spec with exact values and colors
-    const outputNodes = [
-      {
-        id: 'output_0x257MTCADDR',
-        name: '0x257MTCADDR',
-        value: 11886,
-        color: '#33CC99',  // Green from spec
-        columnPosition: 'right' as const
-      },
-      {
-        id: 'output_0x258MTCADDR',
-        name: '0x258MTCADDR',
-        value: 12009,  // Match the value from the spec image - full amount from low activity nodes
-        color: '#66CCFF',  // Light blue from spec
-        columnPosition: 'right' as const
-      },
-      {
-        id: 'output_0x259MTCADDR',
-        name: '0x259MTCADDR',
-        value: 3388,
-        color: '#3399FF',  // Medium blue from spec
-        columnPosition: 'right' as const
-      },
-      {
-        id: 'output_0x260MTCADDR',
-        name: '0x260MTCADDR',
-        value: 8987,
-        color: '#FF9933',  // Orange from spec
-        columnPosition: 'right' as const
-      },
-      {
-        id: 'output_0x261MTCADDR',
-        name: '0x261MTCADDR',
-        value: 1445,
-        color: '#CC66FF',  // Purple from spec
-        columnPosition: 'right' as const
-      },
-      {
-        id: 'output_0x262MTCADDR',
-        name: '0x262MTCADDR',
-        value: 990,
-        color: '#99CC33',  // Green from spec
-        columnPosition: 'right' as const
-      }
     ];
     
     const outputNodes = outputValues.map(item => ({
@@ -401,10 +355,26 @@ const BlockCard: React.FC<BlockCardProps> = ({
     // For Block #651, create an advanced Sankey diagram as shown in the spec
     nodes = [
       ...inputNodes,
-      centerNode,
       ...outputNodes
     ];
 
+    // Create center node for processing (needed for links)
+    const centerNode = {
+      id: 'center_0x257MTCADDR',
+      name: '0x257MTCADDR',
+      value: 32847,
+      color: '#8046c4', // Purple from spec
+      internalConsumption: true,
+      columnPosition: 'center' as const
+    };
+    
+    // Update diagram with center node
+    nodes = [
+      ...inputNodes,
+      centerNode,
+      ...outputNodes
+    ];
+    
     // Create links to exactly match the spec image with proper gradient colors and splits
     links = [
       // Links from 0x197MTCADDR (largest blue input)
@@ -415,7 +385,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         color: '#4a7eff',
         gradientStart: '#4a7eff',
         gradientEnd: '#8046c4',
-        details: 'From: 0x197MTCADDR\nTo: 0x257MTCADDR\nPhlo: 78,847'
+        details: `From: 0x197MTCADDR\nTo: 0x257MTCADDR\n${getTokenName()}: 78,847`
       },
       
       // Links from center to outputs - splits into upper flow
@@ -495,8 +465,20 @@ const BlockCard: React.FC<BlockCardProps> = ({
         gradientStart: '#66c49b',
         gradientEnd: '#66CCFF',
         details: 'From: Low activity nodes\nTo: 0x258MTCADDR\nPhlo: 12,009'
->>>>>>> Stashed changes
       }
+    ];
+
+    // Create links connecting inputs to outputs
+    const diagramLinks: SankeyLink[] = [];
+    
+    // For each input node, distribute its value to specific output nodes
+    Object.entries(deployerGroups).forEach(([deployer, data]) => {
+      // Define which outputs this input should connect to (based on the spec)
+      const targetOutputs = deployer === '0x197MTCADDR' 
+        ? ['0x257MTCADDR', '0x258MTCADDR'] 
+        : deployer === '0x198MTCADDR'
+        ? ['0x259MTCADDR', '0x260MTCADDR']
+        : ['0x261MTCADDR', '0x262MTCADDR']; // default for other inputs
       
       // Add links to the specified outputs with appropriate values
       const linkShare = data.totalCost / targetOutputs.length;
@@ -511,7 +493,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
             color: (inputAddrColors as Record<string, string>)[deployer] || 
                    addressColors.get(deployer) || 
                    generateRandomColor(),
-            details: `From: ${deployer}\nTo: ${target}\nPhlo: ${value.toLocaleString()}`
+            details: `From: ${deployer}\nTo: ${target}\n${getTokenName()}: ${value.toLocaleString()}`
           });
         }
       });
@@ -566,7 +548,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: block.blockHash,
         value: data.totalCost,
         color: addressColors.get(deployer) || generateRandomColor(),
-        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal ${getTokenName()}: ${data.totalPhlo}`
       }));
       
       // Add self-referential link for internal consumption with higher opacity and dashed line
@@ -580,7 +562,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
           color: '#ffa500', // Orange color for internal consumption
           dashArray: "10,5", // Dashed line pattern
           opacity: 0.9, // Higher opacity for better visibility
-          details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
+          details: `${blockNode.phloConsumed || 0} ${getTokenName()} consumed internally by Rholang code execution`
         }
       ];
     } else {
@@ -609,7 +591,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: deploy.to,
         value: deploy.amount,
         color: addressColors.get(deploy.from) || generateRandomColor(),
-        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
+        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\n${getTokenName()}: ${deploy.phlo}`
       }));
       
       // Add self-referential link for internal consumption
@@ -623,7 +605,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
           color: '#ffa500', // Exact color from PDF spec
           opacity: 0.9, // Higher opacity for better visibility
           dashArray: "10,5", // Dashed line pattern
-          details: `${blockNode.phloConsumed || 0} Phlo consumed internally by Rholang code execution`
+          details: `${blockNode.phloConsumed || 0} ${getTokenName()} consumed internally by Rholang code execution`
         }
       ];
     }
@@ -666,7 +648,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: block.blockHash,
         value: data.totalCost,
         color: addressColors.get(deployer) || generateRandomColor(),
-        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal Phlo: ${data.totalPhlo}`
+        details: `Deployer: 0x${deployer.substring(0, 6)} | Deploys: ${data.deploys.length}\n\nTotal Cost: ${data.totalCost}\nTotal ${getTokenName()}: ${data.totalPhlo}`
       }));
     } else {
       // Has match patterns - show transfers between addresses
@@ -689,7 +671,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
         target: deploy.to,
         value: deploy.amount,
         color: addressColors.get(deploy.from) || generateRandomColor(),
-        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\nPhlo: ${deploy.phlo}`
+        details: `From: 0x${deploy.from.substring(0, 6)} | To: 0x${deploy.to.substring(0, 6)}\n\nAmount: ${deploy.amount}\n${getTokenName()}: ${deploy.phlo}`
       }));
     }
   }
@@ -755,7 +737,7 @@ const BlockCard: React.FC<BlockCardProps> = ({
             <span className="block text-2xl font-bold text-white">
               {new Intl.NumberFormat().format(deploys.reduce((sum, d) => sum + d.phloLimit, 0) || 14201890)}
             </span>
-            <label className="text-gray-400 text-sm">Total Phlo</label>
+            <label className="text-gray-400 text-sm">Total {getTokenName()}</label>
           </div>
         </div>
       </div>
@@ -799,4 +781,4 @@ const BlockCard: React.FC<BlockCardProps> = ({
   );
 };
 
-export default BlockCard; 
+export default BlockCard;

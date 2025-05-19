@@ -1,3 +1,5 @@
 import { SankeyDiagram } from './visualizations';
-export * from './visualizations/SankeyTypes';
+import { SankeyDiagramProps, SankeyLayoutType } from './visualizations/SankeyTypes';
+
+export type { SankeyDiagramProps, SankeyLayoutType };
 export default SankeyDiagram;
