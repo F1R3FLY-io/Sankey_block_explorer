@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { 
-  SankeyData, 
   SankeyLayoutType, 
   SankeyLink, 
   SankeyNode 
@@ -72,10 +71,14 @@ const useSankeyData = (
   }, [nodes, links, nodeMap, layoutType, hasColumnPositions, width, height]);
   
   // Apply the layout and return processed data
-  const { layoutNodes, layoutLinks } = useMemo(
+  const result = useMemo(
     () => processData(),
     [processData]
   );
+  
+  // Extract the correct properties based on the layout result
+  const layoutNodes = 'layoutNodes' in result ? result.layoutNodes : result.nodes;
+  const layoutLinks = 'layoutLinks' in result ? result.layoutLinks : result.links;
   
   return {
     layoutNodes,

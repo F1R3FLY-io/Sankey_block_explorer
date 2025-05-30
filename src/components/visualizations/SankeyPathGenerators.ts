@@ -7,7 +7,7 @@ import { CONSTANTS, calculateFlowWidths, getFlowDivisor } from './SankeyUtils';
  * Used for flows that stop midway and don't connect to target
  */
 export function generateTerminatingPath(params: PathParams): string {
-  const { sourceX, sourceY, targetY, sourceWidth, midWidth } = params;
+  const { sourceX, sourceY, targetY, sourceWidth, midWidth = sourceWidth / 2 } = params;
   
   // For terminating flows, we'll stop halfway
   const midpointX = sourceX + 100; // Fixed distance for termination
@@ -137,5 +137,6 @@ export function generateSankeyPath(d: SankeyLink, hasColumnPositions: boolean): 
   }
   
   // Default to standard D3 Sankey path for other cases
-  return sankeyLinkHorizontal()(d);
+  const result = sankeyLinkHorizontal()(d);
+  return result || "";
 }

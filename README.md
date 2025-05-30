@@ -40,6 +40,14 @@ A visualization tool for exploring blockchain data using Sankey diagrams. This a
 pnpm install
 ```
 
+3. Set up your environment by creating a `.env` file:
+
+```bash
+cp .env.example .env
+```
+
+This will set up your environment with the default configuration. You can modify the `.env` file as needed for your environment.
+
 ### Development
 
 Start the development server:
@@ -129,11 +137,34 @@ The project follows a structured approach with:
 - **React Router**: App Router-based navigation with clean route structure
 - **Site Configuration**: Centralized configuration in siteMetadata.ts
 
+## Environment Configuration
+
+The application uses environment variables for configuration. Create a `.env` file in the root directory with the following variables:
+
+```
+# Controls whether to build with specific capabilities
+VITE_BUILD_CAPS=true
+
+# API endpoint for the block explorer backend
+# Default development endpoint (f1r3fly-dev)
+VITE_BLOCK_EXPLORER_ENDPOINT=http://159.54.181.185:30003
+```
+
+Additional available endpoints:
+- ASI Development: `http://146.235.215.215:30003`
+- ASI Production: `http://167.234.221.56:30003`
+
+For convenience, you can copy the `.env.example` file to create your `.env` file:
+
+```bash
+cp .env.example .env
+```
+
 ## API Proxy Configuration
 
 The application includes a built-in API proxy to communicate with the backend blockchain data service. The proxy:
 
-- Forwards all `/api/*` requests to the backend service
+- Forwards all `/api/*` requests to the backend service specified in the `VITE_BLOCK_EXPLORER_ENDPOINT` environment variable
 - Handles CORS (Cross-Origin Resource Sharing) issues automatically
 - Works in both HTTP and HTTPS development modes
 - Configured in `vite.config.ts`
@@ -150,6 +181,9 @@ The project is currently in active development with the following recent updates
 - Fixed site metadata and navigation structure
 - Updated block explorer visualization components
 - Added comprehensive test coverage with Vitest
+- Improved environment variable configuration for different endpoints
+- Fixed type safety issues throughout the codebase
+- Enhanced event handling in visualization components
 
 ## License
 

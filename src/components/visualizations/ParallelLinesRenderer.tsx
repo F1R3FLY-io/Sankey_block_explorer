@@ -104,18 +104,17 @@ class ParallelLinesRenderer {
       .style("stroke-linecap", "butt")
       .style("stroke-linejoin", "miter");
 
-    const self = this;
-    
-    // Add interaction to the lines
+    // Add interaction to the lines - using arrow functions to preserve 'this' context
     this.svg.selectAll("line")
-      .on("mouseover", function(event: MouseEvent, d: unknown) {
+      .on("mouseover", (event: MouseEvent, d: unknown) => {
         const sankeyLink = d as SankeyLink;
-        d3.select(this)
+        // Use d3.select(event.currentTarget) instead of this
+        d3.select(event.currentTarget as Element)
           .style("stroke-opacity", 1)
           .style("stroke-width", widthScale(sankeyLink.value) * 1.2);
         
         if (sankeyLink.details) {
-          const tooltip = self.svg.append("g")
+          const tooltip = this.svg.append("g")
             .attr("class", "tooltip")
             .attr("transform", `translate(${event.offsetX * 0.75},${event.offsetY - 10})`);
 
@@ -128,13 +127,13 @@ class ParallelLinesRenderer {
             .style("fill", "#ffffff");
         }
       })
-      .on("mouseout", function(_, d: unknown) {
+      .on("mouseout", (_, d: unknown) => {
         const sankeyLink = d as SankeyLink;
-        d3.select(this)
+        d3.select(_.currentTarget as Element)
           .style("stroke-opacity", sankeyLink.opacity || (
             sankeyLink.isInternalConsumption 
               ? 0.9 
-              : (self.options.link?.opacity || 0.8)
+              : (this.options.link?.opacity || 0.8)
           ))
           .style("stroke-dasharray", sankeyLink.dashArray || (
             sankeyLink.isInternalConsumption 
@@ -146,7 +145,7 @@ class ParallelLinesRenderer {
             : widthScale(sankeyLink.value)
           );
         
-        self.svg.selectAll(".tooltip").remove();
+        this.svg.selectAll(".tooltip").remove();
       });
   }
 }
