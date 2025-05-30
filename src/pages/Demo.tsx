@@ -11,7 +11,8 @@ import {
   mockBlock651,
   mockDeploys,
   mockDeploysWithPattern,
-  mockDeploysWithInternalConsumption
+  mockDeploysWithInternalConsumption,
+  mockDeploysWithMixedPatterns
 } from '../test/mocks';
 
 // Button Demo Section
@@ -109,7 +110,7 @@ const BlockCardSection = () => {
       id: 'block-650',
       blockNumber: 650,
       title: 'Block #650 - Internal Phlo Consumption',
-      description: 'This block demonstrates internal Phlo consumption with Rholang code execution. The visualization shows flows from input nodes (left) through the execution pipeline to output nodes (right).',
+      description: 'This block demonstrates internal Phlo consumption with Rholang code execution. The visualization shows flows from input nodes (left) through a center processing node to output nodes (right).',
       block: mockBlock650,
       deploys: mockDeploysWithInternalConsumption,
       totalBlocks: 871,
@@ -119,13 +120,13 @@ const BlockCardSection = () => {
     {
       id: 'block-651',
       blockNumber: 651,
-      title: 'Block #651 - No Sink Split Phlo',
-      description: 'This block demonstrates a specialized flow pattern with a flow termination midway and splits into higher values in the upper part of the diagram.',
+      title: 'Block #651 - Sink Split Phlo',
+      description: 'This block demonstrates a specialized flow pattern with TWO key differences: 1) The teal flow (0x198MTCADDR) terminates midway and never reaches outputs, and 2) Low activity nodes connect directly to 0x258MTCADDR, bypassing the center node.',
       block: mockBlock651,
-      deploys: mockDeploysWithInternalConsumption, // Using the same deploys as block 650
-      totalBlocks: 871,
+      deploys: mockDeploysWithMixedPatterns,
+      totalBlocks: 700,
       hasInternalConsumption: true,
-      customHeight: true // Using custom height for proper visualization
+      customHeight: false
     }
   ];
 
