@@ -1,6 +1,7 @@
 node_modules/
 .aider*
 .env*
+deployment/oci-deployment/.venv/
 .aider.*
 .idea/
 dist/
