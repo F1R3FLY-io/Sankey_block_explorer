@@ -1,6 +1,6 @@
 node_modules/
 .aider*
-.env*
+.env
 .aider.*
 .idea/
 dist/
