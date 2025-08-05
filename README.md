@@ -28,7 +28,7 @@ A visualization tool for exploring blockchain data using Sankey diagrams. This a
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
+- Node.js (v20 or higher)
 - pnpm (v7 or higher)
 
 ### Installation
@@ -187,4 +187,4 @@ The project is currently in active development with the following recent updates
 
 ## License
 
-[Sovereign Source License](https://gitlab.com/smart-assets.io/SovereignLicense/-/raw/main/SovereignLicense.md)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
