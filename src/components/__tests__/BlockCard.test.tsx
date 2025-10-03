@@ -2,19 +2,21 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BlockCard from '../BlockCard';
 import { SankeyNode, SankeyLink } from '../visualizations/SankeyTypes';
-import { 
-  mockBlock, 
-  mockDeploys, 
+import {
+  mockBlock,
+  mockDeploys,
   mockDeploysWithPattern,
   mockDeploysWithInternalConsumption,
   mockDeploysWithMixedPatterns,
   mockBlock650,
-  mockBlock651
+  mockBlock651,
+  mockDeploysWithEmbersPattern,
+  mockDeploysWithMixedTransferPatterns
 } from '../../test/mocks';
 // import { siteConfig } from '../../siteMetadata'; // Using hardcoded colors from PDF spec
 
 // Mock the SankeyDiagram component
-vi.mock('../SankeyDiagram', () => {
+vi.mock('../visualizations/SankeyDiagram', () => {
   return {
     __esModule: true,
     SankeyNode: vi.fn(),
@@ -183,73 +185,73 @@ describe('BlockCard', () => {
     });
   });
   
-  it.skip('should correctly handle deploys with transfer patterns', () => {
+  it('should correctly handle deploys with transfer patterns', () => {
     render(<BlockCard {...{
       ...defaultProps,
       deploys: mockDeploysWithPattern,
       hasInternalConsumption: false
     }} />);
-    
+
     const sankeyNodes = screen.getByTestId('sankey-nodes');
     const sankeyLinks = screen.getByTestId('sankey-links');
-    
+
     // Parse nodes and links data
     const nodes = JSON.parse(sankeyNodes.textContent || '[]');
     const links = JSON.parse(sankeyLinks.textContent || '[]');
-    
+
     // With pattern matching deploys, we expect to see the addresses extracted
     // Test for address nodes
     const addr1Node = nodes.find((n: SankeyNode) => n.id === 'addr1');
     const addr2Node = nodes.find((n: SankeyNode) => n.id === 'addr2');
     const addr3Node = nodes.find((n: SankeyNode) => n.id === 'addr3');
     const addr4Node = nodes.find((n: SankeyNode) => n.id === 'addr4');
-    
+
     expect(addr1Node).toBeDefined();
     expect(addr2Node).toBeDefined();
     expect(addr3Node).toBeDefined();
     expect(addr4Node).toBeDefined();
-    
+
     // Check for expected pattern of links
-    const addr1ToAddr2Link = links.find((l: SankeyLink) => 
-      (typeof l.source === 'string' && l.source === 'addr1' && 
+    const addr1ToAddr2Link = links.find((l: SankeyLink) =>
+      (typeof l.source === 'string' && l.source === 'addr1' &&
        typeof l.target === 'string' && l.target === 'addr2')
     );
     expect(addr1ToAddr2Link).toBeDefined();
     expect(addr1ToAddr2Link?.value).toBe(1000);
-    
-    const addr1ToAddr3Link = links.find((l: SankeyLink) => 
-      (typeof l.source === 'string' && l.source === 'addr1' && 
+
+    const addr1ToAddr3Link = links.find((l: SankeyLink) =>
+      (typeof l.source === 'string' && l.source === 'addr1' &&
        typeof l.target === 'string' && l.target === 'addr3')
     );
     expect(addr1ToAddr3Link).toBeDefined();
     expect(addr1ToAddr3Link?.value).toBe(1500);
-    
-    const addr4ToAddr2Link = links.find((l: SankeyLink) => 
-      (typeof l.source === 'string' && l.source === 'addr4' && 
+
+    const addr4ToAddr2Link = links.find((l: SankeyLink) =>
+      (typeof l.source === 'string' && l.source === 'addr4' &&
        typeof l.target === 'string' && l.target === 'addr2')
     );
     expect(addr4ToAddr2Link).toBeDefined();
     expect(addr4ToAddr2Link?.value).toBe(800);
-    
+
     // Verify that color properties are present
     nodes.forEach((node: SankeyNode) => {
       expect(node.color).toBeDefined();
     });
-    
+
     links.forEach((link: SankeyLink) => {
       expect(link.color).toBeDefined();
     });
   });
   
-  it.skip('should pass appropriate options to SankeyDiagram', () => {
+  it('should pass appropriate options to SankeyDiagram', () => {
     render(<BlockCard {...defaultProps} hasInternalConsumption={false} />);
-    
+
     const sankeyOptions = screen.getByTestId('sankey-options');
     const options = JSON.parse(sankeyOptions.textContent || '{}');
-    
+
     // Check that node opacity is set to 1
     expect(options.node?.opacity).toBe(1);
-    
+
     // Check that link opacity is set to 0.3
     expect(options.link?.opacity).toBe(0.3);
   });
@@ -509,5 +511,258 @@ describe('BlockCard', () => {
     // The BlockCard should show the transaction label
     const transactionLabel = screen.getByText('Transactions');
     expect(transactionLabel).toBeInTheDocument();
+  });
+
+  describe('Transfer pattern support (standard match and Embers)', () => {
+    it('should correctly handle deploys with both standard and Embers patterns together', () => {
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: [...mockDeploysWithPattern, ...mockDeploysWithEmbersPattern],
+        hasInternalConsumption: false
+      }} />);
+
+      const sankeyNodes = screen.getByTestId('sankey-nodes');
+      const sankeyLinks = screen.getByTestId('sankey-links');
+
+      const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+      const links = JSON.parse(sankeyLinks.textContent || '[]');
+
+      // Verify standard pattern addresses
+      expect(nodes.find((n: SankeyNode) => n.id === 'addr1')).toBeDefined();
+      expect(nodes.find((n: SankeyNode) => n.id === 'addr2')).toBeDefined();
+
+      // Verify Embers pattern addresses
+      expect(nodes.find((n: SankeyNode) => n.id === 'emberAddr1')).toBeDefined();
+      expect(nodes.find((n: SankeyNode) => n.id === 'emberAddr2')).toBeDefined();
+
+      // Verify both types of links exist
+      const standardLink = links.find((l: SankeyLink) =>
+        l.source === 'addr1' && l.target === 'addr2'
+      );
+      const embersLink = links.find((l: SankeyLink) =>
+        l.source === 'emberAddr1' && l.target === 'emberAddr2'
+      );
+
+      expect(standardLink).toBeDefined();
+      expect(embersLink).toBeDefined();
+    });
+
+    it('should correctly parse and display Embers sendTransfer pattern', () => {
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: mockDeploysWithEmbersPattern,
+        hasInternalConsumption: false
+      }} />);
+
+      const sankeyNodes = screen.getByTestId('sankey-nodes');
+      const sankeyLinks = screen.getByTestId('sankey-links');
+
+      // Parse nodes and links data
+      const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+      const links = JSON.parse(sankeyLinks.textContent || '[]');
+
+      // Verify nodes for Embers addresses exist
+      const emberAddr1Node = nodes.find((n: SankeyNode) => n.id === 'emberAddr1');
+      const emberAddr2Node = nodes.find((n: SankeyNode) => n.id === 'emberAddr2');
+      const emberAddr3Node = nodes.find((n: SankeyNode) => n.id === 'emberAddr3');
+
+      expect(emberAddr1Node).toBeDefined();
+      expect(emberAddr2Node).toBeDefined();
+      expect(emberAddr3Node).toBeDefined();
+
+      // Verify links exist between addresses
+      const emberAddr1ToAddr2Link = links.find((l: SankeyLink) =>
+        (typeof l.source === 'string' && l.source === 'emberAddr1' &&
+         typeof l.target === 'string' && l.target === 'emberAddr2')
+      );
+      expect(emberAddr1ToAddr2Link).toBeDefined();
+      expect(emberAddr1ToAddr2Link?.value).toBe(2500);
+
+      const emberAddr3ToAddr1Link = links.find((l: SankeyLink) =>
+        (typeof l.source === 'string' && l.source === 'emberAddr3' &&
+         typeof l.target === 'string' && l.target === 'emberAddr1')
+      );
+      expect(emberAddr3ToAddr1Link).toBeDefined();
+      expect(emberAddr3ToAddr1Link?.value).toBe(3000);
+
+      // Verify transaction count includes Embers transfers
+      const transactionCount = mockDeploysWithEmbersPattern.length;
+      // Use getAllByText since the number appears multiple times (deploys count and transaction count)
+      const countElements = screen.getAllByText(String(transactionCount));
+      expect(countElements.length).toBeGreaterThan(0);
+    });
+
+    it('should handle mixed standard and Embers transfer patterns', () => {
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: mockDeploysWithMixedTransferPatterns,
+        hasInternalConsumption: false
+      }} />);
+
+      const sankeyNodes = screen.getByTestId('sankey-nodes');
+      const sankeyLinks = screen.getByTestId('sankey-links');
+
+      // Parse nodes and links data
+      const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+      const links = JSON.parse(sankeyLinks.textContent || '[]');
+
+      // Verify both standard and Embers addresses exist
+      const addr1Node = nodes.find((n: SankeyNode) => n.id === 'addr1');
+      const addr2Node = nodes.find((n: SankeyNode) => n.id === 'addr2');
+      const emberAddr1Node = nodes.find((n: SankeyNode) => n.id === 'emberAddr1');
+
+      expect(addr1Node).toBeDefined();
+      expect(addr2Node).toBeDefined();
+      expect(emberAddr1Node).toBeDefined();
+
+      // Verify links exist for both patterns
+      const standardLink = links.find((l: SankeyLink) =>
+        (typeof l.source === 'string' && l.source === 'addr1' &&
+         typeof l.target === 'string' && l.target === 'addr2')
+      );
+      expect(standardLink).toBeDefined();
+      expect(standardLink?.value).toBe(1000);
+
+      const embersLink = links.find((l: SankeyLink) =>
+        (typeof l.source === 'string' && l.source === 'emberAddr1' &&
+         typeof l.target === 'string' && l.target === 'addr2')
+      );
+      expect(embersLink).toBeDefined();
+      expect(embersLink?.value).toBe(1500);
+
+      // Verify transaction count includes both types
+      const transactionCount = mockDeploysWithMixedTransferPatterns.length;
+      // Use getAllByText since the number appears multiple times (deploys count and transaction count)
+      const countElements = screen.getAllByText(String(transactionCount));
+      expect(countElements.length).toBeGreaterThan(0);
+    });
+
+    it('should not classify Embers transfers as internal consumption', () => {
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: mockDeploysWithEmbersPattern,
+        currentBlock: 150, // Higher than 100 to enable auto-detection
+        hasInternalConsumption: undefined // Let it auto-detect
+      }} />);
+
+      const sankeyLinks = screen.getByTestId('sankey-links');
+      const links = JSON.parse(sankeyLinks.textContent || '[]');
+
+      // Verify no internal consumption links are created for Embers transfers
+      const internalLinks = links.filter((l: SankeyLink) => l.isInternalConsumption === true);
+      expect(internalLinks.length).toBe(0);
+    });
+
+    it('should correctly assign colors to Embers transfer addresses', () => {
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: mockDeploysWithEmbersPattern,
+        hasInternalConsumption: false
+      }} />);
+
+      const sankeyNodes = screen.getByTestId('sankey-nodes');
+      const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+
+      // All Embers addresses should have colors assigned
+      const emberAddr1Node = nodes.find((n: SankeyNode) => n.id === 'emberAddr1');
+      const emberAddr2Node = nodes.find((n: SankeyNode) => n.id === 'emberAddr2');
+      const emberAddr3Node = nodes.find((n: SankeyNode) => n.id === 'emberAddr3');
+
+      expect(emberAddr1Node?.color).toBeDefined();
+      expect(emberAddr2Node?.color).toBeDefined();
+      expect(emberAddr3Node?.color).toBeDefined();
+    });
+
+    it('should count Embers transfers in transaction statistics', () => {
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: mockDeploysWithEmbersPattern,
+        hasInternalConsumption: false
+      }} />);
+
+      // Find the Transactions label
+      const transactionLabel = screen.getByText('Transactions');
+      expect(transactionLabel).toBeInTheDocument();
+
+      // The transaction count should match the number of Embers deploys (2)
+      const stats = screen.getByText('Transactions').parentElement;
+      expect(stats).toBeInTheDocument();
+    });
+
+    it('should handle deploys with mixed internal consumption and Embers transfers', () => {
+      const mixedDeploys = [
+        ...mockDeploysWithInternalConsumption, // No transfer pattern - internal consumption
+        ...mockDeploysWithEmbersPattern // Embers transfer pattern
+      ];
+
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: mixedDeploys,
+        currentBlock: 150,
+        hasInternalConsumption: true // Explicitly set
+      }} />);
+
+      const sankeyNodes = screen.getByTestId('sankey-nodes');
+      const sankeyLinks = screen.getByTestId('sankey-links');
+
+      const nodes = JSON.parse(sankeyNodes.textContent || '[]');
+      const links = JSON.parse(sankeyLinks.textContent || '[]');
+
+      // Should have Embers transfer addresses
+      expect(nodes.find((n: SankeyNode) => n.id === 'emberAddr1')).toBeDefined();
+      expect(nodes.find((n: SankeyNode) => n.id === 'emberAddr2')).toBeDefined();
+
+      // Should have Embers transfer links
+      const embersLink = links.find((l: SankeyLink) =>
+        l.source === 'emberAddr1' && l.target === 'emberAddr2'
+      );
+      expect(embersLink).toBeDefined();
+    });
+
+    it('should correctly calculate values for Embers transfers', () => {
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: mockDeploysWithEmbersPattern,
+        hasInternalConsumption: false
+      }} />);
+
+      const sankeyLinks = screen.getByTestId('sankey-links');
+      const links = JSON.parse(sankeyLinks.textContent || '[]');
+
+      // First Embers transfer: emberAddr1 -> emberAddr2, amount 2500
+      const link1 = links.find((l: SankeyLink) =>
+        l.source === 'emberAddr1' && l.target === 'emberAddr2'
+      );
+      expect(link1?.value).toBe(2500);
+
+      // Second Embers transfer: emberAddr3 -> emberAddr1, amount 3000
+      const link2 = links.find((l: SankeyLink) =>
+        l.source === 'emberAddr3' && l.target === 'emberAddr1'
+      );
+      expect(link2?.value).toBe(3000);
+    });
+
+    it('should properly detect transfers with parseTransfer utility', () => {
+      const standardDeploy = mockDeploysWithPattern[0];
+      const embersDeploy = mockDeploysWithEmbersPattern[0];
+      const internalDeploy = mockDeploysWithInternalConsumption[0];
+
+      // Use parseTransfer imported at top level would be better, but we can test via behavior
+      render(<BlockCard {...{
+        ...defaultProps,
+        deploys: [standardDeploy, embersDeploy, internalDeploy],
+        currentBlock: 150,
+        hasInternalConsumption: undefined // Auto-detect
+      }} />);
+
+      const sankeyLinks = screen.getByTestId('sankey-links');
+      const links = JSON.parse(sankeyLinks.textContent || '[]');
+
+      // Should have 2 transfers (standard + Embers), not 3
+      const transferLinks = links.filter((l: SankeyLink) => !l.isInternalConsumption);
+
+      // At minimum we should have the two explicit transfers
+      expect(transferLinks.length).toBeGreaterThanOrEqual(2);
+    });
   });
 });

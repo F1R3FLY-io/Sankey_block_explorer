@@ -4,6 +4,7 @@ import SankeyDiagram from './visualizations/SankeyDiagram';
 import type { SankeyNode, SankeyLink } from './visualizations/SankeyTypes';
 import HelpButton from './HelpButton.tsx';
 import { getTokenName } from '../utils/capsUtils';
+import { parseTransfer } from '../utils/transferParser';
 // import { siteConfig } from '../siteMetadata'; // Using hardcoded colors from PDF spec
 
 const GENESIS_CEREMONY_BLOCK_INDEX = 0;
@@ -33,16 +34,16 @@ const BlockCard: React.FC<BlockCardProps> = ({
   // Auto-detect internal consumption if not explicitly set
   const hasInternalConsumptionDetected = useMemo(() => {
     if (hasInternalConsumption !== undefined) return hasInternalConsumption;
-    
+
     // Skip auto-detection for standard views to avoid false positives
     if (currentBlock < 100) return false;
-    
-    // Check for deploys that don't have match patterns and do have cost
+
+    // Check for deploys that don't have transfer patterns and do have cost
     const internalConsumptionDeploys = deploys.filter(deploy => {
-      const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
-      return !termMatch && deploy.cost > 0;
+      const transfer = parseTransfer(deploy.term);
+      return !transfer && deploy.cost > 0;
     });
-    
+
     return internalConsumptionDeploys.length > 0;
   }, [deploys, hasInternalConsumption, currentBlock]);
 
@@ -54,11 +55,10 @@ const BlockCard: React.FC<BlockCardProps> = ({
       }
 
       if (currentBlock !== GENESIS_CEREMONY_BLOCK_INDEX) {
-        const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
-        if (termMatch) {
-          const [, from, to] = termMatch;
-          if (!colors.has(from)) colors.set(from, generateRandomColor());
-          if (!colors.has(to)) colors.set(to, generateRandomColor());
+        const transfer = parseTransfer(deploy.term);
+        if (transfer) {
+          if (!colors.has(transfer.from)) colors.set(transfer.from, generateRandomColor());
+          if (!colors.has(transfer.to)) colors.set(transfer.to, generateRandomColor());
         }
       }
     });
@@ -78,13 +78,13 @@ const BlockCard: React.FC<BlockCardProps> = ({
     acc[deploy.deployer].deploys.push(deploy);
     acc[deploy.deployer].totalCost += deploy.cost;
     acc[deploy.deployer].totalPhlo += deploy.phloLimit;
-    
-    // Calculate internal consumption for deploys that don't have match patterns
-    const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
-    if (!termMatch && deploy.cost > 0) {
+
+    // Calculate internal consumption for deploys that don't have transfer patterns
+    const transfer = parseTransfer(deploy.term);
+    if (!transfer && deploy.cost > 0) {
       acc[deploy.deployer].internalConsumption += deploy.cost;
     }
-    
+
     return acc;
   }, {} as Record<string, { 
     deploys: Deploy[], 
@@ -509,21 +509,21 @@ const BlockCard: React.FC<BlockCardProps> = ({
       value: deploys.reduce((sum, d) => sum + d.cost, 0),
       color: '#ffa500', // Orange color for internal consumption
       phloConsumed: deploys.reduce((sum, d) => {
-        // Only count as internal consumption if no match pattern
-        const termMatch = d.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
-        return termMatch ? sum : sum + d.cost;
+        // Only count as internal consumption if no transfer pattern
+        const transfer = parseTransfer(d.term);
+        return transfer ? sum : sum + d.cost;
       }, 0)
     };
     
     // Process external transfers if any exist
     const processedDeploys = deploys
       .map(deploy => {
-        const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
-        if (!termMatch) return null;
+        const transfer = parseTransfer(deploy.term);
+        if (!transfer) return null;
         return {
-          from: termMatch[1],
-          to: termMatch[2],
-          amount: parseInt(termMatch[3]),
+          from: transfer.from,
+          to: transfer.to,
+          amount: transfer.amount,
           phlo: deploy.phloLimit
         };
       })
@@ -613,12 +613,12 @@ const BlockCard: React.FC<BlockCardProps> = ({
     // Standard blocks - process based on deploy patterns
     const processedDeploys = deploys
       .map(deploy => {
-        const termMatch = deploy.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/);
-        if (!termMatch) return null;
+        const transfer = parseTransfer(deploy.term);
+        if (!transfer) return null;
         return {
-          from: termMatch[1],
-          to: termMatch[2],
-          amount: parseInt(termMatch[3]),
+          from: transfer.from,
+          to: transfer.to,
+          amount: transfer.amount,
           phlo: deploy.phloLimit
         };
       })
@@ -717,8 +717,8 @@ const BlockCard: React.FC<BlockCardProps> = ({
           <div className="stat-item">
             <span className="block text-2xl font-bold text-white">
               {
-                // For transactions, count the match patterns (external transfers)
-                deploys.filter(d => d.term?.match(/match \("([^"]+)", "([^"]+)", (\d+)\)/)).length || '1,038'
+                // For transactions, count the transfer patterns (external transfers)
+                deploys.filter(d => parseTransfer(d.term)).length || '1,038'
               }
             </span>
             <label className="text-gray-400 text-sm">Transactions</label>

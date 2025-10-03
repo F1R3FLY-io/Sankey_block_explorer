@@ -84,6 +84,96 @@ export const mockDeploysWithPattern: Deploy[] = [
   }
 ];
 
+// Mock deploys with Embers sendTransfer pattern
+export const mockDeploysWithEmbersPattern: Deploy[] = [
+  {
+    deployer: 'embersDeployer1',
+    term: `new deployerId(\`rho:rchain:deployerId\`), deployId(\`rho:rchain:deployId\`) in {
+    @"sendTransfer"!(
+        *deployerId,
+        *deployId,
+        1649086000000,
+        "emberAddr1",
+        "emberAddr2",
+        2500,
+        "Embers wallet transfer"
+    )
+}`,
+    timestamp: 1649086000000,
+    sig: 'embersSig1',
+    sigAlgorithm: 'Ed25519',
+    phloPrice: 100,
+    phloLimit: 1000,
+    validAfterBlockNumber: 1,
+    cost: 500,
+    errored: false,
+    systemDeployError: ''
+  },
+  {
+    deployer: 'embersDeployer2',
+    term: `new deployerId(\`rho:rchain:deployerId\`), deployId(\`rho:rchain:deployId\`) in {
+    @"sendTransfer"!(
+        *deployerId,
+        *deployId,
+        1649086100000,
+        "emberAddr3",
+        "emberAddr1",
+        3000,
+        "Another Embers transfer"
+    )
+}`,
+    timestamp: 1649086100000,
+    sig: 'embersSig2',
+    sigAlgorithm: 'Ed25519',
+    phloPrice: 120,
+    phloLimit: 1200,
+    validAfterBlockNumber: 1,
+    cost: 600,
+    errored: false,
+    systemDeployError: ''
+  }
+];
+
+// Mock deploys with mixed patterns (standard match and Embers sendTransfer)
+export const mockDeploysWithMixedTransferPatterns: Deploy[] = [
+  {
+    deployer: 'deployer1',
+    term: 'match ("addr1", "addr2", 1000)',
+    timestamp: 1649086000000,
+    sig: 'sig1',
+    sigAlgorithm: 'Ed25519',
+    phloPrice: 100,
+    phloLimit: 1000,
+    validAfterBlockNumber: 1,
+    cost: 500,
+    errored: false,
+    systemDeployError: ''
+  },
+  {
+    deployer: 'embersDeployer1',
+    term: `new deployerId(\`rho:rchain:deployerId\`), deployId(\`rho:rchain:deployId\`) in {
+    @"sendTransfer"!(
+        *deployerId,
+        *deployId,
+        1649086100000,
+        "emberAddr1",
+        "addr2",
+        1500,
+        "Embers to standard address"
+    )
+}`,
+    timestamp: 1649086100000,
+    sig: 'embersSig1',
+    sigAlgorithm: 'Ed25519',
+    phloPrice: 120,
+    phloLimit: 1200,
+    validAfterBlockNumber: 1,
+    cost: 600,
+    errored: false,
+    systemDeployError: ''
+  }
+];
+
 // Mock deploys for internal Phlo consumption - first set for exact spec visualization
 export const mockDeploysWithInternalConsumption: Deploy[] = [
   {
