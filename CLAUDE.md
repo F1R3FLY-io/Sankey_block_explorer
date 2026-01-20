@@ -12,7 +12,9 @@
 - Build: `pnpm build`
 - Lint: `pnpm lint` (ESLint with Next.js and TypeScript rules)
 - Start production: `pnpm start`
-- DO NOT ever `git add` or `git commit` code. Allow the Claude user to always manually review changes.
+- Use the `/quick-commit` slash command for git add/commit operations; use the `/recursive-push` command for git push operations. Do not run `git add`, `git commit`, or `git push` directly unless explicitly requested.
+- `git mv` is permitted but requires user confirmation.
+- Never discard user changes; avoid destructive git commands.
 - DO NOT ever remove tests from eslint or type checks.
 - Run `pnpm test && pnpm build` to test code changes before proceeding to a prompt for more instructions or the next task.
 - DO NOT start the development servers with `pnpm dev` or `pnpm dev-https`. Inform the user to start their development environments themselves.
@@ -44,4 +46,8 @@
 - Follow React 19 and Next.js 15 best practices
 - Use Next.js App Router patterns
 - Implement proper types for all components and functions
-- Work with the user to develop feature enhancements using a test driven development strategy. Unit tests should be created for new components, they should initially fail and then work once the corresponding funcationality is poperly implemented.
+- Work with the user to develop feature enhancements using a test driven development strategy. Unit tests should be created for new components, they should initially fail and then work once the corresponding functionality is poperly implemented.
+
+## Attributions
+
+- Do not include any references to Claude co-authoring commits or code.
