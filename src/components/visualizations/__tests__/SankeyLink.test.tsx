@@ -4,6 +4,11 @@ import SankeyLink from '../SankeyLink';
 import { SankeyLink as SankeyLinkType } from '../SankeyTypes';
 import * as capsUtils from '../../../utils/capsUtils';
 
+// Type for accessing private methods in tests
+interface SankeyLinkWithPrivateMethods {
+  handleMouseOver: (event: MouseEvent, link: SankeyLinkType, element: SVGPathElement) => void;
+}
+
 // Mock d3 select and other methods
 vi.mock('d3', () => {
   const mockSelection = {
@@ -44,7 +49,7 @@ describe('SankeyLink', () => {
 
   // Mock SVG element
   const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const svgSelection = d3.select(svgElement) as any;
+  const svgSelection = d3.select(svgElement) as d3.Selection<SVGSVGElement, unknown, null, undefined>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -63,11 +68,11 @@ describe('SankeyLink', () => {
     expect(svgSelection.append).toHaveBeenCalledWith('g');
     expect(svgSelection.selectAll).toHaveBeenCalledWith('path');
   });
-  
+
   it('should create tooltips with formatTooltipDetails', () => {
     // Spy on formatTooltipDetails
     const spy = vi.spyOn(capsUtils, 'formatTooltipDetails');
-    
+
     // Create a SankeyLink instance with a link that has details
     const sankeyLink = new SankeyLink({
       links: testLinks,
@@ -77,10 +82,10 @@ describe('SankeyLink', () => {
     });
 
     // Simulate a mouseover event to trigger tooltip creation
-    // Access the private method using any type
-    (sankeyLink as any).handleMouseOver(
-      new MouseEvent('mouseover'), 
-      testLinks[0], 
+    // Access the private method for testing
+    (sankeyLink as unknown as SankeyLinkWithPrivateMethods).handleMouseOver(
+      new MouseEvent('mouseover'),
+      testLinks[0],
       document.createElementNS('http://www.w3.org/2000/svg', 'path')
     );
 
@@ -93,9 +98,9 @@ describe('SankeyLink', () => {
 describe('SankeyLink in CAPS mode', () => {
   // Sample test data
   const testLinks: SankeyLinkType[] = [
-    { 
-      source: 'node1', 
-      target: 'node2', 
+    {
+      source: 'node1',
+      target: 'node2',
       value: 100,
       color: '#ff0000',
       details: 'From: 0xabcd\nTo: 0x1234\nPhlo: 1000'
@@ -104,13 +109,11 @@ describe('SankeyLink in CAPS mode', () => {
 
   // Mock SVG element
   const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const svgSelection = d3.select(svgElement) as any;
+  const svgSelection = d3.select(svgElement) as d3.Selection<SVGSVGElement, unknown, null, undefined>;
 
-  // Setup for mocking
-  
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock capsUtils for CAPS mode
     vi.mocked(capsUtils.isCapsMode).mockReturnValue(true);
     vi.mocked(capsUtils.getTokenName).mockReturnValue('CAPS');
@@ -126,7 +129,7 @@ describe('SankeyLink in CAPS mode', () => {
   it('should use formatTooltipDetails to replace Phlo with CAPS in tooltips', () => {
     // Spy on formatTooltipDetails
     const spy = vi.spyOn(capsUtils, 'formatTooltipDetails');
-    
+
     // Create a SankeyLink instance
     const sankeyLink = new SankeyLink({
       links: testLinks,
@@ -136,15 +139,15 @@ describe('SankeyLink in CAPS mode', () => {
     });
 
     // Simulate a mouseover event to trigger tooltip creation
-    (sankeyLink as any).handleMouseOver(
-      new MouseEvent('mouseover'), 
-      testLinks[0], 
+    (sankeyLink as unknown as SankeyLinkWithPrivateMethods).handleMouseOver(
+      new MouseEvent('mouseover'),
+      testLinks[0],
       document.createElementNS('http://www.w3.org/2000/svg', 'path')
     );
 
     // Verify formatTooltipDetails was called
     expect(spy).toHaveBeenCalledWith(testLinks[0].details);
-    
+
     // Confirm the implementation transforms Phlo to CAPS
     expect(spy.mock.results[0].value).toContain('CAPS');
     expect(spy.mock.results[0].value).not.toContain('Phlo');

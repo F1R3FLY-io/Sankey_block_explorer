@@ -7,7 +7,7 @@
  * This uses the __CAPS_MODE__ global variable set in vite.config.ts
  */
 export const isCapsMode = (): boolean => {
-  // @ts-ignore - This variable is defined in vite.config.ts
+  // @ts-expect-error - __CAPS_MODE__ is defined in vite.config.ts via define option
   return typeof __CAPS_MODE__ !== 'undefined' && __CAPS_MODE__ === true;
 };
 

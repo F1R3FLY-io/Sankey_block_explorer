@@ -2,11 +2,16 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import BlockCard from '../BlockCard';
 import { SankeyNode, SankeyLink } from '../visualizations/SankeyTypes';
-import { 
-  mockBlock, 
+import {
+  mockBlock,
   mockDeploys,
   mockDeploysWithPattern
 } from '../../test/mocks';
+
+// Type for global with CAPS mode flag
+interface GlobalWithCapsMode {
+  __CAPS_MODE__?: boolean;
+}
 
 // Mock the capsUtils module
 vi.mock('../../utils/capsUtils', () => ({
@@ -46,23 +51,24 @@ describe('BlockCard in CAPS mode', () => {
   };
 
   // Store original global variable if it exists
-  let originalCapsMode: any;
+  let originalCapsMode: boolean | undefined;
+  const globalWithCaps = global as unknown as GlobalWithCapsMode;
 
   beforeEach(() => {
     // Store the original value if it exists
-    if (typeof (global as any).__CAPS_MODE__ !== 'undefined') {
-      originalCapsMode = (global as any).__CAPS_MODE__;
+    if (typeof globalWithCaps.__CAPS_MODE__ !== 'undefined') {
+      originalCapsMode = globalWithCaps.__CAPS_MODE__;
     }
     // Set the global variable to true to simulate CAPS mode
-    (global as any).__CAPS_MODE__ = true;
+    globalWithCaps.__CAPS_MODE__ = true;
   });
 
   afterEach(() => {
     // Reset the global variable after each test
     if (typeof originalCapsMode !== 'undefined') {
-      (global as any).__CAPS_MODE__ = originalCapsMode;
+      globalWithCaps.__CAPS_MODE__ = originalCapsMode;
     } else {
-      delete (global as any).__CAPS_MODE__;
+      delete globalWithCaps.__CAPS_MODE__;
     }
   });
 

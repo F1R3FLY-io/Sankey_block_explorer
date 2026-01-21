@@ -1,0 +1,17 @@
+# Check if there are commits to push (works for both new and existing branches)
+CURRENT_BRANCH=$(git branch --show-current)
+UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true)
+
+if [ -n "$UPSTREAM" ]; then
+  # Existing branch with upstream - check if ahead
+  if ! git status | grep -q "Your branch is ahead"; then
+    echo "Error: No changes to push. Your branch is not ahead of the remote."
+    exit 1
+  fi
+fi
+
+# New branches (no upstream) are allowed to push
+pnpm lint
+pnpm typecheck
+pnpm test:run
+pnpm build
