@@ -1,12 +1,34 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider, RouteObject } from 'react-router-dom';
 import Explorer from '../Explorer';
 import { mockBlock, mockDeploys, mockDeploysWithPattern } from '../../test/mocks';
 import { BlockWithDeploys } from '../../services/blockService';
 
 // Mock the BlockCard component
 import { Block, Deploy } from '../../services/blockService';
+
+// Future flags for React Router v7 compatibility
+const routerFutureFlags = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any;
+
+// Helper function to create router with future flags
+const createTestRouter = (element: React.ReactNode) => {
+  const routes: RouteObject[] = [{ path: '/', element }];
+  return createMemoryRouter(routes, {
+    initialEntries: ['/'],
+    future: routerFutureFlags
+  });
+};
+
+// Helper to render with RouterProvider and future flags
+const renderWithRouter = (element: React.ReactNode) => {
+  const router = createTestRouter(element);
+  return render(<RouterProvider router={router} future={routerFutureFlags} />);
+};
 
 vi.mock('../../components/BlockCard.tsx', () => ({
   default: ({ 
@@ -56,54 +78,48 @@ describe('Explorer', () => {
   ];
 
   it('should render loading state correctly', () => {
-    render(
-      <MemoryRouter>
-        <Explorer 
-          blocks={[]} 
-          categories={mockCategories} 
-          loading={true} 
-        />
-      </MemoryRouter>
+    renderWithRouter(
+      <Explorer
+        blocks={[]}
+        categories={mockCategories}
+        loading={true}
+      />
     );
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('should render empty state correctly', () => {
-    render(
-      <MemoryRouter>
-        <Explorer 
-          blocks={[]} 
-          categories={mockCategories} 
-          loading={false} 
-        />
-      </MemoryRouter>
+    renderWithRouter(
+      <Explorer
+        blocks={[]}
+        categories={mockCategories}
+        loading={false}
+      />
     );
 
     expect(screen.getByText('No data available')).toBeInTheDocument();
   });
 
   it('should correctly pass data to BlockCard when blocks are available', () => {
-    render(
-      <MemoryRouter>
-        <Explorer 
-          blocks={mockBlocks} 
-          categories={mockCategories} 
-          loading={false} 
-        />
-      </MemoryRouter>
+    renderWithRouter(
+      <Explorer
+        blocks={mockBlocks}
+        categories={mockCategories}
+        loading={false}
+      />
     );
 
     // Check that BlockCard is rendered
     expect(screen.getByTestId('block-card')).toBeInTheDocument();
-    
+
     // Verify that the correct block data is being passed
     const blockInfo = JSON.parse(screen.getByTestId('block-info').textContent || '{}');
     expect(blockInfo.blockHash).toBe(mockBlock.blockHash);
     expect(blockInfo.blockNumber).toBe(mockBlock.blockNumber);
     expect(blockInfo.currentBlock).toBe(0); // 0-indexed
     expect(blockInfo.totalBlocks).toBe(mockBlocks.length);
-    
+
     // Verify that the correct deploy data is being passed
     const deploysInfo = JSON.parse(screen.getByTestId('deploys-info').textContent || '[]');
     expect(deploysInfo.length).toBe(mockDeploys.length);
@@ -111,24 +127,22 @@ describe('Explorer', () => {
   });
 
   it('should display the correct count of blocks and active agents', () => {
-    render(
-      <MemoryRouter>
-        <Explorer 
-          blocks={mockBlocks} 
-          categories={mockCategories} 
-          loading={false} 
-        />
-      </MemoryRouter>
+    renderWithRouter(
+      <Explorer
+        blocks={mockBlocks}
+        categories={mockCategories}
+        loading={false}
+      />
     );
 
     // Check blocks count
     expect(screen.getByText(mockBlocks.length.toString())).toBeInTheDocument();
     expect(screen.getByText('Blocks')).toBeInTheDocument();
-    
+
     // Check active agents count (sum of all categories)
-    const totalAgents = 
-      mockCategories.sources.length + 
-      mockCategories.sinks.length + 
+    const totalAgents =
+      mockCategories.sources.length +
+      mockCategories.sinks.length +
       mockCategories.sourceSinks.length - 1;
     expect(screen.getByText(totalAgents.toString())).toBeInTheDocument();
     expect(screen.getByText('Active agents')).toBeInTheDocument();

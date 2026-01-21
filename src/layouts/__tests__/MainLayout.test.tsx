@@ -15,15 +15,18 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
+// Future flags for React Router v7 compatibility
+const routerFutureFlags = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any;
+
 // Helper function to create router with future flags
 const createTestRouter = (routes: RouteObject[]) => {
   return createMemoryRouter(routes, {
     initialEntries: ['/'],
-    future: {
-      v7_startTransition: true,
-      v7_relativeSplatPath: true
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any // Type assertion to bypass TypeScript errors
+    future: routerFutureFlags
   });
 };
 
@@ -41,7 +44,7 @@ describe('MainLayout', () => {
     ];
 
     const router = createTestRouter(routes);
-    render(<RouterProvider router={router} />);
+    render(<RouterProvider router={router} future={routerFutureFlags} />);
     
     // Check for the logo
     const logo = screen.getByAltText('MeTTaCycle Logo');
@@ -65,7 +68,7 @@ describe('MainLayout', () => {
     ];
 
     const router = createTestRouter(routes);
-    render(<RouterProvider router={router} />);
+    render(<RouterProvider router={router} future={routerFutureFlags} />);
     
     const searchInput = screen.getByPlaceholderText('Search');
     expect(searchInput).toBeInTheDocument();
@@ -85,7 +88,7 @@ describe('MainLayout', () => {
     ];
 
     const router = createTestRouter(routes);
-    render(<RouterProvider router={router} />);
+    render(<RouterProvider router={router} future={routerFutureFlags} />);
     
     expect(screen.getByText('Explorer')).toBeInTheDocument();
     expect(screen.getByText('Blocks')).toBeInTheDocument();
@@ -106,7 +109,7 @@ describe('MainLayout', () => {
     ];
 
     const router = createTestRouter(routes);
-    render(<RouterProvider router={router} />);
+    render(<RouterProvider router={router} future={routerFutureFlags} />);
     
     const explorerLink = screen.getByText('Explorer');
     expect(explorerLink).toHaveClass('bg-blue-600');
@@ -129,7 +132,7 @@ describe('MainLayout', () => {
     ];
 
     const router = createTestRouter(routes);
-    render(<RouterProvider router={router} />);
+    render(<RouterProvider router={router} future={routerFutureFlags} />);
     
     expect(screen.getByTestId('test-content')).toBeInTheDocument();
     expect(screen.getByText('Child Content')).toBeInTheDocument();
@@ -148,7 +151,7 @@ describe('MainLayout', () => {
     ];
 
     const router = createTestRouter(routes);
-    render(<RouterProvider router={router} />);
+    render(<RouterProvider router={router} future={routerFutureFlags} />);
     
     const currentYear = new Date().getFullYear();
     expect(screen.getByText(new RegExp(`© ${currentYear} MeTTaCycle Block Explorer. All rights reserved.`))).toBeInTheDocument();
